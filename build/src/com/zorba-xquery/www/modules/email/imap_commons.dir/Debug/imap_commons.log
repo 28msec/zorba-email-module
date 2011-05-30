@@ -1,0 +1,32 @@
+﻿Build started 27/05/2011 05:44:40 p.m..
+     1>Project "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\imap_commons.vcxproj" on node 3 (build target(s)).
+     1>PrepareForBuild:
+         Creating directory "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Debug\".
+       InitializeBuildStatus:
+         Creating "imap_commons.dir\Debug\imap_commons.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       CustomBuild:
+         Building Custom Rule D:/ZORBA/zorba_modules/email/src/com/zorba-xquery/www/modules/email/CMakeLists.txt
+         CMake does not need to re-run because D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ID:/ZORBA/zorba/include /ID:/ZORBA/zorba/build/include /I"C:/Libs/imap/c-client" /I"D:/ZORBA/zorba_modules/email/src/com/zorba-xquery/www/modules/email/cclient.xq.src" /Zi /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"imap_commons.dir\Debug\\" /Fd"D:/ZORBA/zorba_modules/email/build/src/com/zorba-xquery/www/modules/email/Debug/imap_commons.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\cclient.xq.src\imap_client.cpp"  /Zm1000 
+         imap_client.cpp
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\cclient.xq.src\imap_client.cpp(22): warning C4068: unknown pragma
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\cclient.xq.src\imap_client.cpp(97): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : see declaration of 'sprintf'
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\cclient.xq.src\imap_client.cpp(99): warning C4800: 'long' : forcing value to bool 'true' or 'false' (performance warning)
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\cclient.xq.src\imap_client.cpp(954): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\cclient.xq.src\imap_client.cpp(955): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\cclient.xq.src\imap_client.cpp(967): warning C4068: unknown pragma
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Debug\imap_commons.lib" /NOLOGO imap_commons.dir\Debug\imap_client.obj
+         imap_commons.vcxproj -> D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Debug\imap_commons.lib
+       FinalizeBuildStatus:
+         Deleting file "imap_commons.dir\Debug\imap_commons.unsuccessfulbuild".
+         Touching "imap_commons.dir\Debug\imap_commons.lastbuildstate".
+     1>Done Building Project "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\imap_commons.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.24

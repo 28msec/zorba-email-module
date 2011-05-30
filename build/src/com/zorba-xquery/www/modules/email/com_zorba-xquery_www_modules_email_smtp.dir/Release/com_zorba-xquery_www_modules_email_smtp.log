@@ -1,0 +1,51 @@
+﻿Build started 30/05/2011 10:38:09 a.m..
+     1>Project "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\com_zorba-xquery_www_modules_email_smtp.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "com_zorba-xquery_www_modules_email_smtp.dir\Release\com_zorba-xquery_www_modules_email_smtp.unsuccessfulbuild".
+       PreBuildEvent:
+         if exist "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\\smtp.dll" del "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\\smtp.dll"
+         if errorlevel 1 goto :VCEnd
+         :VCEnd
+       CustomBuild:
+         All outputs are up-to-date.
+       ClCompile:
+         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ID:/ZORBA/zorba/include /ID:/ZORBA/zorba/build/include /I"C:/Users/juanza/Desktop/imap-2007e/c-client" /I"D:/ZORBA/zorba_modules/email/src/com/zorba-xquery/www/modules/email/cclient.xq.src" /nologo /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D "CMAKE_INTDIR=\"Release\"" /D com_zorba_xquery_www_modules_email_smtp_EXPORTS /D _MBCS /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"com_zorba-xquery_www_modules_email_smtp.dir\Release\\" /Fd"D:/ZORBA/zorba_modules/email/build/src/com/zorba-xquery/www/modules/email/Release/smtp.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\email_function.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\email_module.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_handler.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_parser.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\smtp.cpp"  /Zm1000 
+         email_function.cpp
+         email_module.cpp
+         mime_handler.cpp
+     1>c:\users\juanza\desktop\imap-2007e\c-client\mail.h(532): warning C4005: 'ERROR' : macro redefinition
+                 C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include\wingdi.h(112) : see previous definition of 'ERROR'
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_handler.cpp(102): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_handler.cpp(116): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_handler.cpp(609): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+         mime_parser.cpp
+     1>c:\users\juanza\desktop\imap-2007e\c-client\mail.h(532): warning C4005: 'ERROR' : macro redefinition
+                 C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include\wingdi.h(112) : see previous definition of 'ERROR'
+         smtp.cpp
+     1>c:\users\juanza\desktop\imap-2007e\c-client\mail.h(532): warning C4005: 'ERROR' : macro redefinition
+                 C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include\wingdi.h(112) : see previous definition of 'ERROR'
+         Generating Code...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Release\smtp.dll" /NOLOGO "com_zorba-xquery_www_modules_email_smtp.dir\Release\email_function.obj"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Release\email_module.obj"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Release\mime_handler.obj"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Release\mime_parser.obj"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Release\smtp.obj"
+         com_zorba-xquery_www_modules_email_smtp.vcxproj -> D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Release\smtp.dll
+       PostBuildEvent:
+         copy "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Release\smtp.dll" "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\"
+         if errorlevel 1 goto :VCEnd
+         :VCEnd
+                 1 file(s) copied.
+       FinalizeBuildStatus:
+         Deleting file "com_zorba-xquery_www_modules_email_smtp.dir\Release\com_zorba-xquery_www_modules_email_smtp.unsuccessfulbuild".
+         Touching "com_zorba-xquery_www_modules_email_smtp.dir\Release\com_zorba-xquery_www_modules_email_smtp.lastbuildstate".
+     1>Done Building Project "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\com_zorba-xquery_www_modules_email_smtp.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:07.93

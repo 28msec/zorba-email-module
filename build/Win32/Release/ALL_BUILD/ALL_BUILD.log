@@ -1,0 +1,14 @@
+﻿Build started 30/05/2011 10:32:19 a.m..
+     1>Project "D:\ZORBA\zorba_modules\email\build\ALL_BUILD.vcxproj" on node 5 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Win32\Release\ALL_BUILD\ALL_BUILD.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       CustomBuild:
+         All outputs are up-to-date.
+       FinalizeBuildStatus:
+         Deleting file "Win32\Release\ALL_BUILD\ALL_BUILD.unsuccessfulbuild".
+         Touching "Win32\Release\ALL_BUILD\ALL_BUILD.lastbuildstate".
+     1>Done Building Project "D:\ZORBA\zorba_modules\email\build\ALL_BUILD.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.09

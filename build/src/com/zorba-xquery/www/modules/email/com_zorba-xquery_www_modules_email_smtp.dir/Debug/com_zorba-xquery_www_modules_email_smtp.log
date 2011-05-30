@@ -1,0 +1,40 @@
+﻿Build started 27/05/2011 05:44:44 p.m..
+     1>Project "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\com_zorba-xquery_www_modules_email_smtp.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "com_zorba-xquery_www_modules_email_smtp.dir\Debug\com_zorba-xquery_www_modules_email_smtp.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       PreBuildEvent:
+         if exist "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\\smtp.dll" del "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\\smtp.dll"
+         if errorlevel 1 goto :VCEnd
+         :VCEnd
+       CustomBuild:
+         Building Custom Rule D:/ZORBA/zorba_modules/email/src/com/zorba-xquery/www/modules/email/CMakeLists.txt
+         CMake does not need to re-run because D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ID:/ZORBA/zorba/include /ID:/ZORBA/zorba/build/include /I"C:/Libs/imap/c-client" /I"D:/ZORBA/zorba_modules/email/src/com/zorba-xquery/www/modules/email/cclient.xq.src" /Zi /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D com_zorba_xquery_www_modules_email_smtp_EXPORTS /D _WINDLL /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"com_zorba-xquery_www_modules_email_smtp.dir\Debug\\" /Fd"D:/ZORBA/zorba_modules/email/build/src/com/zorba-xquery/www/modules/email/Debug/smtp.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\email_function.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\email_module.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_handler.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_parser.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\smtp.cpp"  /Zm1000 
+         email_function.cpp
+         email_module.cpp
+         mime_handler.cpp
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_handler.cpp(102): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_handler.cpp(116): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\smtp.xq.src\mime_handler.cpp(609): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : see declaration of 'strcpy'
+         mime_parser.cpp
+         smtp.cpp
+         Generating Code...
+       ManifestResourceCompile:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"com_zorba-xquery_www_modules_email_smtp.dir\Debug\smtp.dll.embed.manifest.res" com_zorba-xquery_www_modules_email_smtp.dir\Debug\smtp_manifest.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Debug\smtp.dll" /VERSION:"0.0" /INCREMENTAL /NOLOGO /LIBPATH:D:/ZORBA/zorba/build/src /LIBPATH:D:/ZORBA/zorba/build/src/Debug kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib zorba_simplestore.lib Debug\imap_commons.lib "C:\Libs\imap\c-client\cclient.lib" secur32.lib crypt32.lib winmm.lib ws2_32.lib /MANIFEST /ManifestFile:"com_zorba-xquery_www_modules_email_smtp.dir\Debug\smtp.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Debug\smtp.pdb" /SUBSYSTEM:CONSOLE /STACK:"10000000" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/ZORBA/zorba_modules/email/build/src/com/zorba-xquery/www/modules/email/Debug/smtp.lib" /MACHINE:X86 /DLL "com_zorba-xquery_www_modules_email_smtp.dir\Debug\smtp.dll.embed.manifest.res"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Debug\email_function.obj"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Debug\email_module.obj"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Debug\mime_handler.obj"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Debug\mime_parser.obj"
+         "com_zorba-xquery_www_modules_email_smtp.dir\Debug\smtp.obj"  /machine:X86 /debug 
+     1>LINK : fatal error LNK1104: cannot open file 'zorba_simplestore.lib'
+     1>Done Building Project "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\com_zorba-xquery_www_modules_email_smtp.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:09.47

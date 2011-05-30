@@ -1,0 +1,38 @@
+﻿Build started 30/05/2011 10:44:04 a.m..
+     1>Project "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\com_zorba-xquery_www_modules_email_imap.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "com_zorba-xquery_www_modules_email_imap.dir\Release\com_zorba-xquery_www_modules_email_imap.unsuccessfulbuild".
+       PreBuildEvent:
+         if exist "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\\imap.dll" del "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\\imap.dll"
+         if errorlevel 1 goto :VCEnd
+         :VCEnd
+       CustomBuild:
+         All outputs are up-to-date.
+       ClCompile:
+         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ID:/ZORBA/zorba/include /ID:/ZORBA/zorba/build/include /I"C:/Users/juanza/Desktop/imap-2007e/c-client" /I"D:/ZORBA/zorba_modules/email/src/com/zorba-xquery/www/modules/email/cclient.xq.src" /nologo /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D "CMAKE_INTDIR=\"Release\"" /D com_zorba_xquery_www_modules_email_imap_EXPORTS /D _MBCS /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"com_zorba-xquery_www_modules_email_imap.dir\Release\\" /Fd"D:/ZORBA/zorba_modules/email/build/src/com/zorba-xquery/www/modules/email/Release/imap.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\imap.xq.src\imap.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\imap.xq.src\imap_function.cpp" "..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\imap.xq.src\imap_module.cpp"  /Zm1000 
+         imap.cpp
+     1>c:\users\juanza\desktop\imap-2007e\c-client\mail.h(532): warning C4005: 'ERROR' : macro redefinition
+                 C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include\wingdi.h(112) : see previous definition of 'ERROR'
+         imap_function.cpp
+     1>..\..\..\..\..\..\..\src\com\zorba-xquery\www\modules\email\imap.xq.src\imap_function.cpp(129): warning C4244: 'return' : conversion from 'int64_t' to 'unsigned long', possible loss of data
+         imap_module.cpp
+         Generating Code...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Release\imap.dll" /NOLOGO "com_zorba-xquery_www_modules_email_imap.dir\Release\imap.obj"
+         "com_zorba-xquery_www_modules_email_imap.dir\Release\imap_function.obj"
+         "com_zorba-xquery_www_modules_email_imap.dir\Release\imap_module.obj"
+         com_zorba-xquery_www_modules_email_imap.vcxproj -> D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Release\imap.dll
+       PostBuildEvent:
+         copy "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\Release\imap.dll" "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\"
+         if errorlevel 1 goto :VCEnd
+         :VCEnd
+                 1 file(s) copied.
+       FinalizeBuildStatus:
+         Deleting file "com_zorba-xquery_www_modules_email_imap.dir\Release\com_zorba-xquery_www_modules_email_imap.unsuccessfulbuild".
+         Touching "com_zorba-xquery_www_modules_email_imap.dir\Release\com_zorba-xquery_www_modules_email_imap.lastbuildstate".
+     1>Done Building Project "D:\ZORBA\zorba_modules\email\build\src\com\zorba-xquery\www\modules\email\com_zorba-xquery_www_modules_email_imap.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:08.14

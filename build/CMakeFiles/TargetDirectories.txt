@@ -1,9 +1,0 @@
-D:/ZORBA/zorba_modules/email/build/CMakeFiles/ALL_BUILD.dir
-D:/ZORBA/zorba_modules/email/build/CMakeFiles/Continuous.dir
-D:/ZORBA/zorba_modules/email/build/CMakeFiles/Experimental.dir
-D:/ZORBA/zorba_modules/email/build/CMakeFiles/Nightly.dir
-D:/ZORBA/zorba_modules/email/build/CMakeFiles/NightlyMemoryCheck.dir
-D:/ZORBA/zorba_modules/email/build/CMakeFiles/ZERO_CHECK.dir
-D:/ZORBA/zorba_modules/email/build/src/com/zorba-xquery/www/modules/email/CMakeFiles/com_zorba-xquery_www_modules_email_imap.dir
-D:/ZORBA/zorba_modules/email/build/src/com/zorba-xquery/www/modules/email/CMakeFiles/com_zorba-xquery_www_modules_email_smtp.dir
-D:/ZORBA/zorba_modules/email/build/src/com/zorba-xquery/www/modules/email/CMakeFiles/imap_commons.dir

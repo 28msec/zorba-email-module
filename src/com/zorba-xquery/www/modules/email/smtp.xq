@@ -51,6 +51,7 @@
  : @author Daniel Thomas
  : @library <a href="http://www.washington.edu/imap/">c‑client Library part of UW IMAP toolkit</a>
  :
+ : @project communication
  :)
 module namespace smtp = "http://www.zorba-xquery.com/modules/email/smtp";
 import schema namespace imap = "http://www.zorba-xquery.com/modules/email/imap";

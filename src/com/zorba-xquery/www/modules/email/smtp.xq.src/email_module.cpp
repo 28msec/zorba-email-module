@@ -42,10 +42,10 @@ namespace zorba {
       return "http://www.zorba-xquery.com/modules/email/smtp";
     }
     
-    StatelessExternalFunction*
+    ExternalFunction*
     SMTPModule::getExternalFunction(const String& aLocalname)
     {
-      StatelessExternalFunction*& lFunc = theFunctions[aLocalname];
+      ExternalFunction*& lFunc = theFunctions[aLocalname];
       if (!lFunc)
       {
         if (aLocalname == "send-impl")

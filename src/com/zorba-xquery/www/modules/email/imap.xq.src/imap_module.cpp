@@ -32,10 +32,10 @@ ImapModule::~ImapModule()
   theFunctions.clear();
 }
   
-StatelessExternalFunction*
+ExternalFunction*
 ImapModule::getExternalFunction(const String& aLocalname)
 {
-  StatelessExternalFunction*& lFunc = theFunctions[aLocalname];
+  ExternalFunction*& lFunc = theFunctions[aLocalname];
   if (!lFunc) {
     if (1 == 0) {
     } else if (aLocalname == "status-impl") {

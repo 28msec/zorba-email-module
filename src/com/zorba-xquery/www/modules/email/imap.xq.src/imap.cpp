@@ -19,6 +19,7 @@
 #include <zorba/singleton_item_sequence.h>
 #include <zorba/vector_item_sequence.h>
 #include <zorba/empty_sequence.h>
+#include <zorba/user_exception.h>
 #include <zorba/xquery_functions.h>
 #include <sstream>
 #include <algorithm>
@@ -39,7 +40,7 @@ StatusFunction::StatusFunction(const ImapModule* aModule)
   
 ItemSequence_t
 StatusFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -88,7 +89,7 @@ CreateFunction::CreateFunction(const ImapModule* aModule)
 
 ItemSequence_t
 CreateFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -126,7 +127,7 @@ DeleteFunction::DeleteFunction(const ImapModule* aModule)
 
 ItemSequence_t
 DeleteFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -164,7 +165,7 @@ RenameFunction::RenameFunction(const ImapModule* aModule)
 
 ItemSequence_t
 RenameFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -203,7 +204,7 @@ ListFunction::ListFunction(const ImapModule* aModule)
 
 ItemSequence_t
 ListFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -253,7 +254,7 @@ SubscribeFunction::SubscribeFunction(const ImapModule* aModule)
 
 ItemSequence_t
 SubscribeFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -290,7 +291,7 @@ UnsubscribeFunction::UnsubscribeFunction(const ImapModule* aModule)
 
 ItemSequence_t
 UnsubscribeFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -327,7 +328,7 @@ ExpungeFunction::ExpungeFunction(const ImapModule* aModule)
 
 ItemSequence_t
 ExpungeFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -364,7 +365,7 @@ SearchFunction::SearchFunction(const ImapModule* aModule)
 
 ItemSequence_t
 SearchFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -417,7 +418,7 @@ CopyFunction::CopyFunction(const ImapModule* aModule)
 
 ItemSequence_t
 CopyFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -474,7 +475,7 @@ FetchEnvelopeFunction::FetchEnvelopeFunction(const ImapModule* aModule)
 
 ItemSequence_t
 FetchEnvelopeFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -526,7 +527,7 @@ FetchSubjectFunction::FetchSubjectFunction(const ImapModule* aModule)
 
 ItemSequence_t
 FetchSubjectFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -565,7 +566,7 @@ FetchFromFunction::FetchFromFunction(const ImapModule* aModule)
 
 ItemSequence_t
 FetchFromFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -605,7 +606,7 @@ FetchFlagsFunction::FetchFlagsFunction(const ImapModule* aModule)
 
 ItemSequence_t
 FetchFlagsFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -660,7 +661,7 @@ SetFlagsFunction::SetFlagsFunction(const ImapModule* aModule)
 
 ItemSequence_t
 SetFlagsFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -703,7 +704,7 @@ SetFlagsFunction::evaluate(
 }
 
 void
-SetFlagsFunction::getFlagsVector(const StatelessExternalFunction::Arguments_t& aArgs, std::vector<int>& aFlags) {
+SetFlagsFunction::getFlagsVector(const ExternalFunction::Arguments_t& aArgs, std::vector<int>& aFlags) {
   
   Item lFlagsNode;
   Iterator_t arg3_iter = aArgs[3]->getIterator();
@@ -747,7 +748,7 @@ FetchUidFunction::FetchUidFunction(const ImapModule* aModule)
 
 ItemSequence_t
 FetchUidFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -779,7 +780,7 @@ FetchMessageSequenceNumberFunction::FetchMessageSequenceNumberFunction(const Ima
 
 ItemSequence_t
 FetchMessageSequenceNumberFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {
@@ -815,7 +816,7 @@ FetchMessageFunction::FetchMessageFunction(const ImapModule* aModule)
 
 ItemSequence_t
 FetchMessageFunction::evaluate(
-  const StatelessExternalFunction::Arguments_t& aArgs,
+  const ExternalFunction::Arguments_t& aArgs,
   const StaticContext*                          aSctxCtx,
   const DynamicContext*                         aDynCtx) const
 {

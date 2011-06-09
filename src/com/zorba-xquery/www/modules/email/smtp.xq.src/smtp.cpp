@@ -22,6 +22,7 @@
 
 #include <zorba/empty_sequence.h>
 #include <zorba/error_list.h>
+#include <zorba/user_exception.h>
 #include <zorba/singleton_item_sequence.h>
 
 #include "email_module.h"
@@ -41,7 +42,7 @@ namespace zorba
     
     ItemSequence_t
     SendFunction::evaluate(
-                           const StatelessExternalFunction::Arguments_t& args,
+                           const ExternalFunction::Arguments_t& args,
                            const StaticContext* aSctxCtx,
                            const DynamicContext* aDynCtx) const
     {

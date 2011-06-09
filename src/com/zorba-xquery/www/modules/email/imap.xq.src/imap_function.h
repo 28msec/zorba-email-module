@@ -19,7 +19,7 @@
 
 #include <string>
 
-#include <zorba/external_function.h>
+#include <zorba/function.h>
 #include <zorba/error.h>
 
 
@@ -27,13 +27,13 @@ namespace zorba { namespace emailmodule {
 
   class ImapModule;
 
-  class ImapFunction : public NonePureStatelessExternalFunction
+  class ImapFunction : public ContextualExternalFunction
   {
   protected:
       const ImapModule* theModule;
 
       static void
-      getHostUserPassword(const StatelessExternalFunction::Arguments_t& aArgs,
+      getHostUserPassword(const ExternalFunction::Arguments_t& aArgs,
                           int aPos,
                           std::string& aHost,
                           std::string& aUserName,
@@ -42,21 +42,21 @@ namespace zorba { namespace emailmodule {
       static String
       getOneStringArg(
           const ImapModule* aModule,
-          const StatelessExternalFunction::Arguments_t& args,
+          const ExternalFunction::Arguments_t& args,
           int pos);
 
       static std::string
-      getMessageNumbers(const StatelessExternalFunction::Arguments_t& args,
+      getMessageNumbers(const ExternalFunction::Arguments_t& args,
                         int pos);
 
       static unsigned long
-      getOneMessageNumber(const StatelessExternalFunction::Arguments_t& args,
+      getOneMessageNumber(const ExternalFunction::Arguments_t& args,
                           int pos);
 
      static bool
      getOneBoolArg(
        const ImapModule* aModule,
-       const StatelessExternalFunction::Arguments_t& args,
+       const ExternalFunction::Arguments_t& args,
        int pos);
 
     /*

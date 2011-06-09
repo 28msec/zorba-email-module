@@ -17,7 +17,7 @@
 #ifndef ZORBA_EMAILMODULE_EMAILFUNCTION_H
 #define ZORBA_EMAILMODULE_EMAILFUNCTION_H
 
-#include <zorba/external_function.h>
+#include <zorba/function.h>
 
 namespace zorba
 {
@@ -25,7 +25,7 @@ namespace zorba
   {
     class SMTPModule;
 
-    class SMTPFunction : public NonePureStatelessExternalFunction
+    class SMTPFunction : public ContextualExternalFunction
     {
       protected:
         const SMTPModule*     theModule;
@@ -40,7 +40,7 @@ namespace zorba
 
         
         virtual void 
-        getHostUserPassword(const StatelessExternalFunction::Arguments_t& aArgs,
+        getHostUserPassword(const ExternalFunction::Arguments_t& aArgs,
                             int aPos,
                             std::string& aHost,
                             std::string& aUserName,

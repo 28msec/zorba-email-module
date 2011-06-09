@@ -39,7 +39,7 @@ namespace zorba {
       getLocalName() const { return "status-impl"; }
   
       virtual ItemSequence_t 
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -57,7 +57,7 @@ namespace zorba {
       getLocalName() const { return "create-impl"; }
   
       virtual ItemSequence_t 
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -75,7 +75,7 @@ namespace zorba {
       getLocalName() const { return "delete-impl"; }
   
       virtual ItemSequence_t 
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -93,7 +93,7 @@ namespace zorba {
       getLocalName() const { return "rename-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -111,7 +111,7 @@ namespace zorba {
       getLocalName() const { return "list-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -128,7 +128,7 @@ namespace zorba {
       getLocalName() const { return "subscribe-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -144,7 +144,7 @@ namespace zorba {
       getLocalName() const { return "unsubscribe-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -161,7 +161,7 @@ namespace zorba {
       getLocalName() const { return "expunge-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -177,7 +177,7 @@ namespace zorba {
       getLocalName() const { return "search-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -193,7 +193,7 @@ namespace zorba {
       getLocalName() const { return "copy-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
@@ -209,7 +209,7 @@ namespace zorba {
       getLocalName() const { return "fetch-envelope-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   
@@ -228,7 +228,7 @@ namespace zorba {
       getLocalName() const { return "fetch-flags-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
 
@@ -247,12 +247,12 @@ namespace zorba {
       getLocalName() const { return "set-flags-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
 
       static void 
-      getFlagsVector(const StatelessExternalFunction::Arguments_t& aArgs, std::vector<int>& aFlags);
+      getFlagsVector(const ExternalFunction::Arguments_t& aArgs, std::vector<int>& aFlags);
   };
 
  //*****************************************************************************
@@ -266,7 +266,7 @@ namespace zorba {
       getLocalName() const { return "fetch-subject-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
 
@@ -284,7 +284,7 @@ namespace zorba {
       getLocalName() const { return "fetch-from-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
 
@@ -303,7 +303,7 @@ namespace zorba {
       getLocalName() const { return "fetch-uid-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
 
@@ -320,7 +320,7 @@ namespace zorba {
       getLocalName() const { return "fetch-message-sequence-number-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
 
@@ -341,7 +341,7 @@ namespace zorba {
       getLocalName() const { return "fetch-message-impl"; }
 
       virtual ItemSequence_t
-      evaluate(const StatelessExternalFunction::Arguments_t& args,
+      evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
 

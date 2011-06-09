@@ -45,7 +45,7 @@ ImapFunction::getURI() const
 }
 
 void 
-ImapFunction::getHostUserPassword(const StatelessExternalFunction::Arguments_t& aArgs,
+ImapFunction::getHostUserPassword(const ExternalFunction::Arguments_t& aArgs,
                                   int aPos,
                                   std::string& aHost,
                                   std::string& aUserName,
@@ -70,7 +70,7 @@ ImapFunction::getHostUserPassword(const StatelessExternalFunction::Arguments_t& 
 String
 ImapFunction::getOneStringArg(
     const ImapModule* aModule,
-    const StatelessExternalFunction::Arguments_t& aArgs,
+    const ExternalFunction::Arguments_t& aArgs,
     int aPos)
 {
   Item lItem;
@@ -99,7 +99,7 @@ ImapFunction::getOneStringArg(
 
 std::string
 ImapFunction::getMessageNumbers(
-    const StatelessExternalFunction::Arguments_t& aArgs,
+    const ExternalFunction::Arguments_t& aArgs,
     int aPos)
 {
   Item lItem;
@@ -118,7 +118,7 @@ ImapFunction::getMessageNumbers(
 
 unsigned long 
 ImapFunction::getOneMessageNumber(
-    const StatelessExternalFunction::Arguments_t& aArgs,
+    const ExternalFunction::Arguments_t& aArgs,
     int aPos)
 {
   Item lItem;
@@ -133,7 +133,7 @@ ImapFunction::getOneMessageNumber(
 bool
 ImapFunction::getOneBoolArg(
     const ImapModule* aModule,
-    const StatelessExternalFunction::Arguments_t& aArgs,
+    const ExternalFunction::Arguments_t& aArgs,
     int aPos)
 {
   Item lItem;

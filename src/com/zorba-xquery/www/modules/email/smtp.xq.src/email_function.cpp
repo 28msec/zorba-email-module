@@ -45,7 +45,7 @@ namespace zorba
     
 
     void 
-    SMTPFunction::getHostUserPassword(const StatelessExternalFunction::Arguments_t& aArgs,
+    SMTPFunction::getHostUserPassword(const ExternalFunction::Arguments_t& aArgs,
                                       int aPos,
                                       std::string& aHost,
                                       std::string& aUserName,

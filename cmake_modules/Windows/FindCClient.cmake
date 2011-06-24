@@ -27,4 +27,4 @@
 #
 # See the FindCClient.cmake module shipped with Zorba for more information.
 
-FIND_PACKAGE_WIN32(CClient "imap;cclient;c-client")
+FIND_PACKAGE_WIN32(CClient CCLIENT_FOUND "imap;cclient;c-client")

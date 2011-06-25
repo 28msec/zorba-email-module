@@ -12,6 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# TODO: include the following commented code if needed in the SMTP module:
+# 1. Add a ZorbaModuleExtras.cmake in the module project's cmake_module that
+#    contains this code
+# 2. in ZorabModule.cmake save the current CMAKE_MODULE_PATH when entering
+#    GENERATE_MODULE_LIBRARY macro and prepend it with this module project
+#    "cmake_module" directory
+# 3. in ZorabModule.cmake restore CMAKE_MODULE_PATH to the old value when
+#    exiting GENERATE_MODULE_LIBRARY macro
+# 4. Add the INCLUDE (ZorbaModuleExtras.cmake) somewhere in the logic of the
+#    GENERATE_MODULE_LIBRARY macro (this will call the code below)
+##############################
+## only for smtp library set -Wno-write-strings in order to remove
+## the warning "deprecated conversion from string constant to char*".
+## we need to set it to both GNUCC and GNUCXX because of linkage.c
+## and c-client.h. QQQ this is a crappy solution - move it somehow to
+## the smtp module itself
+#IF(${MODULE_NAME} STREQUAL "smtp")
+#  MESSAGE (FATAL_ERROR "This happened----------------------------")
+#  IF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+#    FOREACH(SMTP_SRC ${SRC_FILES})
+#      SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/smtp.xq.src/${SMTP_SRC} PROPERTIES COMPILE_FLAGS "-Wno-write-strings")
+#    ENDFOREACH(SMTP_SRC)
+#  ENDIF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+#ENDIF(${MODULE_NAME} STREQUAL "smtp")
+##############################
+
 # CClient library part of the UW IMAP toolkit required by the email functionality
 IF (ZORBA_SUPPRESS_CCLIENT)
   MESSAGE(STATUS "ZORBA_SUPPRESS_CCLIENT is true - not searching for C-Client")

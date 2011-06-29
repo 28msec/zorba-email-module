@@ -12,16 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# TODO: include the following commented code if needed in the SMTP module:
-# 1. Add a ZorbaModuleExtras.cmake in the module project's cmake_module that
-#    contains this code
-# 2. in ZorabModule.cmake save the current CMAKE_MODULE_PATH when entering
-#    GENERATE_MODULE_LIBRARY macro and prepend it with this module project
-#    "cmake_module" directory
-# 3. in ZorabModule.cmake restore CMAKE_MODULE_PATH to the old value when
-#    exiting GENERATE_MODULE_LIBRARY macro
-# 4. Add the INCLUDE (ZorbaModuleExtras.cmake) somewhere in the logic of the
-#    GENERATE_MODULE_LIBRARY macro (this will call the code below)
 ##############################
 ## only for smtp library set -Wno-write-strings in order to remove
 ## the warning "deprecated conversion from string constant to char*".
@@ -94,8 +84,8 @@ IF(CCLIENT_FOUND)
 
 
   IF (BUILD_MODULE)
-    GENERATE_MODULE_LIBRARY(smtp "imap_commons;${SMTP_LINK_LIBRARIES}")
-    GENERATE_MODULE_LIBRARY(imap "imap_commons;${SMTP_LINK_LIBRARIES}")
+    DECLARE_ZORBA_MODULE("http://www.zorba-xquery.com/modules/email/smtp" 1.0 "smtp.xq" "imap_commons;${SMTP_LINK_LIBRARIES}")
+    DECLARE_ZORBA_MODULE("http://www.zorba-xquery.com/modules/email/imap" 1.0 "smtp.xq" "imap_commons;${SMTP_LINK_LIBRARIES}")
   ENDIF (BUILD_MODULE)
 
 ELSE(CCLIENT_FOUND)

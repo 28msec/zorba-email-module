@@ -57,6 +57,8 @@ module namespace smtp = "http://www.zorba-xquery.com/modules/email/smtp";
 import schema namespace imap = "http://www.zorba-xquery.com/modules/email/imap";
 import schema namespace email = 'http://www.zorba-xquery.com/modules/email/email';
 
+declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
+declare option ver:module-version "1.0";
 
 (:~
  : This function sends email messages from the specified account.

@@ -85,7 +85,7 @@ IF(CCLIENT_FOUND)
 
   IF (BUILD_MODULE)
     DECLARE_ZORBA_MODULE("http://www.zorba-xquery.com/modules/email/smtp" 1.0 "smtp.xq" "imap_commons;${SMTP_LINK_LIBRARIES}")
-    DECLARE_ZORBA_MODULE("http://www.zorba-xquery.com/modules/email/imap" 1.0 "smtp.xq" "imap_commons;${SMTP_LINK_LIBRARIES}")
+    DECLARE_ZORBA_MODULE("http://www.zorba-xquery.com/modules/email/imap" 1.0 "imap.xq" "imap_commons;${SMTP_LINK_LIBRARIES}")
   ENDIF (BUILD_MODULE)
 
 ELSE(CCLIENT_FOUND)

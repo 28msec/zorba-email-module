@@ -84,8 +84,12 @@ IF(CCLIENT_FOUND)
 
 
   IF (BUILD_MODULE)
-    DECLARE_ZORBA_MODULE("http://www.zorba-xquery.com/modules/email/smtp" 1.0 "smtp.xq" "imap_commons;${SMTP_LINK_LIBRARIES}")
-    DECLARE_ZORBA_MODULE("http://www.zorba-xquery.com/modules/email/imap" 1.0 "imap.xq" "imap_commons;${SMTP_LINK_LIBRARIES}")
+    DECLARE_ZORBA_SCHEMA (FILE email.xsd
+      URI "http://www.zorba-xquery.com/modules/email/email")
+    DECLARE_ZORBA_SCHEMA (FILE imap.xsd
+      URI "http://www.zorba-xquery.com/modules/email/imap")
+    DECLARE_ZORBA_MODULE (URI "http://www.zorba-xquery.com/modules/email/smtp" VERSION 1.0 FILE "smtp.xq" LINK_LIBRARIES "imap_commons;${SMTP_LINK_LIBRARIES}")
+    DECLARE_ZORBA_MODULE (URI "http://www.zorba-xquery.com/modules/email/imap" VERSION 1.0 FILE "imap.xq" LINK_LIBRARIES "imap_commons;${SMTP_LINK_LIBRARIES}")
   ENDIF (BUILD_MODULE)
 
 ELSE(CCLIENT_FOUND)

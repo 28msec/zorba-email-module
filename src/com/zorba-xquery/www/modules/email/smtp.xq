@@ -57,6 +57,8 @@ module namespace smtp = "http://www.zorba-xquery.com/modules/email/smtp";
 import schema namespace imap = "http://www.zorba-xquery.com/modules/email/imap";
 import schema namespace email = 'http://www.zorba-xquery.com/modules/email/email';
 
+declare namespace ann = "http://www.zorba-xquery.com/annotations";
+
 declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
 declare option ver:module-version "1.0";
 
@@ -72,7 +74,7 @@ declare option ver:module-version "1.0";
  : @example examples/Queries/smtp/text_with_image.xq
  : @example examples/Queries/smtp/html.xq
  :)
-declare %sequential function smtp:send($host-info as element(imap:hostInfo), $message as element(email:message))  {
+declare %ann:sequential function smtp:send($host-info as element(imap:hostInfo), $message as element(email:message))  {
   smtp:send-impl(validate{$host-info}, validate{$message})
 }; 
 
@@ -87,5 +89,5 @@ declare %sequential function smtp:send($host-info as element(imap:hostInfo), $me
  : @error If it was not possible to connect to the SMTP host.
  :)
 
-declare %private %sequential function smtp:send-impl($host-info as element(imap:hostInfo), $message as element(email:message))  external;
+declare %private %ann:sequential function smtp:send-impl($host-info as element(imap:hostInfo), $message as element(email:message))  external;
 

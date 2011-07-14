@@ -68,10 +68,6 @@ namespace zorba
         virtual void
         destroy();
 
-        bool
-        getOption(const StaticContext* aSctxCtx,
-                  String aOptionName,
-                  String& aOptionValue) const;
     };
   } /* namespace emailmodule */
 } /* namespace zorba */

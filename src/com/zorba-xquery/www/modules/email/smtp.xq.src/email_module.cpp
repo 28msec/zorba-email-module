@@ -66,14 +66,5 @@ namespace zorba {
       delete this;
     }
 
-    bool
-    SMTPModule::getOption(const StaticContext* aSctxCtx,
-                          String aOptionName,
-                          String& aOptionValue) const
-    {
-      return aSctxCtx->getOption(getItemFactory()->
-          createQName(getURI(),aOptionName),aOptionValue);
-    }
-
   } // namespace email
 } // namespace zorba

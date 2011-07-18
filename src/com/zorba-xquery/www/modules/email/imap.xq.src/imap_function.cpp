@@ -22,7 +22,7 @@
 #include <zorba/zorba.h>
 #include <zorba/iterator.h>
 #include <zorba/user_exception.h>
-#include <zorba/error_list.h>
+#include <zorba/diagnostic_list.h>
 
 #include "imap_function.h"
 #include "imap_module.h"

@@ -13,19 +13,19 @@
 # limitations under the License.
 
 ##############################
-# only for smtp library set -Wno-write-strings in order to remove
-# the warning "deprecated conversion from string constant to char*".
-# we need to set it to both GNUCC and GNUCXX because of linkage.c
-# and c-client.h. QQQ this is a crappy solution - move it somehow to
-# the smtp module itself
-IF(${MODULE_NAME} STREQUAL "smtp")
- MESSAGE (FATAL_ERROR "This happened----------------------------")
- IF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-   FOREACH(SMTP_SRC ${SRC_FILES})
-     SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/smtp.xq.src/${SMTP_SRC} PROPERTIES COMPILE_FLAGS "-Wno-write-strings")
-   ENDFOREACH(SMTP_SRC)
- ENDIF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-ENDIF(${MODULE_NAME} STREQUAL "smtp")
+## only for smtp library set -Wno-write-strings in order to remove
+## the warning "deprecated conversion from string constant to char*".
+## we need to set it to both GNUCC and GNUCXX because of linkage.c
+## and c-client.h. QQQ this is a crappy solution - move it somehow to
+## the smtp module itself
+#IF(${MODULE_NAME} STREQUAL "smtp")
+#  MESSAGE (FATAL_ERROR "This happened----------------------------")
+#  IF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+#    FOREACH(SMTP_SRC ${SRC_FILES})
+#      SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/smtp.xq.src/${SMTP_SRC} PROPERTIES COMPILE_FLAGS "-Wno-write-strings")
+#    ENDFOREACH(SMTP_SRC)
+#  ENDIF (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+#ENDIF(${MODULE_NAME} STREQUAL "smtp")
 ##############################
 
 # CClient library part of the UW IMAP toolkit required by the email functionality

@@ -65,8 +65,8 @@ declare option ver:module-version "1.0";
 (:~
  : This function sends email messages from the specified account.
  :
- : @param $host-info describes the SMTP host, username and password.
- : @param $message is the message to send as defined in the email xml schema.
+ : @param $host-info describes the SMTP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
+ : @param $message is the message to send as defined in the email xml schema. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
  : @return true if the message was sent successfully. 
  : @error If the message is not correctly formed.
  : @error If it was not possible to connect to the SMTP host.
@@ -82,8 +82,8 @@ declare %ann:sequential function smtp:send($host-info as element(imap:hostInfo),
 (:~
  : This function sends email messages from the specified account.
  :
- : @param $host-info describes the SMTP host, username and password.
- : @param $message is the message to send as defined in the email xml schema.
+ : @param $host-info describes the SMTP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
+ : @param $message is the message to send as defined in the email xml schema. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
  : @return true if the message was sent successfully. 
  : @error If the message is not correctly formed.
  : @error If it was not possible to connect to the SMTP host.

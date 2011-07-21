@@ -26,9 +26,9 @@ declare option ver:module-version "1.0";
  :  <li>uidvalidity: a value that, together with the uidnext value forms a 64 bit number that must be unique for the server</li>
  : </ul>
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox specifies the mailbox for which we want to have the status.
- : @return the status of the specified mailbox as statusType.
+ : @return the status of the specified mailbox as statusType. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @error If the status can not be read for any reason.
  : @example examples/Queries/imap/status_example.xq
  :)
@@ -51,7 +51,7 @@ declare function imap:status($host-info as element(imaps:hostInfo), $mailbox as 
 (:~
  : Creates a new mailbox for the given user.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-name is the name for the new mailbox.
  : @return true if the mailbox was created successfully.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -65,7 +65,7 @@ declare %ann:sequential function imap:create($host-info as element(imaps:hostInf
 (:~
  : Deletes a mailbox for the given user.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-name is the name of the  mailbox to delete.
  : @return true if the mailbox was deleted successfully.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -80,7 +80,7 @@ declare %ann:sequential function imap:delete($host-info as element(imaps:hostInf
 (:~
  : Renames a mailbox.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-old is the name of the mailbox we want to rename.
  : @param $mailbox-new is the new name for the mailbox.
  : @return true it the mailbox was renamed successfully.
@@ -96,11 +96,11 @@ declare %ann:sequential function imap:rename($host-info as element(imaps:hostInf
 (:~
  : Lists IMAP folders for the specified user on the host that match the pattern. 
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-ref is applied to pattern in an implementation dependent fashion to search for matching mailbox names. 
  : @param $pattern the pattern for mailboxes to look for (can include wildcards '*' and '%').
  : @param $only-subscribed when set true, only mailboxes are listed to which the user is subscribed.
- : @return true it the mailbox was renamed successfully.
+ : @return true it the mailbox was renamed successfully. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @error If it wasn't possible to create a connection to the IMAP server.
  : @error If the passed credentials were rejected by the IMAP server.
  : @example examples/Queries/imap/list_example.xq
@@ -120,7 +120,7 @@ declare function imap:list($host-info as element(imaps:hostInfo), $mailbox-ref a
 (:~
  : Subscribes the user to the specified mailbox.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox the user wants to suscribe to.
  : @return true if the user was successfully subscribed to the mailbox.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -136,7 +136,7 @@ declare %ann:sequential function imap:subscribe($host-info as element(imaps:host
 (:~
  : Unsubscribes the user from the specified mailbox.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox the user wants to unsuscribe from.
  : @return true if the user was successfully unsubscribed from the mailbox.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -151,7 +151,7 @@ declare %ann:sequential function imap:unsubscribe($host-info as element(imaps:ho
 (:~
  : Permanently deletes all messages of the given mailbox that have the \Deleted flag set.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which all messages that have the \Deleted flag set should be permanently deleted.
  : @return true if the expunge was successfull.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -169,7 +169,7 @@ declare %ann:sequential function imap:expunge($host-info as element(imaps:hostIn
  : A valid example would be: 'FROM zorba@gmail.com OR NOT SUBJECT Bug'. 
  : Depending on the value of $uid, the function will either return matching sequence numbers or unique identifiers.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox to search.
  : @param $criteria is the searching criteria.
  : @param $uid when set true, the the function returns the sequence of Unique Identifiers corresponding to the matching mails, when set false (which is default) the corresponding sequence numbers are returned. 
@@ -189,7 +189,7 @@ declare function imap:search($host-info as element(imaps:hostInfo), $mailbox as 
  : Depending on the value of $uid, the messages are either specified through their sequence number or through their unique id.
  : Both mailboxes must exist.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-from is the mailbox in which the messages reside.
  : @param $mailbox-to is the mailbox in to which the messages should be copied.
  : @param $messages are the messages to be copied, specified either by their sequence number or their unique id.
@@ -210,7 +210,7 @@ declare %ann:sequential function imap:copy($host-info as element(imaps:hostInfo)
  : Depending on the value of $uid, the messages are either specified through their sequence number or through their unique id.
  : Both mailboxes must exist.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-from is the mailbox in which the messages reside.
  : @param $mailbox-to is the mailbox in to which the messages should be moved.
  : @param $messages are the messages to be copied, specified either by their sequence number or their unique id.
@@ -229,7 +229,7 @@ declare %ann:sequential function imap:move($host-info as element(imaps:hostInfo)
 (:~
  : Fetches the envelope of a message. 
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox in which to search for the message.
  : @param $message-number is the message for which to fetch the envelope (depending on $uid either as message sequence number or unique identifier).
  : @param $uid defines if the passed $message-number should be interpreted as message sequence number (false, default) or unique identifier.
@@ -248,11 +248,11 @@ declare function imap:fetch-envelope($host-info as element(imaps:hostInfo), $mai
 (:~
  : Fetches a whole message.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox in which to search for the message.
  : @param $message-number is the message to fetch, denoted either by its sequence number or unique identifier.
  : @param $uid defines if the passed $message-number should be interpreted as sequence number (false, default) or unique identifier.
- : @return the message with the passed message number.
+ : @return the message with the passed message number. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
  : @error If it wasn't possible to create a connection to the IMAP server.
  : @error If the passed credentials were rejected by the IMAP server.
  : @error If any of the specified mailbox does not exist.
@@ -268,7 +268,7 @@ declare function imap:fetch-message($host-info as element(imaps:hostInfo), $mail
  : Please note that this function only works with message sequence numbers, not with unique identifiers.
  : Only the first 30 characters of a subject are fetched. 
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which we want to get the subject of a message.
  : @param $message-number denotes the message for which we want the subject.
  : @return the subject of the specified message.
@@ -287,7 +287,7 @@ declare function imap:fetch-subject($host-info as element(imaps:hostInfo), $mail
  : Please note that this function only words with message sequence numbers, not with unique identifiers.
  : Only the first 30 characters of a 'from' string are fetched.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which we want to get the 'from' string of a message.
  : @param $message-number denotes the message for which we want the 'from' string.
  : @return the 'from' string of the specified message.
@@ -306,7 +306,7 @@ declare function imap:fetch-from($host-info as element(imaps:hostInfo), $mailbox
 (:~
  : Fetches the unique identifier for a given message sequence number.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which we want to get the unique identifier of a message sequence number.
  : @param $message-number is the message sequence number for which we want the unique identifier. 
  : @return the unique identifier of the given message sequence number.
@@ -326,7 +326,7 @@ declare function imap:fetch-uid($host-info as element(imaps:hostInfo), $mailbox 
 (:~
  : Fetches the message sequence number for a given unique identifier.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which we want to get the message sequence number of an unique identifier.
  : @param $message-number is the unique identifier for which we want the message sequence number.
  : @return the message sequence number of the of the given unique identifier.
@@ -345,12 +345,12 @@ declare function imap:fetch-message-sequence-number($host-info as element(imaps:
 (:~
  : Fetches the flags of a message.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox containing the specified message.
  : @param $message-number is either the message sequence number or the unique identifier of the message.
  : @param $uid defines if the message number shall be intepreted as message sequence number (default) or unique identifier.
- : @return the flags of the specified message.
- : @error If it wasn't possible to create a connection to the IMAP server.
+ : @return the flags of the specified message. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
+ : @error If it wasn't possible to create a connection to the IMAP server. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
  : @error If the passed credentials were rejected by the IMAP server.
  : @error If any of the specified mailbox does not exist.
  : @error If the passed message number does not exist.
@@ -368,10 +368,10 @@ declare function imap:fetch-flags($host-info as element(imaps:hostInfo), $mailbo
  : The flags are set AND unset according to the passed flagType.
  : Please note that the 'old' flag can not be set/unset and will be ignored. 
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox containing the specified message.
  : @param $message-number is either the message sequence number or the unique identifier of the message (depending on the value of $uid).
- : @param $flags defines which flags should be set for this message.
+ : @param $flags defines which flags should be set for this message. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
  : @param $uid defines if the message number shall be intepreted as message sequence number (default) or unique identifier.
  : @return true if the setting and unsetting of flags went well.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -388,7 +388,7 @@ declare %ann:sequential function imap:set-flags($host-info as element(imaps:host
 (:~
  : For internal use only.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox specifies the mailbox for which we want to have the status.
  : @return the status of the specified mailbox as statusType.
  : @error If the status can not be read for any reason.
@@ -399,7 +399,7 @@ declare %private %ann:nondeterministic function imap:status-impl($host-info as e
 (:~
  : For internal use only. 
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-name is the name for the new mailbox.
  : @return true if the mailbox was created successfully.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -410,7 +410,7 @@ declare %private %ann:sequential function imap:create-impl($host-info as element
 (:~
  : Deletes a mailbox for the given user.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-name is the name of the  mailbox to delete.
  : @return true if the mailbox was deleted successfully.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -422,7 +422,7 @@ declare %private %ann:sequential function imap:delete-impl($host-info as element
 (:~
  : Renames a mailbox.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-old is the name of the mailbox we want to rename.
  : @param $mailbox-new is the new name for the mailbox.
  : @return true it the mailbox was renamed successfully.
@@ -435,7 +435,7 @@ declare %private %ann:sequential function imap:rename-impl($host-info as element
 (:~
  : Lists IMAP folders for the specified user on the host that match the pattern. 
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-ref is applied to pattern in an implementation dependent fashion to search for matching mailbox names. 
  : @param $pattern the pattern for mailboxes to look for (can include wildcards '*' and '%').
  : @param $only-suscribed when set to true, only mailboxes are listed to which the user is suscribed.
@@ -449,7 +449,7 @@ declare %private %ann:nondeterministic function imap:list-impl($host-info as ele
 (:~
  : Subscribes the user to the specified mailbox.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox the user wants to suscribe to.
  : @return true if the user was successfully subscribed to the mailbox.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -462,7 +462,7 @@ declare %private %ann:sequential function imap:subscribe-impl($host-info as elem
 (:~
  : Unsubscribes the user from the specified mailbox.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox the user wants to unsuscribe from.
  : @return true if the user was successfully unsubscribed from the mailbox.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -475,7 +475,7 @@ declare %private %ann:sequential function imap:unsubscribe-impl($host-info as el
 (:~                                                                 
  : Permanently deletes all messages of the given mailbox that have the \Deleted flag set.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which all messages that have the \Deleted flag set should be permanently deleted.
  : @return true if the expunge was successfull.
  : @error If it wasn't possible to create a connection to the IMAP server.
@@ -488,7 +488,7 @@ declare %private %ann:sequential function imap:expunge-impl($host-info as elemen
 (:~
  : Searches the mailbox for messages that match the given criteria.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox to search.
  : @param $criteria is the searching criteria.
  : @param $uid defines if unique identifiers or (default) sequence numbers should be returned.
@@ -506,7 +506,7 @@ declare %private %ann:nondeterministic function imap:search-impl($host-info as e
  : Depending on the value of $uid, the messages are either specified through their sequence number or through their unique id.
  : Both mailboxes must exist.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox-from is the mailbox in which the messages reside.
  : @param $mailbox-to is the mailbox in to which the messages should be copied.
  : @param $messages are the messages to be copied, specified either by their sequence number or their unique id.
@@ -523,11 +523,11 @@ declare %private %ann:sequential function imap:copy-impl($host-info as element(i
 (:~
  : Fetches the envelope of a message. 
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox in which to search for the message.
  : @param $message-number is the message for which to fetch the envelope.
  : @param $uid defines if the passed $message-number should be interpreted as message sequence number (false, default) or unique identifier
- : @return the envelope of the requested message.
+ : @return the envelope of the requested message. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
  : @error If it wasn't possible to create a connection to the IMAP server.
  : @error If the passed credentials were rejected by the IMAP server.
  : @error If any of the specified mailbox does not exist.
@@ -538,7 +538,7 @@ declare %private %ann:nondeterministic function imap:fetch-envelope-impl($host-i
 (:~
  : Fetches a whole message.
  : 
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox in which to search for the message.
  : @param $message-number is the message to fetch, denoted either by its sequence number or unique identifier.
  : @param $uid defines if the passed $message-number should be interpreted as sequence number (false, default) or unique identifier.
@@ -554,7 +554,7 @@ declare %private %ann:nondeterministic function imap:fetch-message-impl($host-in
  : Fetches the subject for a message.
  : Please note that this function only works with message sequence numbers, not with unique identifiers.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which we want to get the subject of a message.
  : @param $message-number denotes the message for which we want the subject.
  : @return the subject of the specified message.
@@ -570,7 +570,7 @@ declare %private %ann:nondeterministic function imap:fetch-subject-impl($host-in
  : Please note that this function only words with message sequence numbers, not with unique identifiers.
  : Only the first 30 characters of a 'from' string are fetched.
  : 
- : @param $host-info describes the IMAP host, username and password. : @param $mailbox is the mailbox for which we want to get the 'from' string of a message.
+ : @param $host-info describes the IMAP host, username and password. : @param $mailbox is the mailbox for which we want to get the 'from' string of a message. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which we want the 'from' string.
  : @param $message-number denotes the message for which we want the 'from' string. : 
  : @return the 'from' string of the specified message. 
@@ -584,7 +584,7 @@ declare %private %ann:nondeterministic function imap:fetch-from-impl($host-info 
 (:~
  : Fetches the unique identifier for a given message sequence number.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which we want to get the unique identifier of a message sequence number.
  : @param $message-number is the message sequence number for which we want the unique identifier.
  : @return the unique identifier of the given message sequence number.
@@ -598,7 +598,7 @@ declare %private %ann:nondeterministic function imap:fetch-uid-impl($host-info a
 (:~
  : Fetches the message sequence number for a given unique identifier.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox for which we want to get the message sequence number of an unique identifier.
  : @param $message-number is the unique identifier for which we want the message sequence number.
  : @return the message sequence number of the of the given unique identifier.
@@ -613,11 +613,11 @@ declare %private %ann:nondeterministic function imap:fetch-message-sequence-numb
 (:~
  : Fetches the flags of a message.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox containing the specified message.
  : @param $message-number is either the message sequence number or the unique identifier of the message.
  : @param $uid defines if the message number shall be intepreted as message sequence number (default) or unique identifier.
- : @return the flags of the specified message.
+ : @return the flags of the specified message. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
  : @error If it wasn't possible to create a connection to the IMAP server.
  : @error If the passed credentials were rejected by the IMAP server.
  : @error If any of the specified mailbox does not exist.
@@ -631,10 +631,10 @@ declare %private %ann:nondeterministic function imap:fetch-flags-impl($host-info
  : Sets the flags for a given message.
  : The flags are set AND unset according to the passed flagType.
  :
- : @param $host-info describes the IMAP host, username and password.
+ : @param $host-info describes the IMAP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
  : @param $mailbox is the mailbox containing the specified message.
  : @param $message-number is either the message sequence number or the unique identifier of the message (depending on the value of $uid).
- : @param $flags defines which flags should be set for this message.
+ : @param $flags defines which flags should be set for this message. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
  : @param $uid defines if the message number shall be intepreted as message sequence number (default) or unique identifier.
  : @return true if the setting and unsetting of flags went well.
  : @error If it wasn't possible to create a connection to the IMAP server.

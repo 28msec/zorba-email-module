@@ -52,6 +52,9 @@ ELSE(ZORBA_SUPPRESS_CCLIENT)
    
     # including shared c-client library
     ADD_LIBRARY(imap_commons STATIC cclient.xq.src/imap_client.cpp)
+    SET_TARGET_PROPERTIES (imap_commons PROPERTIES
+      FOLDER "Modules"
+    )
     TARGET_LINK_LIBRARIES(imap_commons ${SMTP_LINK_LIBRARIES})
     INCLUDE_DIRECTORIES("cclient.xq.src")
   

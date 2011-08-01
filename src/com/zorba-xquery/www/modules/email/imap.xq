@@ -1,3 +1,5 @@
+xquery version "3.0";
+
 (:~
  : This module provides functions for accessing and manipulating imap mailservers.
  :

@@ -9,6 +9,7 @@
 
 import module namespace imap = 'http://www.zorba-xquery.com/modules/email/imap';
 import module namespace random = 'http://www.zorba-xquery.com/modules/random';
+
 import schema namespace imaps = 'http://www.zorba-xquery.com/modules/email/imap';
 import schema namespace email = 'http://www.zorba-xquery.com/modules/email/email';
 
@@ -18,6 +19,6 @@ declare variable $local:host-info as element(hostInfo) := (<hostInfo><hostName>m
 
 declare variable $local:mailbox := concat("INBOX.", substring(random:uuid(), 0, 4));
 
+local variable $creation_successfull := imap:create($local:host-info, $local:mailbox);
 
-let $creation_successfull := imap:create($local:host-info, $local:mailbox)
-return imap:delete($local:host-info, $local:mailbox)
+imap:delete($local:host-info, $local:mailbox)

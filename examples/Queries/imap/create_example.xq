@@ -23,5 +23,6 @@ declare variable $local:host-info as element(hostInfo) := (<hostInfo><hostName>m
 declare variable $local:mailbox := concat("INBOX.", substring(random:uuid(), 0, 4));
 
 
-let $creation-successfull := imap:create($local:host-info, $local:mailbox)
-return imap:delete($local:host-info, $local:mailbox)
+local variable $creation-successfull := imap:create($local:host-info, $local:mailbox);
+
+imap:delete($local:host-info, $local:mailbox)

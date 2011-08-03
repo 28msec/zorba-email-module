@@ -16,5 +16,6 @@ declare default element namespace 'http://www.zorba-xquery.com/modules/email/ima
 
 declare variable $local:host-info as element(imaps:hostInfo) := (<imaps:hostInfo><hostName>mail.28msec.com/novalidate-cert</hostName><userName>imaptest</userName><password>cclient</password></imaps:hostInfo>);
 
-let $successfully-subscribed := imap:subscribe($local:host-info, "INBOX.Test")
-return imap:unsubscribe($local:host-info, "INBOX.Test")
+variable $successfully-subscribed := imap:subscribe($local:host-info, "INBOX.Test");
+
+imap:unsubscribe($local:host-info, "INBOX.Test")

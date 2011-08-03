@@ -11,6 +11,7 @@
 
 import module namespace imap = 'http://www.zorba-xquery.com/modules/email/imap';
 import module namespace smtp = 'http://www.zorba-xquery.com/modules/email/smtp';
+
 import schema namespace imaps = 'http://www.zorba-xquery.com/modules/email/imap';
 import schema namespace email = 'http://www.zorba-xquery.com/modules/email/email';
 
@@ -21,13 +22,23 @@ declare variable $local:host-info as element(imaps:hostInfo) := (<imaps:hostInfo
 declare variable $local:sender-host-info as element(imaps:hostInfo) := (<imaps:hostInfo><imaps:hostName>smtp.gmail.com:587/tls/novalidate-cert</imaps:hostName><imaps:userName
 >zorba.smtp.sender</imaps:userName><imaps:password>1openssl!</imaps:password></imaps:hostInfo>);
 
-let $complying-unique-ids as xs:long* := imap:search($local:host-info, "INBOX", "SUBJECT delete", true())
-    (: if there are no emails to delete, then the send function of the smtp library is probably not working, or the expunge is working excellently ... :)
-    return if (empty($complying-unique-ids)) then true()
-           else
-              let $all-flags-set as xs:boolean* := for $id in $complying-unique-ids return imap:set-flags($local:host-info, "INBOX", $id, <email:flags><deleted/></email:flags>, true())
-              let $expunge-ok as xs:boolean := imap:expunge($local:host-info, "INBOX")
-              return empty(imap:search($local:host-info, "INBOX", "SUBJECT delete", true()));
+variable $complying-unique-ids as xs:long* := imap:search($local:host-info, "INBOX", "SUBJECT delete", true());
+
+(: if there are no emails to delete, then the send function of the smtp library is probably not working, or the expunge is working excellently ... :)
+(
+if (empty($complying-unique-ids)) then
+  true()
+else
+{
+  variable $all-flags-set as xs:boolean* := 
+      for $id in $complying-unique-ids 
+      return imap:set-flags($local:host-info, "INBOX", $id, <email:flags><deleted/></email:flags>, true());
+
+  variable $expunge-ok as xs:boolean := imap:expunge($local:host-info, "INBOX");
+
+   empty(imap:search($local:host-info, "INBOX", "SUBJECT delete", true()))
+}
+);
 
 smtp:send($local:sender-host-info,
       <message>
@@ -41,6 +52,4 @@ smtp:send($local:sender-host-info,
             Oh yeah
           </content>
         </body>
-      </message>);
-
-
+      </message>)

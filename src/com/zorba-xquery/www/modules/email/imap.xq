@@ -34,7 +34,8 @@ declare option ver:module-version "1.0";
  : @error If the status can not be read for any reason.
  : @example examples/Queries/imap/status_example.xq
  :)
-declare function imap:status($host-info as element(imaps:hostInfo), $mailbox as xs:string) as element(imaps:status) {
+declare %ann:nondeterministic function imap:status($host-info as element(imaps:hostInfo), $mailbox as xs:string) as element(imaps:status) 
+{
   let $status := imap:status-impl(validate {$host-info}, $mailbox)
   let $status-sequence := fn:tokenize($status, ',')
   return
@@ -91,7 +92,8 @@ declare %ann:sequential function imap:delete($host-info as element(imaps:hostInf
  : @error If there is no mailbox with with the specified name ($mailbox-old). 
  : @example examples/Queries/imap/rename_example.xq
  :)
-declare %ann:sequential function imap:rename($host-info as element(imaps:hostInfo), $mailbox-old as xs:string, $mailbox-new as xs:string) as xs:boolean {
+declare %ann:sequential function imap:rename($host-info as element(imaps:hostInfo), $mailbox-old as xs:string, $mailbox-new as xs:string) as xs:boolean 
+{
   imap:rename-impl(validate {$host-info}, $mailbox-old, $mailbox-new) 
 };
 
@@ -107,7 +109,8 @@ declare %ann:sequential function imap:rename($host-info as element(imaps:hostInf
  : @error If the passed credentials were rejected by the IMAP server.
  : @example examples/Queries/imap/list_example.xq
  :)
-declare function imap:list($host-info as element(imaps:hostInfo), $mailbox-ref as xs:string, $pattern as xs:string, $only-subscribed as xs:boolean) as element(imaps:mailbox)* {
+declare %ann:nondeterministic function imap:list($host-info as element(imaps:hostInfo), $mailbox-ref as xs:string, $pattern as xs:string, $only-subscribed as xs:boolean) as element(imaps:mailbox)* 
+{
   let $mailbox-sequence := imap:list-impl(validate {$host-info}, $mailbox-ref, $pattern, $only-subscribed)
   for $mailbox in $mailbox-sequence
   return
@@ -130,7 +133,8 @@ declare function imap:list($host-info as element(imaps:hostInfo), $mailbox-ref a
  : @error If the specified mailbox does not exist.
  : @example examples/Queries/imap/subscribe_example.xq
  :)
-declare %ann:sequential function imap:subscribe($host-info as element(imaps:hostInfo), $mailbox as xs:string) as xs:boolean {
+declare %ann:sequential function imap:subscribe($host-info as element(imaps:hostInfo), $mailbox as xs:string) as xs:boolean 
+{
   imap:subscribe-impl(validate {$host-info}, $mailbox)
 };
 
@@ -182,7 +186,8 @@ declare %ann:sequential function imap:expunge($host-info as element(imaps:hostIn
  : @error If the syntax of the passed criteria is incorrect.  
  : @example examples/Queries/imap/search_example.xq
  :)
-declare function imap:search($host-info as element(imaps:hostInfo), $mailbox as xs:string, $criteria as xs:string, $uid as xs:boolean?) as xs:long*{
+declare %ann:nondeterministic function imap:search($host-info as element(imaps:hostInfo), $mailbox as xs:string, $criteria as xs:string, $uid as xs:boolean?) as xs:long*
+{
   imap:search-impl(validate {$host-info}, $mailbox, $criteria, $uid)
 }; 
 
@@ -242,7 +247,7 @@ declare %ann:sequential function imap:move($host-info as element(imaps:hostInfo)
  : @error If any of the passed message number does not exist.
  : @example examples/Queries/imap/fetch_envelope_example.xq 
  :) 
-declare function imap:fetch-envelope($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean?) as element() { 
+declare %ann:nondeterministic function imap:fetch-envelope($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean?) as element() { 
      validate {imap:fetch-envelope-impl( validate { $host-info }, $mailbox , $message-number, $uid )} 
 };
 
@@ -261,7 +266,7 @@ declare function imap:fetch-envelope($host-info as element(imaps:hostInfo), $mai
  : @error If any of the passed message number does not exist.
  : @example examples/Queries/imap/fetch_message_example.xq
  :)
-declare function imap:fetch-message($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean) as element(email:message) {
+declare %ann:nondeterministic function imap:fetch-message($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean) as element(email:message) {
    validate {imap:fetch-message-impl(validate {$host-info}, $mailbox, $message-number, $uid)} 
 }; 
 
@@ -280,7 +285,7 @@ declare function imap:fetch-message($host-info as element(imaps:hostInfo), $mail
  : @error If any of the passed message number does not exist.
  : @example examples/Queries/imap/fetch_subject_example.xq
  :)
-declare function imap:fetch-subject($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:string {
+declare %ann:nondeterministic function imap:fetch-subject($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:string {
   imap:fetch-subject-impl(validate {$host-info}, $mailbox, $message-number)
 };
 
@@ -299,7 +304,7 @@ declare function imap:fetch-subject($host-info as element(imaps:hostInfo), $mail
  : @error If any of the passed message number does not exist.
  : @example examples/Queries/imap/fetch_from_example.xq
  :)
-declare function imap:fetch-from($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:string
+declare %ann:nondeterministic function imap:fetch-from($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:string
 {
   imap:fetch-from-impl(validate {$host-info}, $mailbox, $message-number)
 };
@@ -318,7 +323,7 @@ declare function imap:fetch-from($host-info as element(imaps:hostInfo), $mailbox
  : @error If the passed message number does not exist.
  : @example examples/Queries/imap/fetch_uid_example.xq
  :)
-declare function imap:fetch-uid($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:long
+declare %ann:nondeterministic function imap:fetch-uid($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:long
 {
   imap:fetch-uid-impl(validate {$host-info}, $mailbox, $message-number)
 };
@@ -338,7 +343,7 @@ declare function imap:fetch-uid($host-info as element(imaps:hostInfo), $mailbox 
  : @error If the passed message number does not exist.
  : @example examples/Queries/imap/fetch_message_sequence_number_example.xq
  :)
-declare function imap:fetch-message-sequence-number($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:long
+declare %ann:nondeterministic function imap:fetch-message-sequence-number($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:long
 {
   imap:fetch-message-sequence-number-impl(validate {$host-info}, $mailbox, $message-number)
 };
@@ -358,7 +363,7 @@ declare function imap:fetch-message-sequence-number($host-info as element(imaps:
  : @error If the passed message number does not exist.
  : @example examples/Queries/imap/fetch_flags_example.xq
  :)
-declare function imap:fetch-flags($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean?) as element(email:flags) 
+declare %ann:nondeterministic function imap:fetch-flags($host-info as element(imaps:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean?) as element(email:flags) 
 {
    validate {imap:fetch-flags-impl(validate{$host-info}, $mailbox, $message-number, $uid)} 
 };

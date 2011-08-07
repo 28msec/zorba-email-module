@@ -19,42 +19,46 @@
 
 #include <zorba/function.h>
 
-namespace zorba
+namespace zorba { namespace emailmodule {
+
+class SMTPModule;
+
+class SMTPFunction : public ContextualExternalFunction
 {
-  namespace emailmodule
-  {
-    class SMTPModule;
+  protected:
+    const SMTPModule* theModule;
 
-    class SMTPFunction : public ContextualExternalFunction
-    {
-      protected:
-        const SMTPModule*     theModule;
+  public:
+    void
+    raiseSmtpError(
+      const std::string& qName,
+      const std::string& message) const;
 
-      public:
-        SMTPFunction(const SMTPModule* aModule);
+    virtual void 
+    getHostUserPassword(
+      const ExternalFunction::Arguments_t& aArgs,
+      int aPos,
+      std::string& aHost,
+      std::string& aUserName,
+      std::string& aPassword) const;
 
-        ~SMTPFunction();
+    static void
+    getNameAndEmailAddress(
+      Item& aEmailItem,
+      std::string& aName,
+      std::string& aMailbox,
+      std::string& aHost);
 
-        virtual String
-        getURI() const;
+  public:
+    SMTPFunction(const SMTPModule* aModule);
+    ~SMTPFunction();
 
-        
-        virtual void 
-        getHostUserPassword(const ExternalFunction::Arguments_t& aArgs,
-                            int aPos,
-                            std::string& aHost,
-                            std::string& aUserName,
-                            std::string& aPassword) const; 
+    virtual String
+    getURI() const;
 
-       static void
-       getNameAndEmailAddress(Item& aEmailItem,
-                               std::string& aName,
-                               std::string& aMailbox,
-                               std::string& aHost);
+}; //class SMTPFunction
 
-
-    }; //class SMTPFunction
-  } // namespace email
+} // namespace email
 } // namespace zorba
 
 #endif // ZORBA_EMAILMODULE_EMAILFUNCTION_H

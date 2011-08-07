@@ -30,84 +30,77 @@
 #include "mime_parser.h"
 #include "smtp.h"
 
-namespace zorba
+namespace zorba { namespace emailmodule {
+
+SendFunction::SendFunction(const SMTPModule* aModule)
+  : SMTPFunction(aModule)
 {
-  namespace emailmodule
-  {
-    //SendFunction
-    SendFunction::SendFunction(const SMTPModule* aModule)
-    : SMTPFunction(aModule)
-    {
-    }
+}
     
-    ItemSequence_t
-    SendFunction::evaluate(
-                           const ExternalFunction::Arguments_t& args,
-                           const StaticContext* aSctxCtx,
-                           const DynamicContext* aDynCtx) const
-    {
-      try {
-        bool res = false; 
+ItemSequence_t
+SendFunction::evaluate(
+  const ExternalFunction::Arguments_t& args,
+  const StaticContext* aSctxCtx,
+  const DynamicContext* aDynCtx) const
+{
+  try {
+    bool lRes = false; 
         
-        // getting host, username and password 
-        std::string lHostName;
-        std::string lUserName;
-        std::string lPassword;
-        SMTPFunction::getHostUserPassword(args, 0, lHostName, lUserName, lPassword);      
+    // getting host, username and password 
+    std::string lHostName;
+    std::string lUserName;
+    std::string lPassword;
+    SMTPFunction::getHostUserPassword(args, 0, lHostName, lUserName, lPassword);      
         
-        std::stringstream lDiagnostics; 
-        // getting message as item
-        Item messageItem;
-        Iterator_t arg1_iter = args[1]->getIterator();
-        arg1_iter->open();
-        arg1_iter->next(messageItem);
-        arg1_iter->close();
+    std::stringstream lDiagnostics; 
+    // getting message as item
+    Item messageItem;
+    Iterator_t arg1_iter = args[1]->getIterator();
+    arg1_iter->open();
+    arg1_iter->next(messageItem);
+    arg1_iter->close();
         
-        CClientMimeHandler lHandler;
-        MimeParser lParser(&lHandler);
-        bool lParseOK = lParser.parse(messageItem, lDiagnostics);
-        bool lHasRecipient = (lHandler.getEnvelope()->to ||
-                              lHandler.getEnvelope()->cc ||
-                              lHandler.getEnvelope()->bcc);
-        
-        
-        // if we can't parse the message, then we've got problems
-        if (!lParseOK) { 
-          lDiagnostics <<  "Message could not be parsed." << std::endl;
-          res = false; 
-        } else if (!lHasRecipient) {
-          lDiagnostics <<  "Message has no recipient." << std::endl;
-          res = false;
-        } else {
-          res = ImapClient::Instance().send(lHostName.c_str(),
-                                            lUserName.c_str(),
-                                            lPassword.c_str(),
-                                            lHandler.getEnvelope(),
-                                            lHandler.getBody(),
-                                            lDiagnostics);
-        }
-        if( !res )
-        {
-          //TODO implement excenption handling via external_function_data
-          std::stringstream lErrorMessage;
-          lErrorMessage << "Mail could not be sent. Here is the log:" << std::endl;
-          lErrorMessage << lDiagnostics.str();
-          Item lQName = theModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/smtpash",
-              "ZXQP0003_INTERNAL_ERROR");
-          throw USER_EXCEPTION(lQName, lErrorMessage.str());
-        }
-        
-        
-        return ItemSequence_t(new EmptySequence());
-      } catch (ImapException& e) {
-        std::string lErrorMessage = e.get_message();
-        Item lQName = SMTPModule::getItemFactory()->createQName(SMTPModule::getURIString(), "imap", e.get_localname());
-        throw USER_EXCEPTION(lQName, lErrorMessage);
-      }
-      return ItemSequence_t(NULL);
+    CClientMimeHandler lHandler;
+    MimeParser lParser(&lHandler);
+    bool lParseOK = lParser.parse(messageItem, lDiagnostics);
+    bool lHasRecipient = (lHandler.getEnvelope()->to ||
+                          lHandler.getEnvelope()->cc ||
+                          lHandler.getEnvelope()->bcc);
+
+    // if we can't parse the message, then we've got problems
+    if (!lParseOK) { 
+      lDiagnostics << "Message could not be parsed." << std::endl;
+      lRes = false; 
+    } else if (!lHasRecipient) {
+      lDiagnostics << "Message has no recipient." << std::endl;
+      lRes = false;
+    } else {
+      lRes = ImapClient::Instance().send(
+        lHostName.c_str(),
+        lUserName.c_str(),
+        lPassword.c_str(),
+        lHandler.getEnvelope(),
+        lHandler.getBody(),
+        lDiagnostics);
     }
+    if (!lRes) {
+      std::stringstream lErrorMessage;
+      lErrorMessage << "Mail could not be sent. Here is the log:" << std::endl;
+      lErrorMessage << lDiagnostics.str();
+      raiseSmtpError("SMTP0001", lErrorMessage.str());
+    }
+
+    return ItemSequence_t(new SingletonItemSequence(
+      theModule->getItemFactory()->createBoolean(false)));
+  } catch (ImapException& e) {
+    std::string lErrorMessage = e.get_message();
+    raiseSmtpError("SMTP0001", lErrorMessage);
+  }
+  return ItemSequence_t(new SingletonItemSequence(
+    theModule->getItemFactory()->createBoolean(false)));
+}
     
-  } // namespace emailmodule
+} // namespace emailmodule
 } // namespace zorba
 
 #ifdef WIN32

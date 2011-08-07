@@ -23,74 +23,85 @@
 
 #include "email_module.h"
 
-namespace zorba
+namespace zorba { namespace emailmodule {
+
+SMTPFunction::SMTPFunction(const SMTPModule* aModule)
+  : theModule(aModule)
 {
-  namespace emailmodule
-  {
-    SMTPFunction::SMTPFunction(const SMTPModule* aModule)
-    : theModule(aModule)
-    {
-    }
+}
 
-    SMTPFunction::~SMTPFunction()
-    {
-    }
+SMTPFunction::~SMTPFunction()
+{
+}
 
-    String
-    SMTPFunction::getURI() const
-    {
-      return theModule->getURI();
-    }
+void
+SMTPFunction::raiseSmtpError(
+  const std::string& aQName,
+  const std::string& aMessage) const
+{
+  std::stringstream lErrorMessage;
+  lErrorMessage << aMessage;
+  Item lQName = theModule->getItemFactory()->createQName(getURI(), "smtp", aQName);
+  throw USER_EXCEPTION(lQName, lErrorMessage.str());
+}
 
-    
+String
+SMTPFunction::getURI() const
+{
+  return theModule->getURI();
+}
 
-    void 
-    SMTPFunction::getHostUserPassword(const ExternalFunction::Arguments_t& aArgs,
-                                      int aPos,
-                                      std::string& aHost,
-                                      std::string& aUserName,
-                                      std::string& aPassword) const {
-      Item lNode;
-      Iterator_t args_iter = aArgs[aPos]->getIterator();
-      args_iter->open();
-      args_iter->next(lNode);
-      args_iter->close();
-      Iterator_t lChildren = lNode.getChildren();
-      lChildren->open();
-      Item lChild;
-      lChildren->next(lChild);
-      aHost = lChild.getStringValue().c_str();
-      lChildren->next(lChild);
-      aUserName = lChild.getStringValue().c_str();
-      lChildren->next(lChild);
-      aPassword = lChild.getStringValue().c_str();
-      lChildren->close();  
-    }
+void 
+SMTPFunction::getHostUserPassword(
+  const ExternalFunction::Arguments_t& aArgs,
+  int aPos,
+  std::string& aHost,
+  std::string& aUserName,
+  std::string& aPassword) const
+{
+  Item lNode;
+  Iterator_t args_iter = aArgs[aPos]->getIterator();
+  args_iter->open();
+  args_iter->next(lNode);
+  args_iter->close();
+  Iterator_t lChildren = lNode.getChildren();
+  lChildren->open();
+  Item lChild;
+  lChildren->next(lChild);
+  aHost = lChild.getStringValue().c_str();
+  lChildren->next(lChild);
+  aUserName = lChild.getStringValue().c_str();
+  lChildren->next(lChild);
+  aPassword = lChild.getStringValue().c_str();
+  lChildren->close();  
+}
 
-    void
-    SMTPFunction::getNameAndEmailAddress(Item& aEmailItem,
-                                         std::string& aName,
-                                         std::string& aMailbox,
-                                         std::string& aHost) {
-
-        Iterator_t lChildren = aEmailItem.getChildren();
-        lChildren->open();
-        Item lChild;
-        lChildren->next(lChild);
+void
+SMTPFunction::getNameAndEmailAddress(
+  Item& aEmailItem,
+  std::string& aName,
+  std::string& aMailbox,
+  std::string& aHost)
+{
+  Iterator_t lChildren = aEmailItem.getChildren();
+  lChildren->open();
+  Item lChild;
+  lChildren->next(lChild);
   
-        // as a name is not mandatory, we first check if this is a name node
-        Item lNodeName;
-        lChild.getNodeName(lNodeName);
-        if (fn::ends_with(lNodeName.getStringValue(),"e")) {
-          aName = lChild.getStringValue().c_str();
-          lChildren->next(lChild);
-        } else {
-          aName = "";
-        }  
-        String lEmail = lChild.getStringValue();
-        int lIndexOfAt = lEmail.find('@'); 
-        aMailbox = lEmail.substr(0, lIndexOfAt).c_str(); 
-        aHost = lEmail.substr(lIndexOfAt+1, lEmail.length()-lIndexOfAt-1).c_str();
-    }
-  } // namespace email
+  // as a name is not mandatory, we first check if this is a name node
+  Item lNodeName;
+  lChild.getNodeName(lNodeName);
+  if (fn::ends_with(lNodeName.getStringValue(),"e")) {
+    aName = lChild.getStringValue().c_str();
+    lChildren->next(lChild);
+  } else {
+    aName = "";
+  }  
+  String lEmail = lChild.getStringValue();
+  int lIndexOfAt = lEmail.find('@'); 
+  aMailbox = lEmail.substr(0, lIndexOfAt).c_str(); 
+  aHost = lEmail.substr(lIndexOfAt+1, lEmail.length()-lIndexOfAt-1).c_str();
+}
+
+} // namespace emailmodule
 } // namespace zorba

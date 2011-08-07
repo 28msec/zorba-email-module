@@ -383,7 +383,7 @@ namespace zorba { namespace emailmodule {
     
     if (!lResult)
     {
-      throw ImapException("WRONG_ID", "Could not get message - wrong message id");
+      throw ImapException("WRONG_ID", "Could not get message - wrong message id.");
     }
     
     
@@ -482,7 +482,7 @@ namespace zorba { namespace emailmodule {
     ENVELOPE * lResult = mail_fetchstructure_full (lSource, aMessageNumber, aBody, (aUid ? FT_UID : NIL));
     
     if (!lResult) {
-      throw ImapException("WRONG_ID", "Wrong message id");
+      throw ImapException("WRONG_ID", "Could not get message - wrong message id.");
     }
     
     if (aUid) {
@@ -857,13 +857,7 @@ namespace zorba { namespace emailmodule {
   {
     if (!aStream) {
       std::stringstream lMessage;
-      lMessage << "Could not open mail stream." << std::endl
-      << "Error Entries:" << std::endl
-      << "==============" << std::endl
-      << theErrorMessage.str() << std::endl
-      << "Log Entries:" << std::endl
-      << "============" << std::endl
-      << theLog.str() << std::endl;
+      lMessage << "Could not open mail stream. " << theErrorMessage.str() << "." << std::endl;
       theLog.clear();
       theErrorMessage.clear();
       throw ImapException("CONNECTION_ERROR", lMessage.str());

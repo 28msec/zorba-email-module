@@ -26,16 +26,43 @@
 
 #include "imap_function.h"
 #include "imap_module.h"
+#include "imap_client.h"
 
 namespace zorba { namespace emailmodule {
 
-
 ImapFunction::ImapFunction(const ImapModule* aModule)
-        : theModule(aModule)
+  : theModule(aModule)
 {
 }
+
 ImapFunction::~ImapFunction()
 {
+}
+
+void
+ImapFunction::raiseImapError(
+  ImapException& e) const
+{
+  std::string lCode;
+  if (e.get_localname() == "CONNECTION_ERROR") {
+    lCode = "IMAP0002";
+  }
+  else if (e.get_localname() == "WRONG_ID") {
+    lCode = "IMAP0003";
+  }
+  else {
+    lCode = "IMAP0001";
+  }
+  raiseImapError(lCode, e.get_message());
+}
+
+void
+ImapFunction::raiseImapError(
+      const std::string& qName,
+      const std::string& message) const
+{
+  Item lQName = theModule->getItemFactory()->createQName(getURI(), "imap", qName);
+  throw USER_EXCEPTION(lQName, message);
 }
 
 String
@@ -45,11 +72,13 @@ ImapFunction::getURI() const
 }
 
 void 
-ImapFunction::getHostUserPassword(const ExternalFunction::Arguments_t& aArgs,
-                                  int aPos,
-                                  std::string& aHost,
-                                  std::string& aUserName,
-                                  std::string& aPassword) {
+ImapFunction::getHostUserPassword(
+  const ExternalFunction::Arguments_t& aArgs,
+  int aPos,
+  std::string& aHost,
+  std::string& aUserName,
+  std::string& aPassword)
+{
   Item lNode;
   Iterator_t args_iter = aArgs[aPos]->getIterator();
   args_iter->open();
@@ -69,38 +98,22 @@ ImapFunction::getHostUserPassword(const ExternalFunction::Arguments_t& aArgs,
 
 String
 ImapFunction::getOneStringArg(
-    const ImapModule* aModule,
-    const ExternalFunction::Arguments_t& aArgs,
-    int aPos)
+  const ImapModule* aModule,
+  const ExternalFunction::Arguments_t& aArgs,
+  int aPos)
 {
   Item lItem;
   Iterator_t args_iter = aArgs[aPos]->getIterator();
   args_iter->open();
-  if (!args_iter->next(lItem)) {
-    std::stringstream lErrorMessage;
-    lErrorMessage << "An empty-sequence is not allowed as "
-                  << aPos << ". parameter.";
-    Item lQName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/imap",
-        "XPTY0004");
-    USER_EXCEPTION(lQName, lErrorMessage.str());
-  }
-  zorba::String lTmpString = lItem.getStringValue();
-  if (args_iter->next(lItem)) {
-    std::stringstream lErrorMessage;
-    lErrorMessage << "A sequence of more then one item is not allowed as "
-                  << aPos << ". parameter.";
-    Item lQName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/imap",
-        "XPTY0004");
-    USER_EXCEPTION(lQName, lErrorMessage.str());
-  }
+  args_iter->next(lItem);
   args_iter->close();
-  return lTmpString;
+  return lItem.getStringValue();
 }
 
 std::string
 ImapFunction::getMessageNumbers(
-    const ExternalFunction::Arguments_t& aArgs,
-    int aPos)
+  const ExternalFunction::Arguments_t& aArgs,
+  int aPos)
 {
   Item lItem;
   std::stringstream lMessageNumbers;
@@ -115,11 +128,10 @@ ImapFunction::getMessageNumbers(
   return lMessageNumbers.str(); 
 }
 
-
 unsigned long 
 ImapFunction::getOneMessageNumber(
-    const ExternalFunction::Arguments_t& aArgs,
-    int aPos)
+  const ExternalFunction::Arguments_t& aArgs,
+  int aPos)
 {
   Item lItem;
   Iterator_t args_iter = aArgs[aPos]->getIterator();
@@ -129,42 +141,25 @@ ImapFunction::getOneMessageNumber(
   return lItem.getLongValue();
 }
 
-
 bool
 ImapFunction::getOneBoolArg(
-    const ImapModule* aModule,
-    const ExternalFunction::Arguments_t& aArgs,
-    int aPos)
+  const ImapModule* aModule,
+  const ExternalFunction::Arguments_t& aArgs,
+  int aPos)
 {
   Item lItem;
   Iterator_t args_iter = aArgs[aPos]->getIterator();
   args_iter->open();
-  if (!args_iter->next(lItem)) {
-    std::stringstream lErrorMessage;
-    lErrorMessage << "An empty-sequence is not allowed as "
-                  << aPos << ". parameter.";
-    Item lQName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/imap",
-        "XPTY0004");
-    USER_EXCEPTION(lQName, lErrorMessage.str());
-  }
-  bool lTmpBool = lItem.getBooleanValue();
-  if (args_iter->next(lItem)) {
-    std::stringstream lErrorMessage;
-    lErrorMessage << "A sequence of more then one item is not allowed as "
-                  << aPos << ". parameter.";
-    Item lQName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/imap",
-        "XPTY0004");
-    USER_EXCEPTION(lQName, lErrorMessage.str());
-  }
+  args_iter->next(lItem);
   args_iter->close();
-  return lTmpBool;
+  return lItem.getBooleanValue();
 }
-
 
 std::string
 ImapFunction::getDateTime(
   const ImapModule* aModule,
-  const std::string& aCClientDateTime) {
+  const std::string& aCClientDateTime)
+{
   std::stringstream lResult;    
   std::stringstream lDateTimeStream(aCClientDateTime);
   std::string lBuffer;
@@ -184,7 +179,7 @@ ImapFunction::getDateTime(
   if (lMonthNumber == std::string::npos) {
     Item lQName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/imap",
         "XPTY0004");
-    USER_EXCEPTION(lQName, "Error while processing month in date of message");
+    throw USER_EXCEPTION(lQName, "Error while processing month in date of message");
   }  
   lMonthNumber = lMonthNumber/3 + 1;
   // make sure its MM and not just <
@@ -205,7 +200,10 @@ ImapFunction::getDateTime(
 }
 
 std::string
-ImapFunction::getContentType(const unsigned short aType, const char* aSubtype) {
+ImapFunction::getContentType(
+  const unsigned short aType,
+  const char* aSubtype)
+{
   std::stringstream lType;
   switch (aType) {
     // Text
@@ -245,7 +243,8 @@ ImapFunction::getContentType(const unsigned short aType, const char* aSubtype) {
 }
 
 std::string
-ImapFunction::getEncoding(const unsigned short aEncoding) {
+ImapFunction::getEncoding(const unsigned short aEncoding)
+{
   std::stringstream lEncoding;
   switch (aEncoding) {
     case 0 :
@@ -273,17 +272,14 @@ ImapFunction::getEncoding(const unsigned short aEncoding) {
   return lEncoding.str();
 }
 
-
-
 void
-ImapFunction::createFlagsNode(const ImapModule* aModule,
-                              Item& aParent,
-                              Item& aFlags,
-                              std::vector<int>& aFlagsVector,
-                              const bool aQualified) {
-
-
-
+ImapFunction::createFlagsNode(
+  const ImapModule* aModule,
+  Item& aParent,
+  Item& aFlags,
+  std::vector<int>& aFlagsVector,
+  const bool aQualified)
+{
   std::vector<std::pair<String, String> >  ns_binding;
   ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
   
@@ -293,26 +289,25 @@ ImapFunction::createFlagsNode(const ImapModule* aModule,
   Item lFlagsType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email",  "flagsType");
   aFlags = aModule->getItemFactory()->createElementNode(aParent, lFlagsName, lFlagsType, false, false, ns_binding);
 
-
   std::string lFlagName;
   for (int i = 0; i < 5; ++i) {
     int lFlagNumber = aFlagsVector[i];
     if (lFlagNumber == 1) {
       switch (i) {
-        case 0 :
-          lFlagName = "seen";
+      case 0:
+        lFlagName = "seen";
         break;
-        case 1 :
-          lFlagName = "deleted";
+      case 1 :
+        lFlagName = "deleted";
         break;
-        case 2 :
-          lFlagName = "flagged";
+      case 2 :
+        lFlagName = "flagged";
         break;
-        case 3 :
-          lFlagName = "answered";
+      case 3 :
+        lFlagName = "answered";
         break;
-        case 4 :
-          lFlagName = "draft";
+      case 4 :
+        lFlagName = "draft";
         break;
       }
       
@@ -323,39 +318,37 @@ ImapFunction::createFlagsNode(const ImapModule* aModule,
   }
 }
 
-
 void
-ImapFunction::createInnerNodeWithText(const ImapModule* aModule, 
-                                      Item& aParent, 
-                                      const std::string& aNamespace,
-                                      const std::string& aPrefix,
-                                      const std::string& aName,
-                                      const std::string& aTypeNamespace,
-                                      const std::string& aType,
-                                      const std::string& aContent) 
+ImapFunction::createInnerNodeWithText(
+  const ImapModule* aModule,
+  Item& aParent,
+  const std::string& aNamespace,
+  const std::string& aPrefix,
+  const std::string& aName,
+  const std::string& aTypeNamespace,
+  const std::string& aType,
+  const std::string& aContent)
 {
-   std::vector<std::pair<String, String> > null_binding; 
+  std::vector<std::pair<String, String> > null_binding; 
   Item lName = aModule->getItemFactory()->createQName(aNamespace, aPrefix, aName);
   Item lType = aModule->getItemFactory()->createQName(aTypeNamespace,  aType);
   Item lItem = aModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, null_binding);
   aModule->getItemFactory()->createTextNode(lItem, String(aContent));
 }  
 
-
 void
-ImapFunction::createContentNode(const ImapModule* aModule,
-                   Item& aParent,
-                   const std::string& aContent,
-                   const std::string& aContentType,
-                   const std::string& aCharset,
-                   const std::string& aContentTransferEncoding,
-                   const std::string& aContentDisposition,
-                   const std::string& aContentDispositionFilename,
-                   const std::string& aContentDispositionModificationDate,
-                   const std::string& aContentId)
-
+ImapFunction::createContentNode(
+  const ImapModule* aModule,
+  Item& aParent,
+  const std::string& aContent,
+  const std::string& aContentType,
+  const std::string& aCharset,
+  const std::string& aContentTransferEncoding,
+  const std::string& aContentDisposition,
+  const std::string& aContentDispositionFilename,
+  const std::string& aContentDispositionModificationDate,
+  const std::string& aContentId)
 {  
-
   Item lNullItem;
    
   std::vector<std::pair<String, String> > null_binding;
@@ -373,25 +366,22 @@ ImapFunction::createContentNode(const ImapModule* aModule,
   }  
 
   aModule->getItemFactory()->createTextNode(lItem, String(aContent));
-
-
 }
 
-
 void 
-ImapFunction::createEmailAddressNode(const ImapModule* aModule, 
-                                     Item& aParent, 
-                                     const std::string& aName, 
-                                     const char* aPersonal, 
-                                     const char* aMailbox, 
-                                     const char* aHost) 
+ImapFunction::createEmailAddressNode(
+  const ImapModule* aModule,
+  Item& aParent,
+  const std::string& aName,
+  const char* aPersonal,
+  const char* aMailbox,
+  const char* aHost)
 {
-
   Item lType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "emailAddress");
   Item lName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email",  aName);
 
   std::vector<std::pair<String, String> >  ns_binding; 
-   ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
+  ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
  
   Item lItem = aModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding);
   if (aPersonal) {
@@ -402,41 +392,36 @@ ImapFunction::createEmailAddressNode(const ImapModule* aModule,
   }
 }
 
-
-
 void 
-ImapFunction::createRecipentNode(const ImapModule* aModule, 
-                                 Item& aParent, 
-                                 const std::string& aName, 
-                                 const char* aPersonal, 
-                                 const char* aMailbox, 
-                                 const char* aHost) 
+ImapFunction::createRecipentNode(
+  const ImapModule* aModule,
+  Item& aParent,
+  const std::string& aName,
+  const char* aPersonal,
+  const char* aMailbox,
+  const char* aHost)
 {                    
   Item lType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "recipientType");                                                                    
   Item lName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "recipient");                           
   
   std::vector<std::pair<String, String> >  ns_binding;                                        
-    ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
+  ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
  
   Item lItem = aModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding); 
   createEmailAddressNode(aModule, lItem, aName, aPersonal, aMailbox, aHost);
-  
 }
-  
 
 void 
-ImapFunction::createContentTypeAttributes(const ImapModule* aModule,
-                                          Item& aParent,
-                                          const std::string& aContentType,
-                                          const std::string& aCharset,
-                                          const std::string& aContentTransferEncoding,
-                                          const std::string& aContentDisposition,
-                                          const std::string& aContentDispositionFilename,
-                                          const std::string& aContentDispositionModificationDate)
+ImapFunction::createContentTypeAttributes(
+  const ImapModule* aModule,
+  Item& aParent,
+  const std::string& aContentType,
+  const std::string& aCharset,
+  const std::string& aContentTransferEncoding,
+  const std::string& aContentDisposition,
+  const std::string& aContentDispositionFilename,
+  const std::string& aContentDispositionModificationDate)
 {
-
-
-
   Item lNullItem;
   /* build the value attribute */
   Item lContentTypeName = aModule->getItemFactory()->createQName("", "contentType");
@@ -478,10 +463,7 @@ ImapFunction::createContentTypeAttributes(const ImapModule* aModule,
       aModule->getItemFactory()->createAttributeNode(aParent, lContentDispositionModificationDateName, lContentDispositionModificationDateType, lContentDispositionModificationDateText);
     }
   }
-
 }
-
 
 } // namespace emailmodule
 } // namespace zorba
-/* vim:set et sw=2 ts=2: */

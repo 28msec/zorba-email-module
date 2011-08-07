@@ -14,31 +14,32 @@
  * limitations under the License.
  */
 
-#ifndef ZORBA_EMAIL_SMTP_H
-#define ZORBA_EMAIL_SMTP_H
+#ifndef ZORBA_EMAILMODULE_SMTP_H
+#define ZORBA_EMAILMODULE_SMTP_H
 
 #include <zorba/zorba_string.h>
 
 #include "email_function.h"
 
-namespace zorba
+namespace zorba { namespace emailmodule {
+
+class SendFunction : public SMTPFunction
 {
-  namespace emailmodule
-  {
-    class SendFunction : public SMTPFunction
-    {
-    public:
-      SendFunction(const SMTPModule* aModule);
+  public:
+    SendFunction(const SMTPModule* aModule);
 
-      virtual String
-      getLocalName() const { return "send-impl"; }
+    virtual String
+    getLocalName() const { return "send-impl"; }
 
-      virtual ItemSequence_t
-      evaluate( const ExternalFunction::Arguments_t& args,
-                const StaticContext* aSctxCtx,
-                const DynamicContext* aDynCtx) const;
-    };
-  } // namespace email
+    virtual ItemSequence_t
+    evaluate(
+      const ExternalFunction::Arguments_t& args,
+      const StaticContext* aSctxCtx,
+      const DynamicContext* aDynCtx) const;
+
+};
+
+} // namespace email
 } // namespace zorba
 
-#endif // ZORBA_EMAIL_SMTP_H
+#endif // ZORBA_EMAILMODULE_SMTP_H

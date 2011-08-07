@@ -26,61 +26,55 @@ namespace zorba { namespace emailmodule {
 
 class ImapModule : public ExternalModule
 {
-private:
-  static ItemFactory* theFactory;
+  private:
+    static ItemFactory* theFactory;
 
-protected:
-  class ltstr
-  {
+  protected:
+    class ltstr
+    {
+      public:
+        bool operator()(const String& s1, const String& s2) const
+        {
+          return s1.compare(s2) < 0;
+        }
+    };
+  
+    typedef std::map<String, ExternalFunction*, ltstr> FuncMap_t;
+
+    FuncMap_t theFunctions;
+  
   public:
-    bool operator()(const String& s1, const String& s2) const
+    virtual ~ImapModule();
+  
+    virtual String
+    getURI() const { return ImapModule::getURIString(); }
+  
+    virtual ExternalFunction*
+    getExternalFunction(const String& aLocalname);
+
+    virtual void
+    destroy();
+
+    static ItemFactory*
+    getItemFactory()
     {
-      return s1.compare(s2) < 0;
-    }
-  };
-  
-  typedef std::map<String, ExternalFunction*, ltstr> FuncMap_t;
-
-  FuncMap_t theFunctions;
-  
-public:
-  virtual ~ImapModule();
-  
-  virtual String
-  getURI() const { return ImapModule::getURIString(); }
-  
-  virtual ExternalFunction*
-  getExternalFunction(const String& aLocalname);
-
-  virtual void
-  destroy();
-
-  static ItemFactory*
-  getItemFactory()
-  {
-    if(!theFactory)
-    {
-      theFactory = Zorba::getInstance(0)->getItemFactory();
-    }
+      if(!theFactory)
+      {
+        theFactory = Zorba::getInstance(0)->getItemFactory();
+      }
     
-    return theFactory;
-  }
+      return theFactory;
+    }
   
-  static String
-  getURIString() {
-    static String lURI = "http://www.zorba-xquery.com/modules/email/imap";
-    return lURI;
-  }
+    static String
+    getURIString() {
+      static String lURI = "http://www.zorba-xquery.com/modules/email/imap";
+      return lURI;
+    }
 };
 
 
 } /* namespace emailmodule */ 
 } /* namespace zorba */
 
-#endif /* ZORBA_EMAILMODULE_FILEMODULE_H */
-
-/*
- * Local variables:
- * mode: c++
- * End:
- */
+#endif /* ZORBA_EMAILMODULE_IMAPMODULE_H */

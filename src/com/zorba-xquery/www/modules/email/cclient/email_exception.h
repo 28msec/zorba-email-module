@@ -14,32 +14,47 @@
  * limitations under the License.
  */
 
-#ifndef ZORBA_EMAILMODULE_SMTP_H
-#define ZORBA_EMAILMODULE_SMTP_H
+#ifndef ZORBA_EMAILMODULE_EMAILEXCEPTION_H
+#define ZORBA_EMAILMODULE_EMAILEXCEPTION_H
 
-#include <zorba/zorba_string.h>
 
-#include "smtp_function.h"
+#ifdef WIN32
+#include <windows.h>
+#endif
+#include "c-client.h"
+#include <string>
+#undef max
+#include <list>
+#include <vector>
+#include <exception>
+#include <sstream>
 
 namespace zorba { namespace emailmodule {
 
-class SendFunction : public SmtpFunction
+class EmailException : std::exception
 {
   public:
-    SendFunction(const SmtpModule* aModule);
+    explicit EmailException(
+      const std::string& aLocalName,
+      const std::string& message) throw();
+  
+    virtual ~EmailException() throw();
 
-    virtual String
-    getLocalName() const { return "send-impl"; }
+    virtual const char*
+    what() const throw();
 
-    virtual ItemSequence_t
-    evaluate(
-      const ExternalFunction::Arguments_t& args,
-      const StaticContext* aSctxCtx,
-      const DynamicContext* aDynCtx) const;
+    const std::string&
+    get_message() const;
 
+    const std::string&
+    get_localname() const;
+
+  private:
+    std::string theLocalName;
+    std::string theMessage;
 };
-
+    
 } // namespace emailmodule
 } // namespace zorba
 
-#endif // ZORBA_EMAILMODULE_SMTP_H
+#endif // ZORBA_EMAILMODULE_EMAILEXCEPTION_H

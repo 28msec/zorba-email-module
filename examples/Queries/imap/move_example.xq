@@ -1,33 +1,30 @@
-(:~
- : This example shows how to use the move function of the http://www.zorba-xquery.com/modules/email/imap module.
+(:
+ : This example shows how to use the move function of the
+ : http://www.zorba-xquery.com/modules/email/imap module.
  :
- : First we search for a message with the word move in the subject. When we have found such a message, we
- : use the move function to move it internally to the MoveFolder folder.
- : Then we check if there is such a message in the MoveFolder, before moving the message back into the INBOX folder.
- : 
+ : First, we search in the "INBOX.MoveFolder" mailbox for messages containing
+ : the word "move" in the subject. If such messages are found, they are moved
+ : to the INBOX. If not messages were found in the "INBOX.MoveFolder" mailbox,
+ : the move is performed inthe other direction.
  :) 
 
 import module namespace imap = 'http://www.zorba-xquery.com/modules/email/imap';
 
-import schema namespace imaps = 'http://www.zorba-xquery.com/modules/email/imap';
-import schema namespace email = 'http://www.zorba-xquery.com/modules/email/email';
 
-declare default element namespace 'http://www.zorba-xquery.com/modules/email/imap';
+(: This variable contains the information of the account on the IMAP server. :) 
+let $hostInfo :=
+  <hostInfo xmlns="http://www.zorba-xquery.com/modules/email">
+    <hostName>mail.28msec.com/novalidate-cert</hostName>
+    <userName>imaptest</userName>
+    <password>cclient</password>
+  </hostInfo>
 
-declare variable $local:host-info as element(imaps:hostInfo) := (<imaps:hostInfo><hostName>mail.28msec.com/novalidate-cert</hostName><userName>imaptest</userName><password>cclient</password></imaps:hostInfo>);
+let $uids := imap:search($hostInfo, "INBOX.MoveFolder", "SUBJECT move", true())
 
-let $uids := imap:search($local:host-info, "INBOX", "SUBJECT move", true())
 return
- (: if $uids are empty, then probably the message with subject move is already in the move folder and was not copied back last time :)
   if ($uids) then
-  {
-    variable $sucessfully-moved := imap:move($local:host-info, "INBOX", "INBOX.MoveFolder", $uids, true());
-
-    imap:move($local:host-info, "INBOX.MoveFolder", "INBOX", $uids, true())
-  }
+    imap:move($hostInfo, "INBOX.MoveFolder", "INBOX", $uids, true());
   else
-  {
-    variable $uids-in-move := imap:search($local:host-info, "INBOX.MoveFolder", "ALL", true());
-
-    imap:move($local:host-info, "INBOX.MoveFolder", "INBOX", $uids-in-move, true())
-  }
+    let $uids := imap:search($hostInfo, "INBOX", "SUBJECT move", true())
+    return
+      imap:move($hostInfo, "INBOX", "INBOX.MoveFolder", $uids, true())

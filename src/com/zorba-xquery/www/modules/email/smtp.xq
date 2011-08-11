@@ -17,13 +17,7 @@ xquery version "3.0";
 :)
 
 (:~
- : This module provides functions for sending emails.
- :
- : Currently, all the errors in this module are raised under the error code
- : <code>smtp:SMTP0001</code>. Such an error is raised when it wasn't possible
- : to connect to the SMTP server. Other errors might be raised in other cases
- : as well, depending on a particular SMTP server implementation. When an error
- : is raised, the user will have to make decisions based on the error message.
+ : This module can be used for sending emails.
  :
  : <h2>SMTP server naming conventions</h2>
  : This list is in fact section <em>III. Remote names</em> part of the UW IMAP toolkit, file
@@ -59,8 +53,8 @@ xquery version "3.0";
  : @project communication
  :)
 module namespace smtp = "http://www.zorba-xquery.com/modules/email/smtp";
-import schema namespace imap = "http://www.zorba-xquery.com/modules/email/imap";
-import schema namespace email = 'http://www.zorba-xquery.com/modules/email/email';
+
+import schema namespace email = 'http://www.zorba-xquery.com/modules/email';
 
 declare namespace ann = "http://www.zorba-xquery.com/annotations";
 
@@ -70,31 +64,28 @@ declare option ver:module-version "1.0";
 (:~
  : This function sends email messages from the specified account.
  :
+ : All the data passed to this function does not need to be validated. The only
+ : requirements are that they have a valid format and are in the correct
+ : namespace according to the schema:
+ : <code>http://www.zorba-xquery.com/modules/email</code>.
+ :
  : @param $host-info The SMTP host, user name, and password.
  : @param $message The message to send as defined in the email XML schema.
- : @return <code>true</code> if the message was sent successfully.
- : @error SMTP0001 If any error occurs.
+ : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
+ : @error smtp:SMTP0001 The message format is invalid.
+ : @error smtp:SMTP0002 The message has no recipient.
+ : @error smtp:SMTP0003 The message could not be sent.
+ : @error smtp:SMTP9999 If any other error occurs.
  : @example examples/Queries/smtp/simple_text.xq
  : @example examples/Queries/smtp/text_with_image.xq
  : @example examples/Queries/smtp/html.xq
  :)
 declare %ann:sequential function smtp:send(
-    $host-info as element(imap:hostInfo),
+    $host-info as element(email:hostInfo),
     $message as element(email:message))
-  as xs:boolean
+  as empty-sequence()
 {
   smtp:send-impl(validate{$host-info}, validate{$message})
 }; 
 
-(:~
- : For internal use only.
- :
- : @param $host-info The SMTP host, username and password. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/imap" schema.
- : @param $message The message to send as defined in the email xml schema. This parameter has to be validated against "http://www.zorba-xquery.com/modules/email/email" schema.
- : @return <code>true</code> if the message was sent successfully. 
- : @error SMTP0001 If any error occurs.
- :)
-declare %private %ann:sequential function smtp:send-impl(
-  $host-info as element(imap:hostInfo),
-  $message as element(email:message))
-as xs:boolean external;
+declare %private %ann:sequential function smtp:send-impl($host-info as element(email:hostInfo), $message as element(email:message)) as empty-sequence() external;

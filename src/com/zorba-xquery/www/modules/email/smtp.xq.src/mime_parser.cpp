@@ -16,23 +16,18 @@
 
 #include "mime_parser.h"
 
-namespace zorba
+namespace zorba { namespace emailmodule {
+
+void
+MimeParser::parse(const Item& aMimeItem, std::stringstream& aDiagnostics)
 {
-  namespace emailmodule
-  {
-    bool MimeParser::parse(const Item& aMimeItem, std::stringstream& aDiagnostics)
-    {
-      theHandler->begin(aMimeItem);
+  theHandler->begin(aMimeItem);
 
-      bool lRes = theHandler->envelope(aDiagnostics);
+  theHandler->envelope();
+  theHandler->body();
 
-      if(lRes)
-        lRes = theHandler->body(aDiagnostics);
+  theHandler->end();
+}
 
-      theHandler->end();
-
-      return lRes;
-    }
-
-  }//namespace email
-}//namespace zorba
+} // namespace emailmodule
+} // namespace zorba

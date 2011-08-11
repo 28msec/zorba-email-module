@@ -26,16 +26,17 @@
 namespace zorba { namespace emailmodule {
 
 class ImapModule;
-class ImapException;
+class EmailException;
 
 class ImapFunction : public ContextualExternalFunction
 {
   protected:
     const ImapModule* theModule;
+    static const char* SCHEMA_NAMESPACE;  
 
     void
     raiseImapError(
-      ImapException& e) const;
+      EmailException& e) const;
 
     void
     raiseImapError(

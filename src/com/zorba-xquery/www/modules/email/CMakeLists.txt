@@ -51,18 +51,19 @@ ELSE(ZORBA_SUPPRESS_CCLIENT)
     ENDIF (NOT WIN32 AND NOT CYGWIN)
    
     # including shared c-client library
-    ADD_LIBRARY(imap_commons STATIC cclient.xq.src/imap_client.cpp)
+    ADD_LIBRARY (imap_commons STATIC
+      cclient/imap_client.cpp
+      cclient/email_exception.cpp
+    )
     SET_TARGET_PROPERTIES (imap_commons PROPERTIES
       FOLDER "Modules"
     )
     TARGET_LINK_LIBRARIES(imap_commons ${SMTP_LINK_LIBRARIES})
-    INCLUDE_DIRECTORIES("cclient.xq.src")
+    INCLUDE_DIRECTORIES("cclient")
   
   
     DECLARE_ZORBA_SCHEMA (FILE email.xsd
-      URI "http://www.zorba-xquery.com/modules/email/email")
-    DECLARE_ZORBA_SCHEMA (FILE imap.xsd
-      URI "http://www.zorba-xquery.com/modules/email/imap")
+      URI "http://www.zorba-xquery.com/modules/email")
     DECLARE_ZORBA_MODULE (URI "http://www.zorba-xquery.com/modules/email/smtp" VERSION 1.0 FILE "smtp.xq" LINK_LIBRARIES "imap_commons;${SMTP_LINK_LIBRARIES}")
     DECLARE_ZORBA_MODULE (URI "http://www.zorba-xquery.com/modules/email/imap" VERSION 1.0 FILE "imap.xq" LINK_LIBRARIES "imap_commons;${SMTP_LINK_LIBRARIES}")
   

@@ -19,23 +19,42 @@
 #include <zorba/user_exception.h>
 #include <zorba/xquery_functions.h>
 
-#include "email_function.h"
+#include "smtp_function.h"
 
-#include "email_module.h"
+#include "smtp_module.h"
 
 namespace zorba { namespace emailmodule {
 
-SMTPFunction::SMTPFunction(const SMTPModule* aModule)
+SmtpFunction::SmtpFunction(const SmtpModule* aModule)
   : theModule(aModule)
 {
 }
 
-SMTPFunction::~SMTPFunction()
+SmtpFunction::~SmtpFunction()
 {
 }
 
 void
-SMTPFunction::raiseSmtpError(
+SmtpFunction::raiseSmtpError(EmailException& e) const
+{
+  std::string lCode;
+  if (e.get_localname() == "PARSE_ERROR") {
+    lCode = "SMTP0001";
+  }
+  else if (e.get_localname() == "NO_RECIPIENT") {
+    lCode = "SMTP0002";
+  }
+  else if (e.get_localname() == "NOT_SENT") {
+    lCode = "SMTP0003";
+  }
+  else {
+    lCode = "SMTP9999";
+  }
+  raiseSmtpError(lCode, e.get_message());
+}
+
+void
+SmtpFunction::raiseSmtpError(
   const std::string& aQName,
   const std::string& aMessage) const
 {
@@ -46,13 +65,13 @@ SMTPFunction::raiseSmtpError(
 }
 
 String
-SMTPFunction::getURI() const
+SmtpFunction::getURI() const
 {
   return theModule->getURI();
 }
 
 void 
-SMTPFunction::getHostUserPassword(
+SmtpFunction::getHostUserPassword(
   const ExternalFunction::Arguments_t& aArgs,
   int aPos,
   std::string& aHost,
@@ -74,33 +93,6 @@ SMTPFunction::getHostUserPassword(
   lChildren->next(lChild);
   aPassword = lChild.getStringValue().c_str();
   lChildren->close();  
-}
-
-void
-SMTPFunction::getNameAndEmailAddress(
-  Item& aEmailItem,
-  std::string& aName,
-  std::string& aMailbox,
-  std::string& aHost)
-{
-  Iterator_t lChildren = aEmailItem.getChildren();
-  lChildren->open();
-  Item lChild;
-  lChildren->next(lChild);
-  
-  // as a name is not mandatory, we first check if this is a name node
-  Item lNodeName;
-  lChild.getNodeName(lNodeName);
-  if (fn::ends_with(lNodeName.getStringValue(),"e")) {
-    aName = lChild.getStringValue().c_str();
-    lChildren->next(lChild);
-  } else {
-    aName = "";
-  }  
-  String lEmail = lChild.getStringValue();
-  int lIndexOfAt = lEmail.find('@'); 
-  aMailbox = lEmail.substr(0, lIndexOfAt).c_str(); 
-  aHost = lEmail.substr(lIndexOfAt+1, lEmail.length()-lIndexOfAt-1).c_str();
 }
 
 } // namespace emailmodule

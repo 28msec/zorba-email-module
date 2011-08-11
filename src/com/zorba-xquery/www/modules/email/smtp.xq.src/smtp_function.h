@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-#ifndef ZORBA_EMAILMODULE_EMAILFUNCTION_H
-#define ZORBA_EMAILMODULE_EMAILFUNCTION_H
+#ifndef ZORBA_EMAILMODULE_SMTPFUNCTION_H
+#define ZORBA_EMAILMODULE_SMTPFUNCTION_H
 
 #include <zorba/function.h>
 
+#include <email_exception.h>
+
 namespace zorba { namespace emailmodule {
 
-class SMTPModule;
+class SmtpModule;
 
-class SMTPFunction : public ContextualExternalFunction
+class SmtpFunction : public ContextualExternalFunction
 {
   protected:
-    const SMTPModule* theModule;
+    const SmtpModule* theModule;
 
   public:
+    void
+    raiseSmtpError(
+      EmailException& e) const;
+
     void
     raiseSmtpError(
       const std::string& qName,
@@ -42,23 +48,16 @@ class SMTPFunction : public ContextualExternalFunction
       std::string& aUserName,
       std::string& aPassword) const;
 
-    static void
-    getNameAndEmailAddress(
-      Item& aEmailItem,
-      std::string& aName,
-      std::string& aMailbox,
-      std::string& aHost);
-
   public:
-    SMTPFunction(const SMTPModule* aModule);
-    ~SMTPFunction();
+    SmtpFunction(const SmtpModule* aModule);
+    ~SmtpFunction();
 
     virtual String
     getURI() const;
 
-}; //class SMTPFunction
+}; //class SmtpFunction
 
 } // namespace email
 } // namespace zorba
 
-#endif // ZORBA_EMAILMODULE_EMAILFUNCTION_H
+#endif // ZORBA_EMAILMODULE_SMTPFUNCTION_H

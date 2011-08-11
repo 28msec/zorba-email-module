@@ -1,18 +1,27 @@
-(:~
- : This example shows how to use the fetch_from function of the http://www.zorba-xquery.com/modules/email/imap module.
+(:
+ : This example shows how to use the fetch-from function of the
+ : http://www.zorba-xquery.com/modules/email/imap module.
  :
- : First, the message sequence number of all  messages with the word flags in the subject is retrieved.
- : Then the fetch-from function is used to get the the name of the sender associated with the first message sequence number returned from the search.
+ : First, the sequence numbers of all messages containing the word "flags" in
+ : the subject are retrieved. Then, the from field of the first message found
+ : is fetched. This contains the name and the email address of the sender.
+ :
+ : If no error is thrown, all operations were successful.
  :) 
 
 import module namespace imap = 'http://www.zorba-xquery.com/modules/email/imap';
-import schema namespace imaps = 'http://www.zorba-xquery.com/modules/email/imap';
-import schema namespace email = 'http://www.zorba-xquery.com/modules/email/email';
-
-declare default element namespace 'http://www.zorba-xquery.com/modules/email/imap';
-
-declare variable $local:host-info as element(imaps:hostInfo) := (<imaps:hostInfo><hostName>mail.28msec.com/novalidate-cert</hostName><userName>imaptest</userName><password>cclient</password></imaps:hostInfo>);
 
 
-let $uids as xs:long* := imap:search($local:host-info, "INBOX", "SUBJECT flags", false())
-return imap:fetch-from($local:host-info, "INBOX", $uids[1])
+(: This variable contains the information of the account on the IMAP server. :) 
+let $hostInfo :=
+  <hostInfo xmlns="http://www.zorba-xquery.com/modules/email">
+    <hostName>mail.28msec.com/novalidate-cert</hostName>
+    <userName>imaptest</userName>
+    <password>cclient</password>
+  </hostInfo>
+
+
+let $uids := imap:search($hostInfo, "INBOX", "SUBJECT flags", false())
+
+return
+  imap:fetch-from($hostInfo, "INBOX", $uids[1])

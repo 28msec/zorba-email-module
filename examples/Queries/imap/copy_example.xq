@@ -1,4 +1,4 @@
-(:~
+(:
  : This example shows how to use the copy function of the http://www.zorba-xquery.com/modules/email/imap module.
  :
  : First we search for a message with the word copy in the subject. When we have found this message, we
@@ -8,12 +8,16 @@
 
 import module namespace imap = 'http://www.zorba-xquery.com/modules/email/imap';
 
-import schema namespace imaps = 'http://www.zorba-xquery.com/modules/email/imap';
-import schema namespace email = 'http://www.zorba-xquery.com/modules/email/email';
 
-declare default element namespace 'http://www.zorba-xquery.com/modules/email/imap';
+(: This variable contains the information of the account on the IMAP server. :) 
+let $hostInfo :=
+  <hostInfo xmlns="http://www.zorba-xquery.com/modules/email">
+    <hostName>mail.28msec.com/novalidate-cert</hostName>
+    <userName>imaptest</userName>
+    <password>cclient</password>
+  </hostInfo>
 
-declare variable $local:host-info as element(imaps:hostInfo) := (<hostInfo><hostName>mail.28msec.com/novalidate-cert</hostName><userName>imaptest</userName><password>cclient</password></hostInfo>);
+let $uids := imap:search($hostInfo, "INBOX", "SUBJECT copy2", true())
 
-let $uids := imap:search($local:host-info, "INBOX", "SUBJECT copy2", true())
-return imap:copy($local:host-info, "INBOX", "INBOX.CopyFolder", $uids, true())
+return
+  imap:copy($hostInfo, "INBOX", "INBOX.CopyFolder", $uids, true())

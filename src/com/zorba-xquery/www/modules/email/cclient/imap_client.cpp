@@ -15,44 +15,18 @@
  */
 
 #include "imap_client.h"
+
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
 #include <vector>
+
+#include "email_exception.h"
+
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 
 
-
 namespace zorba { namespace emailmodule {
-  
-  // exception handling
-  ImapException::ImapException(const std::string& aLocalName,
-                               const std::string& msg) throw()
-  : theLocalName(aLocalName), theMessage(msg)
-  {
-  }
-  
-  ImapException::~ImapException() throw()
-  {
-  }
-  
-  const char*
-  ImapException::what() const throw()
-  {
-    return theMessage.c_str();
-  }
-  
-  const std::string&
-  ImapException::get_message() const
-  {
-    return theMessage;
-  }
-  
-  const std::string&
-  ImapException::get_localname() const
-  {
-    return theLocalName;
-  }
   
   // functions for smtp support
   
@@ -381,9 +355,8 @@ namespace zorba { namespace emailmodule {
     
     ENVELOPE* lResult = mail_fetchenvelope(lSource, aMessageNumber);
     
-    if (!lResult)
-    {
-      throw ImapException("WRONG_ID", "Could not get message - wrong message id.");
+    if (!lResult) {
+      throw EmailException("WRONG_ID", "Could not get message - wrong message id.");
     }
     
     
@@ -482,7 +455,7 @@ namespace zorba { namespace emailmodule {
     ENVELOPE * lResult = mail_fetchstructure_full (lSource, aMessageNumber, aBody, (aUid ? FT_UID : NIL));
     
     if (!lResult) {
-      throw ImapException("WRONG_ID", "Could not get message - wrong message id.");
+      throw EmailException("WRONG_ID", "Could not get message - wrong message id.");
     }
     
     if (aUid) {
@@ -860,7 +833,7 @@ namespace zorba { namespace emailmodule {
       lMessage << "Could not open mail stream. " << theErrorMessage.str() << "." << std::endl;
       theLog.clear();
       theErrorMessage.clear();
-      throw ImapException("CONNECTION_ERROR", lMessage.str());
+      throw EmailException("CONNECTION_ERROR", lMessage.str());
     }
   }
   

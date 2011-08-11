@@ -25,15 +25,16 @@
 #include <zorba/user_exception.h>
 #include <zorba/singleton_item_sequence.h>
 
-#include "email_module.h"
+#include "smtp_module.h"
 #include "imap_client.h"
+#include "email_exception.h"
 #include "mime_parser.h"
 #include "smtp.h"
 
 namespace zorba { namespace emailmodule {
 
-SendFunction::SendFunction(const SMTPModule* aModule)
-  : SMTPFunction(aModule)
+SendFunction::SendFunction(const SmtpModule* aModule)
+  : SmtpFunction(aModule)
 {
 }
     
@@ -44,13 +45,11 @@ SendFunction::evaluate(
   const DynamicContext* aDynCtx) const
 {
   try {
-    bool lRes = false; 
-        
     // getting host, username and password 
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    SMTPFunction::getHostUserPassword(args, 0, lHostName, lUserName, lPassword);      
+    getHostUserPassword(args, 0, lHostName, lUserName, lPassword);      
         
     std::stringstream lDiagnostics; 
     // getting message as item
@@ -62,42 +61,30 @@ SendFunction::evaluate(
         
     CClientMimeHandler lHandler;
     MimeParser lParser(&lHandler);
-    bool lParseOK = lParser.parse(messageItem, lDiagnostics);
+    lParser.parse(messageItem, lDiagnostics);
+
     bool lHasRecipient = (lHandler.getEnvelope()->to ||
                           lHandler.getEnvelope()->cc ||
                           lHandler.getEnvelope()->bcc);
 
-    // if we can't parse the message, then we've got problems
-    if (!lParseOK) { 
-      lDiagnostics << "Message could not be parsed." << std::endl;
-      lRes = false; 
-    } else if (!lHasRecipient) {
-      lDiagnostics << "Message has no recipient." << std::endl;
-      lRes = false;
+    if (!lHasRecipient) {
+      throw EmailException("NO_RECIPIENT", "Message has no recipient.");
     } else {
-      lRes = ImapClient::Instance().send(
+      bool lRes = ImapClient::Instance().send(
         lHostName.c_str(),
         lUserName.c_str(),
         lPassword.c_str(),
         lHandler.getEnvelope(),
         lHandler.getBody(),
         lDiagnostics);
+      if (!lRes) {
+        throw EmailException("NOT_SENT", "Message could not be sent.");
+      }
     }
-    if (!lRes) {
-      std::stringstream lErrorMessage;
-      lErrorMessage << "Mail could not be sent. Here is the log:" << std::endl;
-      lErrorMessage << lDiagnostics.str();
-      raiseSmtpError("SMTP0001", lErrorMessage.str());
-    }
-
-    return ItemSequence_t(new SingletonItemSequence(
-      theModule->getItemFactory()->createBoolean(false)));
-  } catch (ImapException& e) {
-    std::string lErrorMessage = e.get_message();
-    raiseSmtpError("SMTP0001", lErrorMessage);
+  } catch (EmailException& e) {
+    raiseSmtpError(e);
   }
-  return ItemSequence_t(new SingletonItemSequence(
-    theModule->getItemFactory()->createBoolean(false)));
+  return ItemSequence_t(NULL);
 }
     
 } // namespace emailmodule
@@ -110,5 +97,5 @@ SendFunction::evaluate(
 #endif
 
 extern "C" DLL_EXPORT zorba::ExternalModule* createModule() {
-  return new zorba::emailmodule::SMTPModule();
+  return new zorba::emailmodule::SmtpModule();
 }

@@ -27,8 +27,11 @@
 #include "imap_function.h"
 #include "imap_module.h"
 #include "imap_client.h"
+#include "email_exception.h"
 
 namespace zorba { namespace emailmodule {
+
+const char* ImapFunction::SCHEMA_NAMESPACE = "http://www.zorba-xquery.com/modules/email";  
 
 ImapFunction::ImapFunction(const ImapModule* aModule)
   : theModule(aModule)
@@ -41,7 +44,7 @@ ImapFunction::~ImapFunction()
 
 void
 ImapFunction::raiseImapError(
-  ImapException& e) const
+  EmailException& e) const
 {
   std::string lCode;
   if (e.get_localname() == "CONNECTION_ERROR") {
@@ -177,7 +180,7 @@ ImapFunction::getDateTime(
   size_t lMonthNumber = lMonths.find(lTokens[2]);
   // if the month was not found, were really in trouble!
   if (lMonthNumber == std::string::npos) {
-    Item lQName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/imap",
+    Item lQName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE,
         "XPTY0004");
     throw USER_EXCEPTION(lQName, "Error while processing month in date of message");
   }  
@@ -281,12 +284,12 @@ ImapFunction::createFlagsNode(
   const bool aQualified)
 {
   std::vector<std::pair<String, String> >  ns_binding;
-  ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
+  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
   
   // if aParent is null, then we want to have the flags node qualified (so that it can be shema validated)
   Item lFlagsName;
-  lFlagsName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "flags");
-  Item lFlagsType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email",  "flagsType");
+  lFlagsName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "flags");
+  Item lFlagsType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE,  "flagsType");
   aFlags = aModule->getItemFactory()->createElementNode(aParent, lFlagsName, lFlagsType, false, false, ns_binding);
 
   std::string lFlagName;
@@ -311,8 +314,8 @@ ImapFunction::createFlagsNode(
         break;
       }
       
-      Item lOneFlagName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", lFlagName);
-      Item lOneFlagType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "emptyType");
+      Item lOneFlagName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", lFlagName);
+      Item lOneFlagType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "emptyType");
       Item lOneFlag = aModule->getItemFactory()->createElementNode(aFlags, lOneFlagName, lOneFlagType, false, true, ns_binding);
     }
   }
@@ -352,8 +355,8 @@ ImapFunction::createContentNode(
   Item lNullItem;
    
   std::vector<std::pair<String, String> > null_binding;
-  Item lName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "content");
-  Item lType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "contentType" );
+  Item lName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "content");
+  Item lType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "contentType" );
   Item lItem = aModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, null_binding);
   
   createContentTypeAttributes(aModule, lItem, aContentType, aCharset, aContentTransferEncoding, aContentDisposition, aContentDispositionFilename, aContentDispositionModificationDate);
@@ -377,18 +380,18 @@ ImapFunction::createEmailAddressNode(
   const char* aMailbox,
   const char* aHost)
 {
-  Item lType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "emailAddress");
-  Item lName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email",  aName);
+  Item lType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "emailAddress");
+  Item lName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email",  aName);
 
   std::vector<std::pair<String, String> >  ns_binding; 
-  ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
+  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
  
   Item lItem = aModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding);
   if (aPersonal) {
-    createInnerNodeWithText(aModule, lItem, "http://www.zorba-xquery.com/modules/email/email", "email", "name", "http://www.w3.org/2001/XMLSchema", "string", aPersonal);
+    createInnerNodeWithText(aModule, lItem, SCHEMA_NAMESPACE, "email", "name", "http://www.w3.org/2001/XMLSchema", "string", aPersonal);
   }
   if ((aMailbox) && (aHost)) {
-    createInnerNodeWithText(aModule, lItem, "http://www.zorba-xquery.com/modules/email/email", "email", "email", "http://www.zorba-xquery.com/modules/email/email", "emailAddressType", std::string(aMailbox) + "@" + std::string(aHost));  
+    createInnerNodeWithText(aModule, lItem, SCHEMA_NAMESPACE, "email", "email", SCHEMA_NAMESPACE, "emailAddressType", std::string(aMailbox) + "@" + std::string(aHost));  
   }
 }
 
@@ -401,11 +404,11 @@ ImapFunction::createRecipentNode(
   const char* aMailbox,
   const char* aHost)
 {                    
-  Item lType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "recipientType");                                                                    
-  Item lName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "recipient");                           
+  Item lType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "recipientType");                                                                    
+  Item lName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "recipient");                           
   
   std::vector<std::pair<String, String> >  ns_binding;                                        
-  ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
+  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
  
   Item lItem = aModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding); 
   createEmailAddressNode(aModule, lItem, aName, aPersonal, aMailbox, aHost);
@@ -425,19 +428,19 @@ ImapFunction::createContentTypeAttributes(
   Item lNullItem;
   /* build the value attribute */
   Item lContentTypeName = aModule->getItemFactory()->createQName("", "contentType");
-  Item lContentTypeType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "contentTypeValue");
+  Item lContentTypeType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "contentTypeValue");
   Item lContentTypeText = aModule->getItemFactory()->createTextNode(lNullItem, String(aContentType));
   aModule->getItemFactory()->createAttributeNode(aParent, lContentTypeName, lContentTypeType, lContentTypeText);
 
   /* build the charset attribute */
   Item lCharsetName = aModule->getItemFactory()->createQName("", "charset");
-  Item lCharsetType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "string");
+  Item lCharsetType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "string");
   Item lCharsetText = aModule->getItemFactory()->createTextNode(lNullItem, String(aCharset));
   aModule->getItemFactory()->createAttributeNode(aParent, lCharsetName, lCharsetType, lCharsetText);
 
   /* build the contentTransferEncoding attribute */
   Item lContentTransferName = aModule->getItemFactory()->createQName("", "contentTransferEncoding");
-  Item lContentTransferType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "cteType");
+  Item lContentTransferType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "cteType");
   Item lContentTransferText = aModule->getItemFactory()->createTextNode(lNullItem, String(aContentTransferEncoding));
   aModule->getItemFactory()->createAttributeNode(aParent, lContentTransferName, lContentTransferType, lContentTransferText);
   /* build the contentDisposition attribute */
@@ -451,7 +454,7 @@ ImapFunction::createContentTypeAttributes(
     if (aContentDispositionFilename.length() > 1) {
     /* build the contentDispositionFilename attribute */
       Item lContentDispositionFilenameName = aModule->getItemFactory()->createQName("", "contentDisposition-filename");
-      Item lContentDispositionFilenameType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "string");
+      Item lContentDispositionFilenameType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "string");
       Item lContentDispositionFilenameText = aModule->getItemFactory()->createTextNode(lNullItem, String(aContentDispositionFilename));
       aModule->getItemFactory()->createAttributeNode(aParent, lContentDispositionFilenameName, lContentDispositionFilenameType, lContentDispositionFilenameText);
     }

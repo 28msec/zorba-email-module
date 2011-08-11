@@ -1,12 +1,12 @@
 /*
  * Copyright 2006-2008 The FLWOR Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,28 +14,39 @@
  * limitations under the License.
  */
 
-#ifndef ZORBA_EMAILMODULE_MIMEPARSER_H
-#define ZORBA_EMAILMODULE_MIMEPARSER_H
+#include "email_exception.h"
 
-#include "mime_handler.h"
-
-#include "zorba/api_shared_types.h"
 
 namespace zorba { namespace emailmodule {
 
-class MimeParser
+EmailException::EmailException(
+  const std::string& aLocalName,
+  const std::string& msg) throw()
+  : theLocalName(aLocalName), theMessage(msg)
 {
-  protected:
-    MimeHandler* theHandler;
+}
 
-  public:
-    MimeParser(MimeHandler* aHandler) : theHandler(aHandler) {};
+EmailException::~EmailException() throw()
+{
+}
 
-    void
-    parse(const Item& aMimeItem, std::stringstream& aDiagnostics);
-};
+const char*
+EmailException::what() const throw()
+{
+  return theMessage.c_str();
+}
 
-}//namespace emailmodule
-}//namespace zorba
+const std::string&
+EmailException::get_message() const
+{
+  return theMessage;
+}
 
-#endif // ZORBA_EMAILMODULE_MIMEPARSER_H
+const std::string&
+EmailException::get_localname() const
+{
+  return theLocalName;
+}
+
+} // namespace emailmodule
+} // namespace zorba

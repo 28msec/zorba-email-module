@@ -15,22 +15,27 @@
  */
 
 #include "imap.h"
+
 #include <iostream>
+#include <sstream>
+#include <algorithm>
+#include <string>
+
 #include <zorba/singleton_item_sequence.h>
 #include <zorba/vector_item_sequence.h>
 #include <zorba/empty_sequence.h>
 #include <zorba/user_exception.h>
 #include <zorba/xquery_functions.h>
-#include <sstream>
-#include <algorithm>
+
 #include "imap_module.h"
 #include "imap_client.h"
-#include <string>
+#include "email_exception.h"
 #include "c-client.h"
 
 
 namespace zorba { namespace emailmodule {
 
+  
 //*****************************************************************************
 
 StatusFunction::StatusFunction(const ImapModule* aModule)
@@ -70,7 +75,7 @@ StatusFunction::evaluate(
     std::string lResultString = lResult.str(); 
     return ItemSequence_t(new SingletonItemSequence(
       theModule->getItemFactory()->createString(lResultString.c_str())));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -101,7 +106,7 @@ CreateFunction::evaluate(
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -133,7 +138,7 @@ DeleteFunction::evaluate(
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -165,7 +170,7 @@ RenameFunction::evaluate(
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -210,7 +215,7 @@ ListFunction::evaluate(
     }  
     
     return ItemSequence_t(new VectorItemSequence(lItemVector));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -242,7 +247,7 @@ SubscribeFunction::evaluate(
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -274,7 +279,7 @@ UnsubscribeFunction::evaluate(
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -306,7 +311,7 @@ ExpungeFunction::evaluate(
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -356,7 +361,7 @@ SearchFunction::evaluate(
     } 
     
     return ItemSequence_t(new VectorItemSequence(lItemVector));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -408,7 +413,7 @@ CopyFunction::evaluate(
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -457,7 +462,7 @@ FetchEnvelopeFunction::evaluate(
 
     return ItemSequence_t(new SingletonItemSequence(lParent));
 
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -493,7 +498,7 @@ FetchSubjectFunction::evaluate(
     
     return ItemSequence_t(new SingletonItemSequence(
                                                     theModule->getItemFactory()->createString(lResult)));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -529,7 +534,7 @@ FetchFromFunction::evaluate(
     
     return ItemSequence_t(new SingletonItemSequence(
                                                     theModule->getItemFactory()->createString(lResult)));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -580,7 +585,7 @@ FetchFlagsFunction::evaluate(
     ImapFunction::createFlagsNode(theModule, lParent, lFlagsItem, lFlags, true);
     
     return ItemSequence_t(new SingletonItemSequence(lFlagsItem));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -626,7 +631,7 @@ SetFlagsFunction::evaluate(
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -693,7 +698,7 @@ FetchUidFunction::evaluate(
     
     return ItemSequence_t(new SingletonItemSequence(
                                                     theModule->getItemFactory()->createLong(lResult)));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -723,7 +728,7 @@ FetchMessageSequenceNumberFunction::evaluate(
     
     return ItemSequence_t(new SingletonItemSequence(
                                                     theModule->getItemFactory()->createLong(lResult)));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -756,7 +761,7 @@ FetchMessageFunction::evaluate(
                                      (), lMailbox.c_str(), lMessageNumber, lUid, false);
     
     return ItemSequence_t(new SingletonItemSequence(lParent));
-  } catch (ImapException& e) {
+  } catch (EmailException& e) {
     raiseImapError(e);
   }
   return ItemSequence_t(NULL);
@@ -786,7 +791,7 @@ FetchMessageFunction::getMessage(
   }
     
   std::vector<std::pair<String, String> >   ns_binding;
-  ns_binding.push_back(std::pair<String, String>("email", "http://www.zorba-xquery.com/modules/email/email"));
+  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
     
   Item lEnvelopeItem;
   std::string lErrorMessage = ImapClient::Instance().getError();
@@ -799,30 +804,30 @@ FetchMessageFunction::getMessage(
   // Important: if we only want the envelope, then the envelope MUST be qualified (being the root of the DOM)
   Item lEnvelopeName;
   if (aOnlyEnvelope) {
-    lEnvelopeName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "envelope");
+    lEnvelopeName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelope");
   } else {
-    lEnvelopeName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "envelope");
+    lEnvelopeName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelope");
   }  
-  Item lEnvelopeType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "envelopeType");
+  Item lEnvelopeType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelopeType");
     
   Item lNullItem;
   // if we only want the envelope, then create it with a null parent, else create the message and use it as parent
   if (aOnlyEnvelope) {
     lEnvelopeItem =  aModule->getItemFactory()->createElementNode(lNullItem, lEnvelopeName, lEnvelopeType, false, false, ns_binding);
   } else {
-    Item lMessageName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "message");
-    Item lMessageType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "messageType");
+    Item lMessageName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "message");
+    Item lMessageType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "messageType");
     aParent =  aModule->getItemFactory()->createElementNode(lNullItem, lMessageName, lMessageType, false, false, ns_binding);
     lEnvelopeItem =  aModule->getItemFactory()->createElementNode(aParent, lEnvelopeName, lEnvelopeType, false, false, ns_binding);
   }
     
   // create the remail node if needed
   if (lEnvelope->remail) {
-    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, "http://www.zorba-xquery.com/modules/email/email", "email",  "remail", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->remail);
+    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, SCHEMA_NAMESPACE, "email",  "remail", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->remail);
   }
   // create the date node if needed
   if (lEnvelope->date) {
-    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, "http://www.zorba-xquery.com/modules/email/email", "email",  "date", "http://www.w3.org/2001/XMLSchema", "string", ImapFunction::getDateTime(aModule,
+    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, SCHEMA_NAMESPACE, "email",  "date", "http://www.w3.org/2001/XMLSchema", "string", ImapFunction::getDateTime(aModule,
           reinterpret_cast<const char*>(lEnvelope->date)));
   }
   // create from node if needed
@@ -837,7 +842,7 @@ FetchMessageFunction::getMessage(
   }
   // create subject node
   if (lEnvelope->subject) {
-    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, "http://www.zorba-xquery.com/modules/email/email", "email",  "subject", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->subject);
+    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, SCHEMA_NAMESPACE, "email",  "subject", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->subject);
   }
     
   ADDRESS* lRecipents;
@@ -866,7 +871,7 @@ FetchMessageFunction::getMessage(
     
   // create messageId node
   if (lEnvelope->message_id) {
-    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem,  "http://www.zorba-xquery.com/modules/email/email", "email",  "messageId", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->message_id);
+    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem,  SCHEMA_NAMESPACE, "email",  "messageId", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->message_id);
   }
   Item lFlagsItem;
   // create flags node
@@ -881,20 +886,20 @@ FetchMessageFunction::getMessage(
   // if we want the whole message, then build it together
     
   // <email:mimeVersion>1.0</email:mimeVersion>
-  ImapFunction::createInnerNodeWithText(aModule, aParent,  "http://www.zorba-xquery.com/modules/email/email", "email", "mimeVersion", "http://www.w3.org/2001/XMLSchema", "string", "1.0");
+  ImapFunction::createInnerNodeWithText(aModule, aParent,  SCHEMA_NAMESPACE, "email", "mimeVersion", "http://www.w3.org/2001/XMLSchema", "string", "1.0");
         
   // make a tolower version of the subtype
   std::string lSubType(lBody->subtype);
   std::transform(lSubType.begin(), lSubType.end(), lSubType.begin(), tolower);
     
   // creating the <body> node
-  Item lBodyName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "body");
-  Item lBodyType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "bodyTypeChoice");
+  Item lBodyName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "body");
+  Item lBodyType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "bodyTypeChoice");
   Item lBodyItem = aModule->getItemFactory()->createElementNode(aParent, lBodyName, lBodyType, false, false, ns_binding); 
   // in case of non-multipart, just add the body to the message
     
-  Item lMultipartParentName = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "multipart");
-  Item lMultipartParentType = aModule->getItemFactory()->createQName("http://www.zorba-xquery.com/modules/email/email", "email", "multipartType");
+  Item lMultipartParentName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "multipart");
+  Item lMultipartParentType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "multipartType");
   Item lMultipartParent; 
   // using a vector instead of a stack, because including stack will clash with the c-client include ... 
   std::vector<BODY*> lBodies;

@@ -101,7 +101,7 @@ declare %private %ann:nondeterministic function imap:status-impl($host-info as e
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
  : @error imap:IMAP0001 IMAP operation failed
  : @error imap:IMAP0002 connection to IMAP server refused
- : @example examples/Queries/imap/create_rename_delete_example
+ : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
 declare %ann:sequential function imap:create(
     $host-info as element(email:hostInfo),
@@ -121,7 +121,7 @@ declare %private %ann:sequential function imap:create-impl($host-info as element
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
  : @error imap:IMAP0001 IMAP operation failed
  : @error imap:IMAP0002 connection to IMAP server refused
- : @example examples/Queries/imap/create_rename_delete_example
+ : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
 declare %ann:sequential function imap:delete(
     $host-info as element(email:hostInfo),
@@ -142,7 +142,7 @@ declare %private %ann:sequential function imap:delete-impl($host-info as element
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
  : @error imap:IMAP0001 IMAP operation failed
  : @error imap:IMAP0002 connection to IMAP server refused
- : @example examples/Queries/imap/create_rename_delete_example
+ : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
 declare %ann:sequential function imap:rename(
     $host-info as element(email:hostInfo),

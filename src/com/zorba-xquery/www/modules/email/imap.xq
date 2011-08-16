@@ -68,8 +68,11 @@ declare option ver:module-version "1.0";
  : @return The <code>status</code> of the specified <code>$mailbox</code>.
  :    The result is validated against the schema:
  :    <code>http://www.zorba-xquery.com/modules/email</code>.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/status_example.xq
  :)
 declare %ann:nondeterministic function imap:status(
@@ -99,8 +102,11 @@ declare %private %ann:nondeterministic function imap:status-impl($host-info as e
  : @param $host-info The IMAP host, user name, and password.
  : @param $mailbox-name The name for the new mailbox.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
 declare %ann:sequential function imap:create(
@@ -119,8 +125,11 @@ declare %private %ann:sequential function imap:create-impl($host-info as element
  : @param $host-info The IMAP host, user name, and password.
  : @param $mailbox-name The name of the mailbox to delete.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
 declare %ann:sequential function imap:delete(
@@ -140,8 +149,11 @@ declare %private %ann:sequential function imap:delete-impl($host-info as element
  : @param $mailbox-old The name of the mailbox we want to rename.
  : @param $mailbox-new The new name for the mailbox.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
 declare %ann:sequential function imap:rename(
@@ -165,8 +177,11 @@ declare %private %ann:sequential function imap:rename-impl($host-info as element
  : @return A sequence of <code>mailbox</code> elements.
  :    The result elements are validated against the schema:
  :    <code>http://www.zorba-xquery.com/modules/email</code>.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/list_example.xq
  :)
 declare %ann:nondeterministic function imap:list(
@@ -195,8 +210,11 @@ declare %private %ann:nondeterministic function imap:list-impl($host-info as ele
  : @param $host-info The IMAP host, user name, and password.
  : @param $mailbox The mailbox the user wants to subscribe to.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/subscribe_unsubscribe_example.xq
  :)
 declare %ann:sequential function imap:subscribe(
@@ -215,8 +233,11 @@ declare %private %ann:sequential function imap:subscribe-impl($host-info as elem
  : @param $host-info The IMAP host, user name, and password.
  : @param $mailbox The mailbox the user wants to unsubscribe from.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/subscribe_unsubscribe_example.xq
  :)
 declare %ann:sequential function imap:unsubscribe(
@@ -235,8 +256,11 @@ declare %private %ann:sequential function imap:unsubscribe-impl($host-info as el
  : @param $host-info The IMAP host, user name, and password.
  : @param $mailbox The mailbox for which all messages that have the \Deleted flag set should be permanently deleted.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/expunge_example.xq
  :) 
 declare %ann:sequential function imap:expunge(
@@ -264,8 +288,11 @@ declare %private %ann:sequential function imap:expunge-impl($host-info as elemen
  :    numbers are returned. 
  : @return Either the sequence of matching sequence numbers or the sequence of
  :    matching unique identifiers.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/search_example.xq
  :)
 declare %ann:nondeterministic function imap:search(
@@ -292,9 +319,12 @@ declare %private %ann:nondeterministic function imap:search-impl($host-info as e
  : @param $messages The messages to be copied, specified either by their sequence number or their unique id.
  : @param $uid If true, <code>$messages</code> are treated as sequence numbers. Else as unique identifiers.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/copy_example.xq
  :)
 declare %ann:sequential function imap:copy(
@@ -322,9 +352,12 @@ declare %private %ann:sequential function imap:copy-impl($host-info as element(e
  : @param $messages The messages to be copied, specified either by their sequence number or their unique id.
  : @param $uid If true, <code>$messages</code> are treated as sequence numbers. Else as unique identifiers.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/move_example.xq
  :)
 declare %ann:sequential function imap:move(
@@ -349,9 +382,12 @@ declare %ann:sequential function imap:move(
  : @return The <code>envelope</code> of the requested message.
  :    The result is validated against the schema:
  :    <code>http://www.zorba-xquery.com/modules/email</code>.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_envelope_example.xq 
  :) 
 declare %ann:nondeterministic function imap:fetch-envelope(
@@ -376,9 +412,12 @@ declare %private %ann:nondeterministic function imap:fetch-envelope-impl($host-i
  : @return the <code>message</code> with the given <code>$message-number</code>.
  :    The result is validated against the schema:
  :    <code>http://www.zorba-xquery.com/modules/email</code>.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_message_example.xq
  :)
 declare %ann:nondeterministic function imap:fetch-message(
@@ -403,9 +442,12 @@ declare %private %ann:nondeterministic function imap:fetch-message-impl($host-in
  : @param $mailbox The mailbox for which we want to get the subject of a message.
  : @param $message-number Denotes the message for which we want the subject.
  : @return The subject of the specified message.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_subject_example.xq
  :)
 declare %ann:nondeterministic function imap:fetch-subject(
@@ -429,9 +471,12 @@ declare %private %ann:nondeterministic function imap:fetch-subject-impl($host-in
  : @param $mailbox The mailbox for which we want to get the 'from' string of a message.
  : @param $message-number Denotes the message for which we want the 'from' string.
  : @return The 'from' string of the specified message.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_from_example.xq
  :)
 declare %ann:nondeterministic function imap:fetch-from(
@@ -452,9 +497,12 @@ declare %private %ann:nondeterministic function imap:fetch-from-impl($host-info 
  : @param $mailbox The mailbox for which we want to get the unique identifier of a message sequence number.
  : @param $message-number The message sequence number for which we want the unique identifier. 
  : @return The unique identifier of the given message sequence number.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_uid_example.xq
  :)
 declare %ann:nondeterministic function imap:fetch-uid(
@@ -475,9 +523,12 @@ declare %private %ann:nondeterministic function imap:fetch-uid-impl($host-info a
  : @param $mailbox The mailbox for which we want to get the message sequence number of an unique identifier.
  : @param $message-number The unique identifier for which we want the message sequence number.
  : @return The message sequence number of the of the given unique identifier.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_message_sequence_number_example.xq
  :)
 declare %ann:nondeterministic function imap:fetch-message-sequence-number(
@@ -501,9 +552,12 @@ declare %private %ann:nondeterministic function imap:fetch-message-sequence-numb
  : @return The <code>flags</code> of the specified message.
  :    The result is validated against the schema:
  :    <code>http://www.zorba-xquery.com/modules/email</code>.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_flags_example.xq
  :)
 declare %ann:nondeterministic function imap:fetch-flags(
@@ -548,9 +602,12 @@ declare %private %ann:nondeterministic function imap:fetch-flags-impl($host-info
  :    </code>. 
  : @param $uid If true, <code>$message-number</code> is treated as sequence number. Else as unique identifier.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.
- : @error imap:IMAP0001 IMAP operation failed
- : @error imap:IMAP0002 connection to IMAP server refused
- : @error imap:IMAP0003 no message found for passed sequence number/unique identifier
+ : @error imap:IMAP0001 If the IMAP operation failed.
+ : @error imap:IMAP0002 If the connection to the IMAP server is refused.
+ : @error imap:IMAP0003 If no message is found with the provided sequence number/unique identifier.
+ : @error err:XQDY0027 If the value of <code>$host-info</code> is not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/set_flags_example.xq
  :)
 declare %ann:sequential function imap:set-flags(

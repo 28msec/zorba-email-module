@@ -76,6 +76,9 @@ declare option ver:module-version "1.0";
  : @error smtp:SMTP0002 The message has no recipient.
  : @error smtp:SMTP0003 The message could not be sent.
  : @error smtp:SMTP9999 If any other error occurs.
+ : @error err:XQDY0027 If the values of the arguments are not not valid
+ :    according to the email schema:
+ :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/smtp/simple_text.xq
  : @example examples/Queries/smtp/text_with_image.xq
  : @example examples/Queries/smtp/html.xq

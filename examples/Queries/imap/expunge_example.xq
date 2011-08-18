@@ -50,20 +50,20 @@ let $email :=
     </body>
   </message>
 
-let $ids := imap:search($hostInfo, "INBOX", "SUBJECT delete", true());
+let $flags :=
+  <flags xmlns="http://www.zorba-xquery.com/modules/email">
+    <deleted/>
+  </flags>
 
-(: if there are no emails to delete, then the send function of the SMTP library is probably not working, or the expunge is working excellently ... :)
+let $ids := imap:search($hostInfo, "INBOX", "SUBJECT delete", true())
+return {
+  for $id in $ids
+  return
+    imap:set-flags($hostInfo, "INBOX", $id, $flags, true());
 
-if (fn:empty($ids)) then
-  fn:true()
-else
-  {
-    for $id in $ids 
-    return
-      imap:set-flags($hostInfo, "INBOX", $id, <email:flags><deleted/></email:flags>, true());
+  (: expunge from server :)
+  imap:expunge($hostInfo, "INBOX");
 
-    imap:expunge($hostInfo, "INBOX");
-  };
-
-
-smtp:send($senderHostInfo, $email)
+  (: resend a "delete" message to have it next time when we execute this example :)
+  smtp:send($senderHostInfo, $email);
+}

@@ -19,37 +19,15 @@ xquery version "3.0";
 (:~
  : This module can be used for sending emails.
  :
- : <h2>SMTP server naming conventions</h2>
- : This list is in fact section <em>III. Remote names</em> part of the UW IMAP toolkit, file
- : <a href="http://www.washington.edu/imap/documentation/naming.txt.html" target="_blank">naming.txt</a>.<br />
- :
- : All names are in the form <br />
- :  <table border="1" cellpadding="0" cellspacing="0">
- : <tbody><tr>
- : <td colspan="2"><b>remote_system_name [":" port] [flags]</b></td></tr>
- : <tr><td colspan="2">where:  </td></tr>
- : <tr><td><b>remote_system_name</b> </td><td>Internet domain name or bracketed IP address of server.</td></tr>
- : <tr><td><b>port</b></td><td>optional TCP port number, default is the default port for that service.</td></tr>
- : <tr><td><b>flags</b></td><td>optional flags, one of the following:</td></tr>
- : <tr><td><b>/user=</b></td><td>remote user name for login on the server.</td></tr>
- : <tr><td><b>/anonymous</b></td><td>remote access as anonymous user.</td></tr>
- : <tr><td><b>/secure</b></td><td>do not transmit a plaintext password over the network.</td></tr>
- : <tr><td><b>/ssl</b></td><td>use the Secure Socket Layer to encrypt the session.</td></tr>
- : <tr><td><b>/validate-cert</b></td><td>validate certificates from TLS/SSL server (this is the default behavior).</td></tr>
- : <tr><td><b>/novalidate-cert</b></td><td>do not validate certificates from TLS/SSL server, needed if server uses self-signed certificates.</td></tr>
- : <tr><td><b>/tls</b></td><td>force use of start-TLS to encrypt the session, and reject connection to servers that do not support it.</td></tr>
- : <tr><td><b>/tls-sslv23</b> </td><td>use the depreciated SSLv23 client when negotiating TLS to the server. This is necessary with some broken servers which (incorrectly) think that TLS is just another way of doing SSL </td></tr>
- : <tr><td><b>/notls</b> </td><td>do not do start-TLS to encrypt the session, even with servers that support it  </td></tr>
- : <tr><td><b>/loser</b> </td><td>disable various protocol features and perform various client-side workarounds; for example, it disables the SEARCH command in IMAP and does client-side searching instead. The precise measures taken by <b>/loser</b> depend upon the protocol and are subject to change over time. <b>/loser</b> is intended for use with defective servers which do not implement the protocol specification correctly. It should be used only as a last resort since it will seriously degrade performance </td></tr>
- : </tbody></table>
- : For example: <br />
- : <ul>
- :   <li>smtp.gmail.com:587/tls/novalidate-cert</li>
- :   <li>[209.85.129.111]:587/tls/novalidate-cert</li>
- : </ul>
+ : The SMTP module contains only one public function that receives two parameters.
+ : The SMTP server access information passed as an <code>hostInfo</code> element
+ : and the email message representation as a <code>message</code> element.
+ : For a quick start see the examples associates with the <code>send(...)</code>
+ : function. For a complete specification read, the description and the
+ : documentation associated with this function.
  :
  : @author Sorin Nasoi, Daniel Thomas
- : @library <a href="http://www.washington.edu/imap/">c‑client Library part of UW IMAP toolkit</a>
+ : @library <a href="http://www.washington.edu/imap/">c-client Library part of UW IMAP toolkit</a>
  : @project communication
  :)
 module namespace smtp = "http://www.zorba-xquery.com/modules/email/smtp";
@@ -62,13 +40,37 @@ declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
 declare option ver:module-version "1.0";
 
 (:~
- : This function sends email messages from the specified account.
+ : This function sends an email message from the specified account.
  :
- : All the data passed to this function does not need to be validated. The only
- : requirements are that they have a valid format and are in the correct
- : namespace according to the schema:
+ : The <code>hostName</code> child element of <code>$host-info</code> must have the form:
+ : <code><b>remote_system_name</b> [":" <b>port</b>] [<b>flags</b>]</code>. This syntax is part of the
+ : <a href="http://www.washington.edu/imap/documentation/naming.txt.html" target="_blank">Remote names</a>
+ : syntax defined in the UW IMAP toolkit. The <code><b>remote_system_name</b></code> and
+ : <code><b>flags</b></code> fragments are explained in the section <code>III</code> of this document.
+ :
+ : For example the hostName could look like:
+ : <ul>
+ :   <li><code>&lt;hostName&gt;smtp.gmail.com:587/tls/novalidate-cert&lt;hostName&gt;</code></li>
+ :   <li><code>&lt;hostName&gt;[209.85.129.111]:587/tls/novalidate-cert&lt;hostName&gt;</code></li>
+ : </ul>
+ :
+ : The <code>$host-info</code> parameter could then look like this:
+ : <pre>
+ : &lt;hostInfo&gt;
+ : &lt;hostName&gt;smtp.gmail.com:587/tls/novalidate-cert&lt;hostName&gt;
+ : &lt;userName&gt;username&lt;userName&gt;
+ : &lt;password&gt;password&lt;password&gt;
+ : &lt;/hostInfo&gt;
+ : </pre>
+ :
+ : For a complete of the structure of an email message, see the imported email
+ : schema: <code>http://www.zorba-xquery.com/modules/email</code>
+ :
+ : All the data passed to this function does not need to be validated.
+ : The only requirement is that they have a valid format and are in the
+ : correct namespace according to the schema:
  : <code>http://www.zorba-xquery.com/modules/email</code>.
- :
+ : 
  : @param $host-info The SMTP host, user name, and password.
  : @param $message The message to send as defined in the email XML schema.
  : @return The function is declared as sequential and has side-effects. It returns the empty sequence.

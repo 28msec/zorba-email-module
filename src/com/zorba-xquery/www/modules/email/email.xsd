@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
   targetNamespace="http://www.zorba-xquery.com/modules/email"
-  xmlns:tns="http://www.zorba-xquery.com/modules/email" 
+  xmlns:tns="http://www.zorba-xquery.com/modules/email"
   elementFormDefault="qualified">
 <!--
 :: Copyright 2006-2008 The FLWOR Foundation.
@@ -39,7 +39,7 @@
       <element name="userName" type="string"/>
       <element name="password" type="string"/>
     </sequence>
-  </complexType>    
+  </complexType>
 
   <complexType name="statusType">
     <sequence>
@@ -48,8 +48,8 @@
       <element name="unseen" type="long"/>
       <element name="uidnext" type="long"/>
       <element name="uidvalidity" type="long"/>
-    </sequence>      
-  </complexType>    
+    </sequence> 
+  </complexType>
 
   <element name="mailbox" type="tns:mailboxType"/>
   <element name="status" type="tns:statusType"/>
@@ -67,15 +67,15 @@
      <element name="deleted" type="tns:emptyType" maxOccurs="1" minOccurs="0"/>
      <element name="flagged" type="tns:emptyType" maxOccurs="1" minOccurs="0"/>
      <element name="answered" type="tns:emptyType" maxOccurs="1" minOccurs="0" />
-     <element name="draft" type="tns:emptyType" maxOccurs="1" minOccurs="0"/>        
-    </all>           
-  </complexType>    
+     <element name="draft" type="tns:emptyType" maxOccurs="1" minOccurs="0"/>
+    </all>
+  </complexType>
  
   <element name="flags" type="tns:flagsType"/>
 
   <simpleType name="emailAddressType">
     <restriction base="string">
-      <pattern value="[^@]+@[^\.]+\..+"/>  
+      <pattern value="[^@]+@[^\.]+\..+"/>
     </restriction>
   </simpleType>
 
@@ -110,7 +110,7 @@
     </sequence>
   </complexType>
 
-  <complexType name="messageType"> 
+  <complexType name="messageType">
     <sequence>
       <element name="envelope" type="tns:envelopeType" maxOccurs="1" minOccurs="0"/>
       <element name="mimeVersion" type="string" maxOccurs="1" minOccurs="0" default="1.0"/>
@@ -157,7 +157,7 @@
       <element name="multipart" type="tns:multipartType"  minOccurs="1"/>
     </choice>  
     <attribute name="contentType" type="tns:contentTypeValue"/>
-    <attribute name="charset" type="string" default="us-ascii"/> 
+    <attribute name="charset" type="string" default="us-ascii"/>
     <attribute name="contentTransferEncoding" type="tns:cteType" default="ENC7BIT"/>
   </complexType>
 

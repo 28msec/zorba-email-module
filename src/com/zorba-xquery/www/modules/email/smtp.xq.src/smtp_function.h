@@ -44,9 +44,9 @@ class SmtpFunction : public ContextualExternalFunction
     getHostUserPassword(
       const ExternalFunction::Arguments_t& aArgs,
       int aPos,
-      std::string& aHost,
-      std::string& aUserName,
-      std::string& aPassword) const;
+      String& aHostName,
+      String& aUserName,
+      String& aPassword) const;
 
   public:
     SmtpFunction(const SmtpModule* aModule);

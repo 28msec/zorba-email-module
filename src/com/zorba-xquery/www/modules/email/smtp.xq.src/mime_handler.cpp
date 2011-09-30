@@ -26,22 +26,23 @@
 #include <zorba/xquery_functions.h>
 
 #include "mime_handler.h"
+
 #include "email_exception.h"
 
 namespace zorba { namespace emailmodule {
 
 // helper function for retrieving the NodeName of an Item
-static zorba::String
-get_nodename(const Item aElement)
+static void
+getNodeName(const Item aElement, zorba::String& aValue)
 {
   Item lNodeName;
   aElement.getNodeName(lNodeName);
-  return lNodeName.getLocalName();
+  aValue = lNodeName.getLocalName();
 }
 
 // helper function for retrieving the string value of a Text Node
 static void
-get_text_value(const Item aElement, zorba::String& aValue)
+getTextValue(const Item aElement, zorba::String& aValue)
 {
   Iterator_t lChildrenIt;
   Item       lChild;
@@ -51,7 +52,7 @@ get_text_value(const Item aElement, zorba::String& aValue)
   lChildrenIt->open();
   while (lChildrenIt->next(lChild)) {
     if (lChild.getNodeKind() == store::StoreConsts::textNode) {
-      aValue = lChild.getStringValue();
+      aValue.append(lChild.getStringValue());
     }
   }
 
@@ -62,58 +63,79 @@ get_text_value(const Item aElement, zorba::String& aValue)
 static void
 getNameAndEmailAddress(
   Item& aEmailItem,
-  std::string& aName,
-  std::string& aMailbox,
-  std::string& aHost)
+  String& aName,
+  String& aMailbox,
+  String& aHost)
 {
   Iterator_t lChildren = aEmailItem.getChildren();
   lChildren->open();
   Item lChild;
-  lChildren->next(lChild);
-  
-  // as a name is not mandatory, we first check if this is a name node
-  Item lNodeName;
-  lChild.getNodeName(lNodeName);
-  if (fn::ends_with(lNodeName.getStringValue(), "e")) {
-    aName = lChild.getStringValue().c_str();
-    lChildren->next(lChild);
-  } else {
-    aName = "";
-  }  
-  String lEmail = lChild.getStringValue();
-  int lIndexOfAt = lEmail.find('@'); 
-  aMailbox = lEmail.substr(0, lIndexOfAt).c_str(); 
-  aHost = lEmail.substr(lIndexOfAt+1, lEmail.length()-lIndexOfAt-1).c_str();
+  bool lReadName = true;
+  while (lChildren->next(lChild)) {
+    if (lChild.getNodeKind() != store::StoreConsts::elementNode) {
+      continue;
+    }
+
+    // as a name is not mandatory, we first check if this is a name node
+    String lNodeName;
+    getNodeName(lChild, lNodeName);
+    if (lNodeName == "name") {
+      aName = lChild.getStringValue();
+      lReadName = false;
+    } else {
+      aName = "";
+      String lEmail = lChild.getStringValue();
+      int lIndexOfAt = lEmail.find('@'); 
+      aMailbox = lEmail.substr(0, lIndexOfAt).c_str();
+      aHost = lEmail.substr(lIndexOfAt + 1, lEmail.length() - lIndexOfAt - 1).c_str();
+    }  
+  }
+}
+
+mail_address*
+create_mail_address(String& aName, String& aMailbox, String& aHost)
+{
+  mail_address* address = mail_newaddr();
+  address->personal = cpystr(const_cast<char*>(aName.c_str()));
+  address->mailbox = cpystr(const_cast<char*>(aMailbox.c_str()));
+  address->host = cpystr(const_cast<char*>(aHost.c_str()));
+  return address;
 }
 
 
 CClientMimeHandler::~CClientMimeHandler()
 {
-  //if( theEnvelope )
-  //  mail_free_envelope( &theEnvelope );
-
-  //mail_free_body(&theBody);
 }
 
 void
 CClientMimeHandler::begin(const Item& aMimeItem)
 {
-  Iterator_t    childrenIt;
+  Iterator_t lChildIter;
 
   //initialize ENVELOPE
   theEnvelope = mail_newenvelope ();
   
-
   //initialize BODY
   theBody = mail_newbody ();
   mail_initbody(theBody);
 
   //set theMessageItem
-  childrenIt = aMimeItem.getChildren();
-  childrenIt->open();
-  childrenIt->next(theEnvelopeItem);
-  childrenIt->next(theBodyItem);
-  childrenIt->close();
+  lChildIter = aMimeItem.getChildren();
+  lChildIter->open();
+
+  // read envelope and body elements but skip non-element nodes
+  while (lChildIter->next(theEnvelopeItem)) {
+    if (theEnvelopeItem.getNodeKind() == store::StoreConsts::elementNode) {
+      break;
+    }
+  }
+  while (lChildIter->next(theBodyItem)) {
+    if (theBodyItem.getNodeKind() == store::StoreConsts::elementNode) {
+      break;
+    }
+  }
+
+  lChildIter->close();
 }
 
 void
@@ -124,142 +146,116 @@ CClientMimeHandler::end()
 void
 CClientMimeHandler::envelope()
 {
-  Iterator_t    lChildrenIt;
-  zorba::Item   lChild;
-  char line[MAILTMPLEN];
-  zorba::String lValue;
-
   if (theEnvelopeItem.isNull()) {
     throw EmailException("PARSE_ERROR", "The message could not be parsed.");
   }
 
   //set the date from the client.
   //If this is not set it defaults to the date of the SMTP server.
+  char line[MAILTMPLEN];
   rfc822_date (line);
-    
   theEnvelope->date = (unsigned char *) fs_get (1+strlen (line));
   strcpy((char *)theEnvelope->date,line);
 
-  lChildrenIt = theEnvelopeItem.getChildren();
-  lChildrenIt->open();
-  while (lChildrenIt->next(lChild)) {
-    get_text_value(lChild, lValue);
 
-    String lLowerNodeName = fn::lower_case(get_nodename(lChild));
-    if (lLowerNodeName == "date") {
+  Iterator_t    lChildIter;
+  zorba::Item   lChild;
+  String lNodeName, lNodeValue;
+  String lName, lMailbox, lHost;
+
+  lChildIter = theEnvelopeItem.getChildren();
+  lChildIter->open();
+  while (lChildIter->next(lChild)) {
+    if (lChild.getNodeKind() != store::StoreConsts::elementNode) {
+      continue;
+    }
+
+    getNodeName(lChild, lNodeName);
+    getTextValue(lChild, lNodeValue);
+
+    if (lNodeName == "date") {
       char lDate[MAILTMPLEN]; 
-      parseXmlDateTime(lValue, lDate);
+      parseXmlDateTime(lNodeValue, lDate);
       theEnvelope->date = (unsigned char *) fs_get (1+strlen (lDate));
       strcpy ((char *)theEnvelope->date, lDate);
-    } else if (lLowerNodeName == "from") {
-      std::string lName;
-      std::string lMailbox;
-      std::string lHost;
+    } else if (lNodeName == "from") {
       getNameAndEmailAddress(lChild, lName, lMailbox, lHost);
-      theEnvelope->from = mail_newaddr ();
-      theEnvelope->from->personal = cpystr(const_cast<char*>(lName.c_str()));
-      theEnvelope->from->mailbox = cpystr(const_cast<char*>(lMailbox.c_str()));
-      theEnvelope->from->host = cpystr(const_cast<char*>(lHost.c_str()));
-    } else if (lLowerNodeName == "sender") {
-      std::string lName;
-      std::string lMailbox;
-      std::string lHost;
+      theEnvelope->from = create_mail_address(lName, lMailbox, lHost);
+    } else if (lNodeName == "sender") {
       getNameAndEmailAddress(lChild, lName, lMailbox, lHost);
-      theEnvelope->sender= mail_newaddr ();
-      theEnvelope->sender->personal = cpystr(const_cast<char*>(lName.c_str()));
-      theEnvelope->sender->mailbox = cpystr(const_cast<char*>(lMailbox.c_str()));
-      theEnvelope->sender->host = cpystr(const_cast<char*>(lHost.c_str()));
-    } else if (lLowerNodeName == "replyto") {
-      std::string lName;
-      std::string lMailbox;
-      std::string lHost;
+      theEnvelope->sender = create_mail_address(lName, lMailbox, lHost);
+    } else if (lNodeName == "replyto") {
       getNameAndEmailAddress(lChild, lName, lMailbox, lHost);
-      theEnvelope->reply_to= mail_newaddr ();
-      theEnvelope->reply_to->personal = cpystr(const_cast<char*>(lName.c_str()));
-      theEnvelope->reply_to->mailbox = cpystr(const_cast<char*>(lMailbox.c_str()));
-      theEnvelope->reply_to->host = cpystr(const_cast<char*>(lHost.c_str()));
-    } else if (lLowerNodeName == "subject") {
-      theEnvelope->subject = cpystr ((char*)lValue.c_str());
-    } else if (lLowerNodeName == "recipient") {
+      theEnvelope->reply_to = create_mail_address(lName, lMailbox, lHost);
+    } else if (lNodeName == "subject") {
+      theEnvelope->subject = cpystr(const_cast<char*>(lNodeValue.c_str()));
+    } else if (lNodeName == "recipient") {
       Iterator_t lRecipentChildren = lChild.getChildren(); 
       lRecipentChildren->open();
       Item lRecipentChild;
-      lRecipentChildren->next(lRecipentChild);
-      lLowerNodeName = fn::lower_case( get_nodename(lRecipentChild) );
+      // read the recipient element but skip comments
+      while (lRecipentChildren->next(lRecipentChild)) {
+        if (lRecipentChild.getNodeKind() == store::StoreConsts::elementNode) {
+          break;
+        }
+      }
+      getNodeName(lRecipentChild, lNodeName);
       lRecipentChildren->close();
 
-      if (lLowerNodeName == "to") {
-        std::string lName;
-        std::string lMailbox;
-        std::string lHost;
+      if (lNodeName == "to") {
         getNameAndEmailAddress(lRecipentChild, lName, lMailbox, lHost);
         // there can be multiple to nodes, iterate to the next free one!
         ADDRESS** lNext = &theEnvelope->to;
         while (*lNext) {
           lNext = &((*lNext)->next);
         }  
-        *lNext = mail_newaddr ();
-        (*lNext)->personal = cpystr(const_cast<char*>(lName.c_str()));
-        (*lNext)->mailbox = cpystr(const_cast<char*>(lMailbox.c_str()));
-        (*lNext)->host = cpystr(const_cast<char*>(lHost.c_str()));
-      } else if(lLowerNodeName == "cc") {
-        std::string lName;
-        std::string lMailbox;
-        std::string lHost;
+        *lNext = create_mail_address(lName, lMailbox, lHost);
+      } else if(lNodeName == "cc") {
         getNameAndEmailAddress(lRecipentChild, lName, lMailbox, lHost);
         ADDRESS** lNext = &theEnvelope->cc;
         while (*lNext) {
           lNext = &((*lNext)->next);
         }  
-        *lNext = mail_newaddr ();
-        (*lNext)->personal = cpystr(const_cast<char*>(lName.c_str()));
-        (*lNext)->mailbox = cpystr(const_cast<char*>(lMailbox.c_str()));
-        (*lNext)->host = cpystr(const_cast<char*>(lHost.c_str()));
-      } else if (lLowerNodeName == "bcc") {
-        std::string lName;
-        std::string lMailbox;
-        std::string lHost;
+        *lNext = create_mail_address(lName, lMailbox, lHost);
+      } else if (lNodeName == "bcc") {
         getNameAndEmailAddress(lRecipentChild, lName, lMailbox, lHost);
-            
         ADDRESS** lNext = &theEnvelope->bcc;
         while (*lNext) {
           lNext = &((*lNext)->next);
         }  
-           
-        *lNext = mail_newaddr ();
-        (*lNext)->personal = cpystr(const_cast<char*>(lName.c_str()));
-        (*lNext)->mailbox = cpystr(const_cast<char*>(lMailbox.c_str()));
-        (*lNext)->host = cpystr(const_cast<char*>(lHost.c_str()));
+        *lNext = create_mail_address(lName, lMailbox, lHost);
       }
     }       
   }
-  lChildrenIt->close();
+  lChildIter->close();
 }
 
 void
 CClientMimeHandler::body()
 {
-  Iterator_t    lChildrenIt;
-  zorba::Item   lChild;
-  zorba::String lValue;
-
   theBody->type = TYPEOTHER;
 
-  lChildrenIt = theBodyItem.getChildren();
-  lChildrenIt->open();
-  while (lChildrenIt->next(lChild)) {
-    get_text_value(lChild, lValue);
-    // content case
-    String const lc( fn::lower_case( get_nodename(lChild) ) );
-    if (fn::ends_with(lc,"tent")) {
+  Iterator_t lChildIter;
+  Item lChild;
+  String lNodeName;
+
+  lChildIter = theBodyItem.getChildren();
+  lChildIter->open();
+  while (lChildIter->next(lChild)) {
+    if (lChild.getNodeKind() != store::StoreConsts::elementNode) {
+      continue;
+    }
+
+    getNodeName(lChild, lNodeName);
+
+    if (lNodeName == "content") {
       parse_content(theBody, lChild);
     }
-    // multipart case
-    else if(fn::ends_with(lc,"rt")) {
+    else if (lNodeName == "multipart") {
       parse_multipart(theBody, lChild);
     }
   }
-  lChildrenIt->close();
+  lChildIter->close();
 }
 
 void
@@ -295,14 +291,14 @@ CClientMimeHandler::set_text_body(BODY* aBody, String& aMessage)
 
 PARAMETER*
 CClientMimeHandler::create_param(
-  const char* aAttribute,
-  const char* aValue,
+  String aAttribute,
+  String aValue,
   PARAMETER* aPrevious)
 {
   PARAMETER *lParam;
   lParam = mail_newbody_parameter();
-  lParam->attribute = cpystr (aAttribute);
-  lParam->value = cpystr (aValue);
+  lParam->attribute = cpystr (aAttribute.c_str());
+  lParam->value = cpystr (aValue.c_str());
 
   if (aPrevious) {
     aPrevious->next = lParam;
@@ -312,31 +308,30 @@ CClientMimeHandler::create_param(
 }
 
 void
-CClientMimeHandler::set_encoding(BODY* aBody, zorba::String& aEncoding)
+CClientMimeHandler::set_encoding(BODY* aBody, String& aEncoding)
 {
-  //all encodings should start with ENC so we only check the rest of the string
-  zorba::String const lUpperEncSuffix = fn::upper_case( aEncoding.substr(3) );
+  String lUpperEnc = fn::upper_case(aEncoding);
 
-  if(lUpperEncSuffix == "7BIT")
+  if (lUpperEnc == "ENC7BIT")
     aBody->encoding = ENC7BIT;
-  else if (lUpperEncSuffix == "8BIT")
+  else if (lUpperEnc == "ENC8BIT")
     aBody->encoding = ENC8BIT;
-  else if (lUpperEncSuffix == "BINARY")
+  else if (lUpperEnc == "ENCBINARY")
     aBody->encoding = ENCBINARY;
-  else if (lUpperEncSuffix == "BASE64")
+  else if (lUpperEnc == "ENCBASE64")
     aBody->encoding = ENCBASE64;
-  else if (lUpperEncSuffix == "QUOTEDPRINTABLE")
+  else if (lUpperEnc == "ENCQUOTEDPRINTABLE")
     aBody->encoding = ENCQUOTEDPRINTABLE;
   else
     aBody->encoding = ENCOTHER;
 }
 
 bool
-CClientMimeHandler::set_content_type_value(BODY* aBody, zorba::String& aValue)
+CClientMimeHandler::set_content_type_value(BODY* aBody, String& aValue)
 {
-  bool          lRes = true;
-  int           lPos = aValue.find('/');
-  zorba::String const lLowerType = fn::lower_case(aValue.substr(0, lPos));
+  bool lRes = true;
+  int lPos = aValue.find('/');
+  String lLowerType = fn::lower_case(aValue.substr(0, lPos));
 
   //set the BODY content type
   if (lLowerType == "text")
@@ -357,12 +352,13 @@ CClientMimeHandler::set_content_type_value(BODY* aBody, zorba::String& aValue)
     aBody->type = TYPEOTHER;
     lRes = false;
   }
+
   //set the BODY content subtype
   if (lRes) {
     // the list of subtypes of each type is available at
     // http://www.iana.org/assignments/media-types/
-    zorba::String lSubtype = aValue.substr(lPos + 1,aValue.length() - lPos);
-    aBody->subtype = cpystr((char*) fn::upper_case(lSubtype).c_str());
+    String lSubtype = aValue.substr(lPos + 1, aValue.length() - lPos);
+    aBody->subtype = cpystr(fn::upper_case(lSubtype).c_str());
   }
 
   return lRes;
@@ -376,33 +372,28 @@ CClientMimeHandler::set_contentTypeCharsetCTF(
   Iterator_t lAttributes = aContentOrMultipartItem.getAttributes();
   lAttributes->open();
   Item lAttributeItem;
-  String lValue;
-  while(lAttributes->next(lAttributeItem)) {
-    String lName = get_nodename(lAttributeItem); 
-    lValue = lAttributeItem.getStringValue();
-    if (fn::ends_with(lName,"ype")) {
-      // contentType ...
-      set_content_type_value(aBody, lValue);
-    } else if (fn::ends_with(lName,"set")) {
-      // charset ...
-      aBody->parameter = create_param("charset", const_cast<char*>(fn::upper_case(lValue).c_str()), NIL);
-    } else if (fn::ends_with(lName,"ing")) {
-      // contentTranferEncoding ...
-      set_encoding(aBody, lValue);  
-    } else if (fn::ends_with(lName,"ion")) {
-      // contentDisposition ..
-      aBody->disposition.type = cpystr(const_cast<char*>(fn::upper_case(lValue).c_str())); 
-    } else if (fn::ends_with(lName,"ame")) {
-      // contentDisposition-filename
+  String lNodeName, lNodeValue;
+  while (lAttributes->next(lAttributeItem)) {
+    getNodeName(lAttributeItem, lNodeName); 
+    lNodeValue = lAttributeItem.getStringValue();
+
+    if (lNodeName == "contentType") {
+      set_content_type_value(aBody, lNodeValue);
+    } else if (lNodeName == "charset") {
+      aBody->parameter = create_param("charset", fn::upper_case(lNodeValue), NIL);
+    } else if (lNodeName == "contentTransferEncoding") {
+      set_encoding(aBody, lNodeValue);  
+    } else if (lNodeName ,"contentDisposition") {
+      aBody->disposition.type = cpystr(fn::upper_case(lNodeValue).c_str()); 
+    } else if (lNodeName == "contentDisposition-filename") {
       if (!aBody->disposition.parameter) {  
-        aBody->disposition.parameter = create_param("filename", const_cast<char*>(lValue.c_str()), NIL);
+        aBody->disposition.parameter = create_param("filename", lNodeValue, NIL);
       } else {
-        aBody->disposition.parameter->next = create_param("filename", const_cast<char*>(lValue.c_str()), NIL);
+        aBody->disposition.parameter->next = create_param("filename", lNodeValue, NIL);
       }
-    } else if (fn::ends_with(lName,"ate")) {
-      // contentDisposition-modification-date
+    } else if (lNodeName == "contentDisposition-modification-date") {
       char lDate[MAILTMPLEN];
-      parseXmlDateTime(lValue, lDate);      
+      parseXmlDateTime(lNodeValue, lDate);      
       if (!aBody->disposition.parameter) {
         aBody->disposition.parameter = create_param("modification-date", lDate); 
       } else {
@@ -432,21 +423,26 @@ CClientMimeHandler::parse_content(BODY* aBody, const Item aItemContent)
 bool
 CClientMimeHandler::parse_multipart(BODY* aBody, const Item aItemMultipart)
 {
-  Iterator_t    lChildrenIt;
-  Item          lChild;
-  zorba::String lValue;
-  PART*         lPartRoot = NIL;
-  PART*         lPartPrev = NIL;
+  Iterator_t lChildIter;
+  Item lChild;
+  String lNodeName, lNodeValue;
+  PART* lPartRoot = NIL;
+  PART* lPartPrev = NIL;
  
   set_contentTypeCharsetCTF(aBody, aItemMultipart);
     
   // a multipart node constists of several content or multipart nodes
-  lChildrenIt = aItemMultipart.getChildren();
-  lChildrenIt->open();
-  while (lChildrenIt->next(lChild)) {
+  lChildIter = aItemMultipart.getChildren();
+  lChildIter->open();
+  while (lChildIter->next(lChild)) {
+    if (lChild.getNodeKind() != store::StoreConsts::elementNode) {
+      continue;
+    }
+
     // a simple content item
-    String const lc( fn::lower_case( get_nodename(lChild) ) );
-    if (fn::ends_with(lc,"tent")) {
+    getNodeName(lChild, lNodeName);
+
+    if (lNodeName == "content") {
       PART* lPart;
       lPart = mail_newbody_part();
       parse_content(&lPart->body, lChild);
@@ -458,7 +454,7 @@ CClientMimeHandler::parse_multipart(BODY* aBody, const Item aItemMultipart)
       lPartPrev = lPart;
     }
     // a multipart item ... this calls for recursion 
-    else if (fn::ends_with(lc,"ipart")) {
+    else if (lNodeName == "multipart") {
       PART* lPart;
       lPart = NIL;
       lPart = mail_newbody_part();
@@ -473,7 +469,7 @@ CClientMimeHandler::parse_multipart(BODY* aBody, const Item aItemMultipart)
       lPartPrev = lPart;
     }
   }
-  lChildrenIt->close();
+  lChildIter->close();
 
   if (lPartRoot) {
     aBody->nested.part = lPartRoot;

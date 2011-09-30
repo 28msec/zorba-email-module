@@ -30,7 +30,6 @@ let $hostInfo :=
    http://www.zorba-xquery.com/modules/email :)
 let $email := 
   <message xmlns="http://www.zorba-xquery.com/modules/email">
-    <!-- bug -->
     <envelope>
       <date>2010-11-26T15:50:39-04:01</date>
       <subject>An important HTML message</subject>

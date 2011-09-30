@@ -1,9 +1,12 @@
 (:
  : This example uses the send function of the SMTP module to send an email
- : containing an HTML and text message from a GMail account. If an email client
- : does not support HTML email messages, it can use the text version. The order
- : of the alternative contents might be relevant for some email clients.
- : This message is also sent to the sender itself in CC.
+ : containing an HTML and text message from a GMail account. The order of the
+ : alternative contents might be relevant for some email clients. There is
+ : though a rule of thumb saying that the alternatives must be ordered in from
+ : the least to the most faithful representation. That is in our case, HTML
+ : version comes after the text version. This way email clients can stop at the
+ : email version they can still process. This message is also sent to the sender
+ : itself in CC.
  :)
 
 import module namespace smtp = 'http://www.zorba-xquery.com/modules/email/smtp'; 

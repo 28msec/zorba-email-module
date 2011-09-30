@@ -18,6 +18,7 @@
 #include <zorba/iterator.h>
 #include <zorba/user_exception.h>
 #include <zorba/xquery_functions.h>
+#include <zorba/store_consts.h>
 
 #include "smtp_function.h"
 
@@ -74,25 +75,40 @@ void
 SmtpFunction::getHostUserPassword(
   const ExternalFunction::Arguments_t& aArgs,
   int aPos,
-  std::string& aHost,
-  std::string& aUserName,
-  std::string& aPassword) const
+  String& aHostName,
+  String& aUserName,
+  String& aPassword) const
 {
   Item lNode;
-  Iterator_t args_iter = aArgs[aPos]->getIterator();
-  args_iter->open();
-  args_iter->next(lNode);
-  args_iter->close();
-  Iterator_t lChildren = lNode.getChildren();
-  lChildren->open();
+  Iterator_t lArgsIter = aArgs[aPos]->getIterator();
+  lArgsIter->open();
+  lArgsIter->next(lNode);
+  lArgsIter->close();
+
   Item lChild;
-  lChildren->next(lChild);
-  aHost = lChild.getStringValue().c_str();
-  lChildren->next(lChild);
-  aUserName = lChild.getStringValue().c_str();
-  lChildren->next(lChild);
-  aPassword = lChild.getStringValue().c_str();
-  lChildren->close();  
+  Iterator_t lChildIter = lNode.getChildren();
+  lChildIter->open();
+
+  // now read the children but skipping non-element nodes
+  while (lChildIter->next(lChild)) {
+    if (lChild.getNodeKind() == store::StoreConsts::elementNode) {
+      break;
+    }
+  }
+  aHostName = lChild.getStringValue();
+  while (lChildIter->next(lChild)) {
+    if (lChild.getNodeKind() == store::StoreConsts::elementNode) {
+      break;
+    }
+  }
+  aUserName = lChild.getStringValue();
+  while (lChildIter->next(lChild)) {
+    if (lChild.getNodeKind() == store::StoreConsts::elementNode) {
+      break;
+    }
+  }
+  aPassword = lChild.getStringValue();
+  lChildIter->close();  
 }
 
 } // namespace emailmodule

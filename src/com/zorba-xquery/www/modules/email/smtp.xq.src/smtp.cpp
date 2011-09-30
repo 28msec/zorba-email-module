@@ -46,9 +46,7 @@ SendFunction::evaluate(
 {
   try {
     // getting host, username and password 
-    std::string lHostName;
-    std::string lUserName;
-    std::string lPassword;
+    String lHostName, lUserName, lPassword;
     getHostUserPassword(args, 0, lHostName, lUserName, lPassword);      
         
     std::stringstream lDiagnostics; 
@@ -71,14 +69,14 @@ SendFunction::evaluate(
       throw EmailException("NO_RECIPIENT", "Message has no recipient.");
     } else {
       bool lRes = ImapClient::Instance().send(
-        lHostName.c_str(),
-        lUserName.c_str(),
-        lPassword.c_str(),
-        lHandler.getEnvelope(),
-        lHandler.getBody(),
-        lDiagnostics);
+        lHostName.c_str(), lUserName.c_str(), lPassword.c_str(),
+        lHandler.getEnvelope(), lHandler.getBody(), lDiagnostics);
       if (!lRes) {
-        throw EmailException("NOT_SENT", "Message could not be sent.");
+        std::stringstream lReport;
+        lReport
+          << "Message could not be sent. Reason: "
+          << lDiagnostics.str();
+        throw EmailException("NOT_SENT", lReport.str());
       }
     }
   } catch (EmailException& e) {

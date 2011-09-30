@@ -67,9 +67,10 @@ class CClientMimeHandler : public MimeHandler
 
     // helper function
     PARAMETER *
-    create_param(const char* aAttribute,
-                  const char * aValue,
-                  PARAMETER * aPrevious = NIL);
+    create_param(
+      String aAttribute,
+      String aValue,
+      PARAMETER * aPrevious = NIL);
 
     // parse non multipart message
     bool

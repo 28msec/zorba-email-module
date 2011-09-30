@@ -16,7 +16,7 @@ let $hostInfo :=
   <hostInfo xmlns="http://www.zorba-xquery.com/modules/email">
     <hostName>smtp.gmail.com:587/tls/novalidate-cert</hostName>
     <userName>zorba.smtp.sender</userName>
-    <password>1openssl!</password>
+    <password>1openssl!!</password>
   </hostInfo>
 
 (: The base64 representation of the image to be sent. :) 

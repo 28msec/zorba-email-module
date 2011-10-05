@@ -45,8 +45,6 @@ namespace zorba {
                const DynamicContext* aDynCtx) const;
   };
 
-
-
 //*****************************************************************************
 
   class CreateFunction : public ImapFunction
@@ -62,8 +60,6 @@ namespace zorba {
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
-
-
 
 //*****************************************************************************
 
@@ -81,8 +77,6 @@ namespace zorba {
                const DynamicContext* aDynCtx) const;
   };
 
-
-
 //*****************************************************************************
 
   class RenameFunction : public ImapFunction
@@ -99,8 +93,6 @@ namespace zorba {
                const DynamicContext* aDynCtx) const;
   };
 
-
-
 //*****************************************************************************
 
   class ListFunction : public ImapFunction
@@ -116,7 +108,6 @@ namespace zorba {
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
   };
-
 
 //*****************************************************************************
 
@@ -150,7 +141,6 @@ namespace zorba {
                const DynamicContext* aDynCtx) const;
   };
 
-
 //*****************************************************************************
 
   class ExpungeFunction : public ImapFunction
@@ -167,7 +157,7 @@ namespace zorba {
                const DynamicContext* aDynCtx) const;
   };
 
- //*****************************************************************************
+//*****************************************************************************
 
   class SearchFunction : public ImapFunction
   {
@@ -183,7 +173,7 @@ namespace zorba {
                const DynamicContext* aDynCtx) const;
   };
 
- //*****************************************************************************
+//*****************************************************************************
 
   class CopyFunction : public ImapFunction
   {
@@ -199,7 +189,7 @@ namespace zorba {
                const DynamicContext* aDynCtx) const;
   };
 
- //*****************************************************************************
+//*****************************************************************************
 
   class FetchEnvelopeFunction : public ImapFunction
   {
@@ -217,8 +207,7 @@ namespace zorba {
   
   };
 
-
- //*****************************************************************************
+//*****************************************************************************
 
   class FetchFlagsFunction : public ImapFunction
   {
@@ -236,8 +225,7 @@ namespace zorba {
 
   };
 
-
- //*****************************************************************************
+//*****************************************************************************
 
   class SetFlagsFunction : public ImapFunction
   {
@@ -256,7 +244,7 @@ namespace zorba {
       getFlagsVector(const ExternalFunction::Arguments_t& aArgs, std::vector<int>& aFlags);
   };
 
- //*****************************************************************************
+//*****************************************************************************
 
   class FetchSubjectFunction : public ImapFunction
   {
@@ -270,11 +258,9 @@ namespace zorba {
       evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
-
-
   };
 
- //*****************************************************************************
+//*****************************************************************************
 
   class FetchFromFunction: public ImapFunction
   {
@@ -288,12 +274,9 @@ namespace zorba {
       evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
-
-
   };
 
-
- //*****************************************************************************
+//*****************************************************************************
 
   class FetchUidFunction: public ImapFunction
   {
@@ -307,10 +290,9 @@ namespace zorba {
       evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
-
-
   };
- //*****************************************************************************
+
+//*****************************************************************************
 
   class FetchMessageSequenceNumberFunction: public ImapFunction
   {
@@ -324,14 +306,9 @@ namespace zorba {
       evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
-
-
   };
 
-
-
-
- //*****************************************************************************
+//*****************************************************************************
 
   class FetchMessageFunction : public ImapFunction
   {
@@ -345,22 +322,10 @@ namespace zorba {
       evaluate(const ExternalFunction::Arguments_t& args,
                const StaticContext* aSctxCtx,
                const DynamicContext* aDynCtx) const;
-
-      static void getMessage(const ImapModule* aModule, 
-                             Item& aParent, 
-                             const std::string& aHostName, 
-                             const std::string& aUserName, 
-                             const std::string& aPassword, 
-                             const std::string& aMailbox, 
-                             const unsigned long aMessageNumber, 
-                             const bool aUid, 
-                             const  bool aOnlyEnvelope);  
-
   };
 
- 
-
   
-} /* namespace emailmodule */ } /* namespace zorba */
+} /* namespace emailmodule */
+} /* namespace zorba */
 
 #endif /* ZORBA_EMAILMODULE_FILE_H */

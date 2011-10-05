@@ -436,7 +436,8 @@ declare %private %ann:nondeterministic function imap:fetch-message-impl($host-in
  : Fetches the subject for a message.
  :
  : Please note that this function only works with message sequence numbers,
- : not with unique identifiers. Only the first 30 characters of a subject are fetched.
+ : not with unique identifiers. Only the first 255 characters of a subject
+ : are fetched.
  :
  : @param $host-info The IMAP host, user name, and password.
  : @param $mailbox The mailbox for which we want to get the subject of a message.
@@ -464,8 +465,9 @@ declare %private %ann:nondeterministic function imap:fetch-subject-impl($host-in
 (:~
  : Fetches the 'from' string of a message.
  :
- : Please note that this function only words with message sequence numbers, not with unique identifiers.
- : Only the first 30 characters of a 'from' string are fetched.
+ : Please note that this function only words with message sequence numbers,
+ : not with unique identifiers. Only the first 255 characters of a 'from'
+ : string are fetched.
  : 
  : @param $host-info The IMAP host, user name, and password.
  : @param $mailbox The mailbox for which we want to get the 'from' string of a message.

@@ -69,8 +69,7 @@ namespace zorba { namespace emailmodule {
       }
       else {
         sprintf (tmp, "MAIL");
-        res = true;
-        res = smtp_mail ( smtp_stream, tmp, aEnvelope, aBody);
+        res = smtp_mail(smtp_stream, tmp, aEnvelope, aBody);
         if (res) {
           out << "Ok.";
         } else {
@@ -382,22 +381,23 @@ namespace zorba { namespace emailmodule {
     
   }
   
-  std::string                    
-  ImapClient::fetchSubject(const std::string& aHost,
-                           const std::string& aUserName,
-                           const std::string& aPassword,
-                           const std::string& aMailbox,
-                           const unsigned long aMessageNumber) {
-    
+std::string
+ImapClient::fetchSubject(
+  const std::string& aHost,
+  const std::string& aUserName,
+  const std::string& aPassword,
+  const std::string& aMailbox,
+  const unsigned long aMessageNumber)
+{
 #include "linkage.c"
     
-    std::string lHost = "{" + aHost + "}" + aMailbox; 
-    MAILSTREAM* lSource = getMailStream(aHost, aUserName, aPassword, aMailbox, true); 
+  std::string lHost = "{" + aHost + "}" + aMailbox; 
+  MAILSTREAM* lSource = getMailStream(aHost, aUserName, aPassword, aMailbox, true); 
     
-    char lResult[30];
-    mail_fetchsubject(lResult, lSource, aMessageNumber, (unsigned long) 30); 
-    return std::string(lResult);
-  }
+  char lResult[256];
+  mail_fetchsubject(lResult, lSource, aMessageNumber, (unsigned long)255);
+  return std::string(lResult);
+}
   
   
   
@@ -412,8 +412,8 @@ namespace zorba { namespace emailmodule {
     
     MAILSTREAM* lSource = getMailStream(aHost, aUserName, aPassword, aMailbox, true); 
     
-    char lResult[30];
-    mail_fetchfrom(lResult, lSource, aMessageNumber, (unsigned long) 30);
+    char lResult[256];
+    mail_fetchsubject(lResult, lSource, aMessageNumber, (unsigned long)255);
     return std::string(lResult);
   }
   
@@ -932,4 +932,3 @@ void mm_fatal (char *string)
 
 
 #pragma GCC diagnostic warning "-Wwrite-strings"
-

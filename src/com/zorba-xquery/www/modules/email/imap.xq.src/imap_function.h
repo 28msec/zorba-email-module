@@ -22,6 +22,8 @@
 #include <zorba/function.h>
 #include <zorba/error.h>
 
+#include <unicode/utypes.h>
+
 
 namespace zorba { namespace emailmodule {
 
@@ -43,76 +45,69 @@ class ImapFunction : public ContextualExternalFunction
       const std::string& qName,
       const std::string& message) const;
 
-    static void
+    void
     getHostUserPassword(
       const ExternalFunction::Arguments_t& aArgs,
       int aPos,
       std::string& aHost,
       std::string& aUserName,
-      std::string& aPassword);
+      std::string& aPassword) const;
 
-    static String
+    String
     getOneStringArg(
-      const ImapModule* aModule,
       const ExternalFunction::Arguments_t& args,
-      int pos);
+      int pos) const;
 
-    static std::string
+    std::string
     getMessageNumbers(
       const ExternalFunction::Arguments_t& args,
-      int pos);
+      int pos) const;
 
-    static unsigned long
+    unsigned long
     getOneMessageNumber(
       const ExternalFunction::Arguments_t& args,
-      int pos);
+      int pos) const;
 
-    static bool
+    bool
     getOneBoolArg(
-      const ImapModule* aModule,
       const ExternalFunction::Arguments_t& args,
-      int pos);
+      int pos) const;
 
     /*
       * Converts a dateTime string as returned by the c-client (e.g. Tue, 24
       * Aug 2010 16:26:10 +0200'DD) into a xs:dateTime format.
       */
-    static std::string
-    getDateTime(
-      const ImapModule* aModule,
-      const std::string& aCClientDateTime);
+    std::string
+    getDateTime(const std::string& aCClientDateTime) const;
 
-    static std::string
-    getContentType(const unsigned short aType, const char* aSubtype);
+    std::string
+    getContentType(const unsigned short aType, const char* aSubtype) const;
 
-    static std::string
-    getEncoding(const unsigned short aEncoding);
+    std::string
+    getEncoding(const unsigned short aEncoding) const;
 
-    static void
+    void
     createFlagsNode(
-      const ImapModule* aModule,
       Item& aParent,
       Item& aFlags,
       std::vector<int>& aFlagsVector,
-      const bool aQualified);
+      const bool aQualified) const;
 
     /*
       * Creates a simple named  node containing a text node.
       */
-    static void
+    void
     createInnerNodeWithText(
-      const ImapModule* aModule,
       Item& aParent,
       const std::string& aNamespace,
       const std::string& aPrefix,
       const std::string& aName,
       const std::string& aTypeNamespace,
       const std::string& aType,
-      const std::string& aContent);
+      const std::string& aContent) const;
 
-    static void
+    void
     createContentNode(
-      const ImapModule* aModule,
       Item& aParent,
       const std::string& aContent,
       const std::string& contentType,
@@ -121,38 +116,68 @@ class ImapFunction : public ContextualExternalFunction
       const std::string& aContentDisposition,
       const std::string& aContentDispositionFilename,
       const std::string& aContentDispositionModificationDate,
-      const std::string& aContentId);
+      const std::string& aContentId) const;
 
     /*
       * Creates a simple email address node as defined in email.xsd
       */
-    static void
-    createEmailAddressNode(const ImapModule* aModule,
-                            Item& aParent,
-                            const std::string& aName,
-                            const char * aPersonal,
-                            const char* aMailbox,
-                            const char* aHost);
+    void
+    createEmailAddressNode(
+      Item& aParent,
+      const std::string& aName,
+      const char * aPersonal,
+      const char* aMailbox,
+      const char* aHost) const;
 
-    static void
+    void
     createRecipentNode(
-      const ImapModule* aModule,
       Item& aParent,
       const std::string& aName,
       const char* aPersonal,
       const char* aMailbox,
-      const char* aHost);
+      const char* aHost) const;
 
-    static void
-    createContentTypeAttributes(const 
-      ImapModule* aModule,
+    void
+    createContentTypeAttributes(
       Item& aParent,
       const std::string& aValue,
       const std::string& aCharset,
       const std::string& aTransferEncoding,
       const std::string& aContentDisposition,
       const std::string& aContentDispositionFilename,
-      const std::string& aContentDispositionModificationDate);
+      const std::string& aContentDispositionModificationDate) const;
+
+    void
+    getMessage(
+      Item& aParent, 
+      const std::string& aHostName, 
+      const std::string& aUserName, 
+      const std::string& aPassword, 
+      const std::string& aMailbox, 
+      const unsigned long aMessageNumber, 
+      const bool aUid, 
+      const  bool aOnlyEnvelope) const;
+
+    void
+    toUtf8(
+      const std::string& value,
+      const char* fromCharset,
+      std::string& result) const;
+
+    void
+    checkStatus(UErrorCode aStatus) const;
+
+    void
+    decodeHeader(
+      const std::string& value,
+      std::string& result) const;
+
+    // This function is defined in imap.cpp because if defined in imap_function.cpp
+    // some header file conflict are raised and it does not compile
+    void
+    decodeEncodedWords(
+      const std::string& value,
+      std::string& result) const;
 
   public:
     ImapFunction(const ImapModule* module);

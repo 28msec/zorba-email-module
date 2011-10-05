@@ -21,13 +21,16 @@
 #ifdef WIN32
 #include <windows.h>
 #endif
-#include "c-client.h"
-#include <string>
+
+#include <c-client.h>
 #undef max
+
+#include <string>
 #include <list>
 #include <vector>
 #include <exception>
 #include <sstream>
+
 
 namespace zorba { namespace emailmodule {
 

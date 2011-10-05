@@ -30,7 +30,6 @@
 #include "imap_module.h"
 #include "imap_client.h"
 #include "email_exception.h"
-#include "c-client.h"
 
 
 namespace zorba { namespace emailmodule {
@@ -53,8 +52,8 @@ StatusFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
     ImapClient::Instance().status(lHostName, lUserName, lPassword, lMailbox.c_str());
     std::string lErrorMessage = ImapClient::Instance().getError();
     if (lErrorMessage.size() != 0) {
@@ -98,8 +97,8 @@ CreateFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailboxName = ImapFunction::getOneStringArg(theModule, aArgs, 1);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailboxName = getOneStringArg(aArgs, 1);
     bool lSuccess = ImapClient::Instance().create(lHostName, lUserName, lPassword, lMailboxName.c_str());
     if (!lSuccess) {
       std::string lErrorMessage = ImapClient::Instance().getError();
@@ -129,8 +128,8 @@ DeleteFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailboxName = ImapFunction::getOneStringArg(theModule, aArgs, 1);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailboxName = getOneStringArg(aArgs, 1);
     bool lSuccess = ImapClient::Instance().delete_mailbox(lHostName, lUserName, lPassword, lMailboxName.c_str());
     
     if (!lSuccess) {
@@ -161,9 +160,9 @@ RenameFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailboxFromName = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    String lMailboxToName = ImapFunction::getOneStringArg(theModule, aArgs, 2);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailboxFromName = getOneStringArg(aArgs, 1);
+    String lMailboxToName = getOneStringArg(aArgs, 2);
     bool lSuccess = ImapClient::Instance().rename(lHostName, lUserName, lPassword, lMailboxFromName.c_str(), lMailboxToName.c_str());
     if (!lSuccess) {
       std::string lErrorMessage = ImapClient::Instance().getError();
@@ -193,10 +192,10 @@ ListFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lReferencePath = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    String lPattern = ImapFunction::getOneStringArg(theModule, aArgs, 2);
-    bool lOnlySuscribed = ImapFunction::getOneBoolArg(theModule, aArgs, 3);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lReferencePath = getOneStringArg(aArgs, 1);
+    String lPattern = getOneStringArg(aArgs, 2);
+    bool lOnlySuscribed = getOneBoolArg(aArgs, 3);
     
     std::vector<std::string> lListedMailboxes = ImapClient::Instance().list(lHostName, lUserName, lPassword, lReferencePath.c_str(), lPattern.c_str(), lOnlySuscribed);
     std::string lErrorMessage = ImapClient::Instance().getError();
@@ -238,8 +237,8 @@ SubscribeFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
     
     bool lSuccess = ImapClient::Instance().subscription(lHostName, lUserName, lPassword, lMailbox.c_str(), true);
     if (!lSuccess) {
@@ -270,8 +269,8 @@ UnsubscribeFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
     
     bool lSuccess = ImapClient::Instance().subscription(lHostName, lUserName, lPassword, lMailbox.c_str(), false);
     if (!lSuccess) {
@@ -302,8 +301,8 @@ ExpungeFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
     
     bool lSuccess = ImapClient::Instance().expunge(lHostName, lUserName, lPassword, lMailbox.c_str());
     if (!lSuccess) {
@@ -334,9 +333,9 @@ SearchFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    String lCriteria = ImapFunction::getOneStringArg(theModule, aArgs, 2);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
+    String lCriteria = getOneStringArg(aArgs, 2);
     // get none or one boolean arg
     bool lUid = false;
     Item lItem;
@@ -384,9 +383,9 @@ CopyFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailboxFrom = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    String lMailboxTo = ImapFunction::getOneStringArg(theModule, aArgs, 2);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailboxFrom = getOneStringArg(aArgs, 1);
+    String lMailboxTo = getOneStringArg(aArgs, 2);
     // find out if we are working with uid's instead of sequence numbers.
     bool lUid = false;
     Item lItem;
@@ -405,7 +404,7 @@ CopyFunction::evaluate(
     }
     arg5_iter->close();
     
-    std::string lMessageNumbers = ImapFunction::getMessageNumbers(aArgs, 3); 
+    std::string lMessageNumbers = getMessageNumbers(aArgs, 3); 
     
     bool lSuccess = ImapClient::Instance().copy(lHostName, lUserName, lPassword, lMailboxFrom.c_str(), lMailboxTo.c_str(), lMessageNumbers, lUid, lCopy);
     if (!lSuccess) {
@@ -436,10 +435,10 @@ FetchEnvelopeFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
     
-    unsigned long lMessageNumber = ImapFunction::getOneMessageNumber(aArgs, 2);  
+    unsigned long lMessageNumber = getOneMessageNumber(aArgs, 2);  
     
     bool lUid = false;
     Item lItem;
@@ -451,9 +450,10 @@ FetchEnvelopeFunction::evaluate(
     arg3_iter->close();
     
     Item lParent; 
-    FetchMessageFunction::getMessage(theModule, lParent,
-      lHostName.c_str(), lUserName.c_str(), lPassword.c_str(), lMailbox.c_str(),
-      lMessageNumber, lUid, true);
+    getMessage(lParent,
+      lHostName.c_str(), lUserName.c_str(), lPassword.c_str(),
+      lMailbox.c_str(), lMessageNumber,
+      lUid, true);
     
     std::string lErrorMessage = ImapClient::Instance().getError();
     if (lErrorMessage.size() != 0) {
@@ -485,19 +485,28 @@ FetchSubjectFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    unsigned long lMessageNumber = ImapFunction::getOneMessageNumber(aArgs, 2);
-    String lResult = ImapClient::Instance().fetchSubject(lHostName, lUserName, lPassword, lMailbox.c_str(), lMessageNumber);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
+    unsigned long lMessageNumber = getOneMessageNumber(aArgs, 2);
+    std::string lRawSubject =
+      ImapClient::Instance().fetchSubject(
+        lHostName,
+        lUserName,
+        lPassword,
+        lMailbox.c_str(),
+        lMessageNumber);
     
+    // decode the subject header because it can contain encoded words
+    std::string lDecodedSubject;
+    decodeHeader(lRawSubject, lDecodedSubject);
+
     std::string lErrorMessage = ImapClient::Instance().getError();
     if (lErrorMessage.size() != 0) {
       raiseImapError("IMAP0001", lErrorMessage);
     }
     
-    
-    return ItemSequence_t(new SingletonItemSequence(
-                                                    theModule->getItemFactory()->createString(lResult)));
+    return ItemSequence_t(new SingletonItemSequence(theModule->getItemFactory()->createString(lDecodedSubject)));
+
   } catch (EmailException& e) {
     raiseImapError(e);
   }
@@ -521,9 +530,9 @@ FetchFromFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    unsigned long lMessageNumber = ImapFunction::getOneMessageNumber(aArgs, 2);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
+    unsigned long lMessageNumber = getOneMessageNumber(aArgs, 2);
     String lResult = ImapClient::Instance().fetchFrom(lHostName, lUserName, lPassword, lMailbox.c_str(), lMessageNumber);
     
     std::string lErrorMessage = ImapClient::Instance().getError();
@@ -557,9 +566,9 @@ FetchFlagsFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    unsigned long lMessageNumber = ImapFunction::getOneMessageNumber(aArgs, 2);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
+    unsigned long lMessageNumber = getOneMessageNumber(aArgs, 2);
     bool lUid = false;
     Item lItem;
     Iterator_t arg3_iter = aArgs[3]->getIterator();
@@ -582,7 +591,7 @@ FetchFlagsFunction::evaluate(
     
     
     Item lFlagsItem;
-    ImapFunction::createFlagsNode(theModule, lParent, lFlagsItem, lFlags, true);
+    createFlagsNode(lParent, lFlagsItem, lFlags, true);
     
     return ItemSequence_t(new SingletonItemSequence(lFlagsItem));
   } catch (EmailException& e) {
@@ -608,9 +617,9 @@ SetFlagsFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    unsigned long lMessageNumber = ImapFunction::getOneMessageNumber(aArgs, 2);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
+    unsigned long lMessageNumber = getOneMessageNumber(aArgs, 2);
     
     std::vector<int> lFlags(6, 0);
     SetFlagsFunction::getFlagsVector(aArgs, lFlags); 
@@ -691,9 +700,9 @@ FetchUidFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    unsigned long lMessageNumber = ImapFunction::getOneMessageNumber(aArgs, 2);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
+    unsigned long lMessageNumber = getOneMessageNumber(aArgs, 2);
     unsigned long lResult = ImapClient::Instance().convertNumber(lHostName, lUserName, lPassword, lMailbox.c_str(), lMessageNumber, true);
     
     return ItemSequence_t(new SingletonItemSequence(
@@ -721,9 +730,9 @@ FetchMessageSequenceNumberFunction::evaluate(
     std::string lHostName;
     std::string lUserName;
     std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
-    unsigned long lMessageNumber = ImapFunction::getOneMessageNumber(aArgs, 2);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
+    unsigned long lMessageNumber = getOneMessageNumber(aArgs, 2);
     unsigned long lResult = ImapClient::Instance().convertNumber(lHostName, lUserName, lPassword, lMailbox.c_str(), lMessageNumber, false);
     
     return ItemSequence_t(new SingletonItemSequence(
@@ -749,16 +758,18 @@ FetchMessageFunction::evaluate(
 {
   try {
     std::string lHostName;  std::string lUserName;  std::string lPassword;
-    ImapFunction::getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
-    String lMailbox = ImapFunction::getOneStringArg(theModule, aArgs, 1);
+    getHostUserPassword(aArgs, 0, lHostName, lUserName, lPassword);
+    String lMailbox = getOneStringArg(aArgs, 1);
     
-    unsigned long lMessageNumber = ImapFunction::getOneMessageNumber(aArgs, 2);
+    unsigned long lMessageNumber = getOneMessageNumber(aArgs, 2);
     
-    bool lUid = ImapFunction::getOneBoolArg(theModule, aArgs, 3);
+    bool lUid = getOneBoolArg(aArgs, 3);
     
     Item lParent;
-    FetchMessageFunction::getMessage(theModule, lParent, lHostName.c_str(), lUserName.c_str(), lPassword.c_str
-                                     (), lMailbox.c_str(), lMessageNumber, lUid, false);
+    getMessage(lParent,
+      lHostName.c_str(), lUserName.c_str(), lPassword.c_str(),
+      lMailbox.c_str(), lMessageNumber,
+      lUid, false);
     
     return ItemSequence_t(new SingletonItemSequence(lParent));
   } catch (EmailException& e) {
@@ -767,223 +778,78 @@ FetchMessageFunction::evaluate(
   return ItemSequence_t(NULL);
 }
 
+
+// This function is defined here because if defined in imap_function.cpp
+// some header file conflict are raised and it does not compile
 void
-FetchMessageFunction::getMessage(
-  const ImapModule* aModule, 
-  Item& aParent,
-  const std::string& aHostName, 
-  const std::string& aUserName, 
-  const std::string& aPassword, 
-  const std::string& aMailbox, 
-  const unsigned long aMessageNumber, 
-  const bool aUid, 
-  const bool aOnlyEnvelope)
+ImapFunction::decodeEncodedWords(
+  const std::string& aRawSubject,
+  std::string& aDecodedSubject) const
 {
-  std::vector<int> lFlags(6,0);
-  ENVELOPE* lEnvelope;
-  BODY* lBody;
-  if (aOnlyEnvelope) {
-    // only fetch envelope
-    lEnvelope =  ImapClient::Instance().fetchEnvelope(aHostName, aUserName, aPassword, aMailbox, aMessageNumber, lFlags, aUid);
-  } else {
-    // the flags vector in the imap client will be filled by this call, so clear it
-    lEnvelope = ImapClient::Instance().fetchStructure(aHostName, aUserName, aPassword, aMailbox, &lBody, aMessageNumber, aUid, lFlags);
-  }
-    
-  std::vector<std::pair<String, String> >   ns_binding;
-  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
-    
-  Item lEnvelopeItem;
-  std::string lErrorMessage = ImapClient::Instance().getError();
-  if (lErrorMessage.size() != 0) {
-    Item lQName = ImapModule::getItemFactory()->createQName(ImapModule::getURIString(), "imap", "IMAP0001");
-    throw USER_EXCEPTION(lQName, lErrorMessage);
+  std::size_t lLength = aRawSubject.length();
+  // if this is not a good format return the raw subject
+  if (lLength < 4 || (aRawSubject.find("=?") != 0 && aRawSubject.find("?=", lLength - 2) != lLength - 2)) {
+    aDecodedSubject = aRawSubject;
+    return;
   }
 
-  // First construct the envelope (depending on aOnlyEnvelope we may be finished then)
-  // Important: if we only want the envelope, then the envelope MUST be qualified (being the root of the DOM)
-  Item lEnvelopeName;
-  if (aOnlyEnvelope) {
-    lEnvelopeName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelope");
-  } else {
-    lEnvelopeName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelope");
-  }  
-  Item lEnvelopeType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelopeType");
-    
-  Item lNullItem;
-  // if we only want the envelope, then create it with a null parent, else create the message and use it as parent
-  if (aOnlyEnvelope) {
-    lEnvelopeItem =  aModule->getItemFactory()->createElementNode(lNullItem, lEnvelopeName, lEnvelopeType, false, false, ns_binding);
-  } else {
-    Item lMessageName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "message");
-    Item lMessageType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "messageType");
-    aParent =  aModule->getItemFactory()->createElementNode(lNullItem, lMessageName, lMessageType, false, false, ns_binding);
-    lEnvelopeItem =  aModule->getItemFactory()->createElementNode(aParent, lEnvelopeName, lEnvelopeType, false, false, ns_binding);
-  }
-    
-  // create the remail node if needed
-  if (lEnvelope->remail) {
-    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, SCHEMA_NAMESPACE, "email",  "remail", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->remail);
-  }
-  // create the date node if needed
-  if (lEnvelope->date) {
-    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, SCHEMA_NAMESPACE, "email",  "date", "http://www.w3.org/2001/XMLSchema", "string", ImapFunction::getDateTime(aModule,
-          reinterpret_cast<const char*>(lEnvelope->date)));
-  }
-  // create from node if needed
-  if (lEnvelope->from) {
-    ImapFunction::createEmailAddressNode(aModule, lEnvelopeItem, "from", lEnvelope->from->personal, lEnvelope->from->mailbox, lEnvelope->from->host);
-  }
-  // create sender node if needed  
-  if (lEnvelope->sender) {    ImapFunction::createEmailAddressNode(aModule, lEnvelopeItem, "sender", lEnvelope->sender->personal, lEnvelope->sender->mailbox, lEnvelope->sender->host);  }
-  // create replyTo node if needed
-  if (lEnvelope->reply_to) {
-    ImapFunction::createEmailAddressNode(aModule, lEnvelopeItem, "replyTo", lEnvelope->reply_to->personal, lEnvelope->reply_to->mailbox, lEnvelope->reply_to->host);
-  }
-  // create subject node
-  if (lEnvelope->subject) {
-    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem, SCHEMA_NAMESPACE, "email",  "subject", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->subject);
-  }
-    
-  ADDRESS* lRecipents;
-  if (lEnvelope->to) {
-    ImapFunction::createRecipentNode(aModule, lEnvelopeItem, "to", lEnvelope->to->personal, lEnvelope->to->mailbox, lEnvelope->to->host);
-    lRecipents = lEnvelope->to;
-    while ((lRecipents = lRecipents->next)) {
-      ImapFunction::createRecipentNode(aModule, lEnvelopeItem, "to", lEnvelope->to->personal, lEnvelope->to->mailbox, lEnvelope->to->host);
-    }
-  }
-    
-  if (lEnvelope->cc) {
-    ImapFunction::createRecipentNode(aModule, lEnvelopeItem, "cc", lEnvelope->cc->personal, lEnvelope->cc->mailbox, lEnvelope->cc->host);
-    lRecipents = lEnvelope->cc;
-    while ((lRecipents = lRecipents->next)) {
-      ImapFunction::createRecipentNode(aModule, lEnvelopeItem, "cc", lEnvelope->cc->personal, lEnvelope->cc->mailbox, lEnvelope->cc->host);
-    }
-  }
-    
-  if ((lRecipents = lEnvelope->bcc)) {
-    ImapFunction::createRecipentNode(aModule, lEnvelopeItem, "bcc", lEnvelope->bcc->personal, lEnvelope->bcc->mailbox, lEnvelope->bcc->host);
-    while ((lRecipents = lRecipents->next)) {
-      ImapFunction::createRecipentNode(aModule, lEnvelopeItem, "bcc", lEnvelope->bcc->personal, lEnvelope->bcc->mailbox, lEnvelope->bcc->host);
-    }
-  }
-    
-  // create messageId node
-  if (lEnvelope->message_id) {
-    ImapFunction::createInnerNodeWithText(aModule, lEnvelopeItem,  SCHEMA_NAMESPACE, "email",  "messageId", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->message_id);
-  }
-  Item lFlagsItem;
-  // create flags node
-  ImapFunction::createFlagsNode(aModule, lEnvelopeItem, lFlagsItem, lFlags, false);
-    
-  // if we only want the envelope, then here is a good place to stop
-  if (aOnlyEnvelope) {
-    aParent = lEnvelopeItem;
+  // take out the part between the "=?" and "?="
+  std::string lToSplit = aRawSubject.substr(2, lLength - 4);
+
+  // get the charset
+  std::size_t lQPosTmp;
+  std::size_t lQPos = lToSplit.find("?");
+  if (lQPos == std::string::npos)
+  {
+    aDecodedSubject = aRawSubject;
     return;
-  } 
-    
-  // if we want the whole message, then build it together
-    
-  // <email:mimeVersion>1.0</email:mimeVersion>
-  ImapFunction::createInnerNodeWithText(aModule, aParent,  SCHEMA_NAMESPACE, "email", "mimeVersion", "http://www.w3.org/2001/XMLSchema", "string", "1.0");
-        
-  // make a tolower version of the subtype
-  std::string lSubType(lBody->subtype);
-  std::transform(lSubType.begin(), lSubType.end(), lSubType.begin(), tolower);
-    
-  // creating the <body> node
-  Item lBodyName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "body");
-  Item lBodyType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "bodyTypeChoice");
-  Item lBodyItem = aModule->getItemFactory()->createElementNode(aParent, lBodyName, lBodyType, false, false, ns_binding); 
-  // in case of non-multipart, just add the body to the message
-    
-  Item lMultipartParentName = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "multipart");
-  Item lMultipartParentType = aModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "multipartType");
-  Item lMultipartParent; 
-  // using a vector instead of a stack, because including stack will clash with the c-client include ... 
-  std::vector<BODY*> lBodies;
-  lBodies.push_back(lBody);
-  std::vector<Item> lParents;
-  lParents.push_back(lBodyItem);
-  std::vector<std::string> lSections;
-  lSections.push_back("");  
-    
-  // make sure that the special case of a completely non-multipart message is handled correctly
-  bool lNoMultipart = false;
-  if (lBody->type != TYPEMULTIPART) {
-    lNoMultipart = true;
   }
-    
-  BODY* lCurrentBody;
-  Item lCurrentParent;
-  std::string lCurrentSection; 
-  // iterate and create all nodes (doing this recursive would have been nicer, but seems impossible without making a function containing a c-client structure in its signature, which seems impossible)
-  while (lBodies.size() > 0) {
-    lCurrentBody = lBodies.front();
-    lCurrentParent = lParents.front();
-    lCurrentSection = lSections.front(); 
-    lSections.erase(lSections.begin());
-    lParents.erase(lParents.begin()); 
-    lBodies.erase(lBodies.begin());
-    // get different attributes that we will need in any case, regardless if this is a content or multipart item
-    std::string lContentType = ImapFunction::getContentType(lCurrentBody->type, lCurrentBody->subtype);
-    std::string lEncoding = ImapFunction::getEncoding(lCurrentBody->encoding);
-    std::string lContentDisposition = "";
-    if (lCurrentBody->disposition.type != NIL) {
-      lContentDisposition = cpystr(lCurrentBody->disposition.type);
-    }  
-    std::string lContentDispositionFilename = "";
-    std::string lContentDispositionModificationDate = "";
-      
-    PARAMETER* lCurrentParameter = lCurrentBody->disposition.parameter;
-    while (lCurrentParameter != NIL) {
-        
-      if (!std::string("filename").compare(lCurrentParameter->attribute)) {
-        lContentDispositionFilename = cpystr(lCurrentParameter->value);
-      }  else if (!std::string("modification-date").compare(lCurrentParameter->attribute)) {
-        lContentDispositionModificationDate = cpystr(lCurrentParameter->value);
-      }  
-        
-      lCurrentParameter = lCurrentParameter->next;
-    }  
-      
-    if (lCurrentBody->type != TYPEMULTIPART) {
-      std::string lContentId = "";
-      char * lId = lCurrentBody->id;
-        
-      if (lId != NIL) {
-        lContentId = cpystr(lId);
-      }
-        
-      std::string lSubType(lCurrentBody->subtype);                                                                  
-      std::transform(lSubType.begin(), lSubType.end(), lSubType.begin(), tolower);
-      // make sure that we haven't got a empty string (happens if there is no multipart in this message)
-      if (lCurrentSection.size() != 0) {
-        lCurrentSection.erase(lCurrentSection.end() - 1);
-      }
-        
-      std::string lBodyContent = ImapClient::Instance().fetchBodyFull(aHostName, aUserName, aPassword, aMailbox, aMessageNumber, lNoMultipart ? "1" : lCurrentSection, aUid);  
-      ImapFunction::createContentNode(aModule, lCurrentParent, lBodyContent, lContentType, "us-ascii", lEncoding, lContentDisposition, lContentDispositionFilename, lContentDispositionModificationDate, lContentId); 
-        
-    } else {
-      lMultipartParent = aModule->getItemFactory()->createElementNode(lCurrentParent, lMultipartParentName, lMultipartParentType, false, false, ns_binding);
-      ImapFunction::createContentTypeAttributes(aModule, lMultipartParent, lContentType, "us-ascii", lEncoding, lContentDisposition, lContentDispositionFilename, lContentDispositionModificationDate); 
-      PART* lPart = lCurrentBody->nested.part;
-      lBodies.insert(lBodies.begin(), &lPart->body);
-      lParents.insert(lParents.begin(), lMultipartParent);      
-      lSections.insert(lSections.begin(), lCurrentSection + "1.");
-      for (int j = 1; lPart->next; ++j) {
-        lPart = lPart->next; 
-        std::stringstream lConverter;
-        lConverter << j+1 << "."; 
-        lSections.insert(lSections.begin() + j, lCurrentSection + lConverter.str());
-        lConverter.clear(); 
-        lBodies.insert(lBodies.begin() +j, &lPart->body);
-        lParents.insert(lParents.begin(), lMultipartParent);
-      }
-    } 
+  std::string lCharset = lToSplit.substr(0, lQPos);
+  lQPosTmp = lQPos + 1;
+
+  // get the encoding
+  lQPos = lToSplit.find("?", lQPosTmp);
+  if (lQPos == std::string::npos)
+  {
+    aDecodedSubject = aRawSubject;
+    return;
   }
+  std::string lEncoding = lToSplit.substr(lQPosTmp, lQPos - lQPosTmp);
+  lQPosTmp = lQPos + 1;
+
+  // get the encoded data
+  lQPos = lToSplit.find("?", lQPos + 1);
+  if (lQPos != std::string::npos)
+  {
+    aDecodedSubject = aRawSubject;
+    return;
+  }
+  std::string lData = lToSplit.substr(lQPosTmp);
+
+  // binary
+  if (lEncoding == "B" || lEncoding == "b")
+  {
+    unsigned long lNewLength;
+    void* lNewData = rfc822_base64((unsigned char*)lData.c_str(), lData.length(), &lNewLength);
+    lData = std::string((char *)lNewData, lNewLength);
+  }
+  // quoted
+  else if (lEncoding == "Q" || lEncoding == "q")
+  {
+    unsigned long lNewLength;
+    void* lNewData = rfc822_qprint((unsigned char*)lData.c_str(), lData.length(), &lNewLength);
+    lData = std::string((char *)lNewData, lNewLength);
+    std::replace( lData.begin(), lData.end(), '_', ' ' );
+  }
+  // not a valid encoding?
+  else
+  {
+    aDecodedSubject = aRawSubject;
+    return;
+  }
+
+  // decode this fragment according to the charset
+  toUtf8(lData, lCharset.c_str(), aDecodedSubject);
 }
 
 } /* namespace emailmodule */

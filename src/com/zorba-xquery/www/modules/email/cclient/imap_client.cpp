@@ -23,7 +23,9 @@
 
 #include "email_exception.h"
 
+#ifndef WIN32
 #pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 
 
 namespace zorba { namespace emailmodule {
@@ -69,7 +71,7 @@ namespace zorba { namespace emailmodule {
       }
       else {
         sprintf (tmp, "MAIL");
-        res = smtp_mail(smtp_stream, tmp, aEnvelope, aBody);
+        res = smtp_mail(smtp_stream, tmp, aEnvelope, aBody) != 0;
         if (res) {
           out << "Ok.";
         } else {
@@ -931,4 +933,6 @@ void mm_fatal (char *string)
 }
 
 
+#ifndef WIN32
 #pragma GCC diagnostic warning "-Wwrite-strings"
+#endif

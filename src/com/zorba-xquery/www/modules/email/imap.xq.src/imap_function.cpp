@@ -176,7 +176,7 @@ ImapFunction::getDateTime(const std::string& aCClientDateTime) const
   // then push MM
   // build up map for Months
   
-  std::string lMonths = "JanFebMarAprMayJunJulAugSepOctNovDez";
+  std::string lMonths = "JanFebMarAprMayJunJulAugSepOctNovDec";
   size_t lMonthNumber = lMonths.find(lTokens[2]);
   // if the month was not found, were really in trouble!
   if (lMonthNumber == std::string::npos) {
@@ -633,7 +633,6 @@ ImapFunction::getMessage(
     lBodies.erase(lBodies.begin());
     // get different attributes that we will need in any case, regardless if this is a content or multipart item
     std::string lContentType = getContentType(lCurrentBody->type, lCurrentBody->subtype);
-    std::string lEncoding = getEncoding(lCurrentBody->encoding);
     std::string lContentDisposition = "";
     if (lCurrentBody->disposition.type != NIL) {
       lContentDisposition = cpystr(lCurrentBody->disposition.type);
@@ -680,15 +679,29 @@ ImapFunction::getMessage(
           lParam = lParam->next;
         }
 
+        std::string lTransferEncodingDecoded;
+        unsigned short lEncoding = lCurrentBody->encoding;
+        // decode the body according the transfer encoding if it is quoted-printable
+        decodeTextualTransferEncoding(lBodyContent, lContentType, lEncoding, lTransferEncodingDecoded);
+        
         // decode the body according to the charset
-        std::string lDecoded;
-        toUtf8(lBodyContent, lCharset, lDecoded);
+        std::string lCharsetDecoded;
+        toUtf8(lTransferEncodingDecoded, lCharset, lCharsetDecoded);
 
-        createContentNode(lCurrentParent, lDecoded, lContentType, "us-ascii", lEncoding, lContentDisposition, lContentDispositionFilename, lContentDispositionModificationDate, lContentId); 
+        createContentNode(lCurrentParent, lCharsetDecoded, lContentType,
+          "utf-8", getEncoding(lEncoding), lContentDisposition,
+          lContentDispositionFilename, lContentDispositionModificationDate,
+          lContentId);
 
     } else {
-      lMultipartParent = theModule->getItemFactory()->createElementNode(lCurrentParent, lMultipartParentName, lMultipartParentType, false, false, ns_binding);
-      createContentTypeAttributes(lMultipartParent, lContentType, "us-ascii", lEncoding, lContentDisposition, lContentDispositionFilename, lContentDispositionModificationDate); 
+      lMultipartParent = theModule->getItemFactory()->createElementNode(
+        lCurrentParent, lMultipartParentName, lMultipartParentType, false,
+        false, ns_binding);
+
+      createContentTypeAttributes(lMultipartParent, lContentType, "utf-8",
+        getEncoding(lCurrentBody->encoding), lContentDisposition,
+        lContentDispositionFilename, lContentDispositionModificationDate);
+
       PART* lPart = lCurrentBody->nested.part;
       lBodies.insert(lBodies.begin(), &lPart->body);
       lParents.insert(lParents.begin(), lMultipartParent);      
@@ -832,6 +845,36 @@ ImapFunction::decodeHeader(
   aResult = lDecoded.str();
 }
 
+
+void
+ImapFunction::decodeTextualTransferEncoding(
+  const std::string& aValue, 
+  const std::string& aContentType, 
+  unsigned short& aEncoding, 
+  std::string& aResult) const
+{
+  if (aEncoding == ENCQUOTEDPRINTABLE) {
+    unsigned long lNewLength;
+    void* lNewData = rfc822_qprint((unsigned char*)aValue.c_str(), aValue.length(), &lNewLength);
+    aResult = std::string((char *)lNewData, lNewLength);
+    fs_give(&lNewData);
+    aEncoding = ENC8BIT;
+  }
+  else if (aEncoding == ENCBASE64 &&
+        (
+          aContentType.find("text") != std::string::npos
+       || aContentType.find("xml") != std::string::npos
+        )) {
+    unsigned long lNewLength;
+    void* lNewData = rfc822_base64((unsigned char*)aValue.c_str(), aValue.length(), &lNewLength);
+    aResult = std::string((char *)lNewData, lNewLength);
+    fs_give(&lNewData);
+    aEncoding = ENC8BIT;
+  }
+  else {
+    aResult = aValue;
+  }
+}
 
 } /* namespace emailmodule */
 } /* namespace zorba */

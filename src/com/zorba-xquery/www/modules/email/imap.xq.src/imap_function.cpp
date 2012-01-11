@@ -282,7 +282,7 @@ ImapFunction::createFlagsNode(
   std::vector<int>& aFlagsVector,
   const bool aQualified) const
 {
-  std::vector<std::pair<String, String> >  ns_binding;
+  NsBindings ns_binding;
   ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
   
   // if aParent is null, then we want to have the flags node qualified (so that it can be shema validated)
@@ -330,7 +330,7 @@ ImapFunction::createInnerNodeWithText(
   const std::string& aType,
   const std::string& aContent) const
 {
-  std::vector<std::pair<String, String> > null_binding; 
+  NsBindings null_binding;
   Item lName = theModule->getItemFactory()->createQName(aNamespace, aPrefix, aName);
   Item lType = theModule->getItemFactory()->createQName(aTypeNamespace,  aType);
   Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, null_binding);
@@ -351,7 +351,7 @@ ImapFunction::createContentNode(
 {  
   Item lNullItem;
    
-  std::vector<std::pair<String, String> > null_binding;
+  NsBindings null_binding;
   Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "content");
   Item lType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "contentType" );
   Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, null_binding);
@@ -379,7 +379,7 @@ ImapFunction::createEmailAddressNode(
   Item lType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "emailAddress");
   Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email",  aName);
 
-  std::vector<std::pair<String, String> >  ns_binding; 
+  NsBindings ns_binding;
   ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
  
   Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding);
@@ -402,7 +402,7 @@ ImapFunction::createRecipentNode(
   Item lType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "recipientType");                                                                    
   Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "recipient");                           
   
-  std::vector<std::pair<String, String> >  ns_binding;                                        
+  NsBindings ns_binding;
   ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
  
   Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding); 
@@ -484,7 +484,7 @@ ImapFunction::getMessage(
     lEnvelope = ImapClient::Instance().fetchStructure(aHostName, aUserName, aPassword, aMailbox, &lBody, aMessageNumber, aUid, lFlags);
   }
     
-  std::vector<std::pair<String, String> >   ns_binding;
+  NsBindings ns_binding;
   ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
     
   Item lEnvelopeItem;

@@ -34,7 +34,7 @@ class ImapFunction : public ContextualExternalFunction
 {
   protected:
     const ImapModule* theModule;
-    static const char* SCHEMA_NAMESPACE;  
+    static const char* SCHEMA_NAMESPACE;
 
     void
     raiseImapError(
@@ -149,14 +149,20 @@ class ImapFunction : public ContextualExternalFunction
 
     void
     getMessage(
-      Item& aParent, 
-      const std::string& aHostName, 
-      const std::string& aUserName, 
-      const std::string& aPassword, 
-      const std::string& aMailbox, 
-      const unsigned long aMessageNumber, 
-      const bool aUid, 
+      Item& aParent,
+      const std::string& aHostName,
+      const std::string& aUserName,
+      const std::string& aPassword,
+      const std::string& aMailbox,
+      const unsigned long aMessageNumber,
+      const bool aUid,
       const  bool aOnlyEnvelope) const;
+
+    void
+    decodeTextualTransferEncoding(const std::string& aValue,
+      const std::string& aContentType,
+      unsigned short& aEncoding,
+      std::string& aResult) const;
 
     void
     toUtf8(
@@ -167,6 +173,9 @@ class ImapFunction : public ContextualExternalFunction
     void
     checkStatus(UErrorCode aStatus) const;
 
+    /**
+     * Decodes header of an email, e.g. the subject.
+     */
     void
     decodeHeader(
       const std::string& value,

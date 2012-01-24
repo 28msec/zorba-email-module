@@ -127,7 +127,7 @@
   <!-- definition of simple elements -->
   <simpleType name="contentTypeValue">
     <restriction base="string">
-      <pattern value="[a-zA-Z]+/[a-zA-Z]+((\-|\+|\.)[a-zA-Z]+)*"/>
+      <pattern value="[a-zA-Z]+/[a-zA-Z0-9\-\+\.]+"/>
     </restriction>
   </simpleType>
 
@@ -146,7 +146,7 @@
         <attribute name="contentDisposition" type="string"/>
         <attribute name="contentDisposition-filename" type="string"/>
         <attribute name="contentDisposition-modification-date" type="dateTime"/>
-        <attribute name="content-id" type="string" />
+        <attribute name="content-id" type="string"/>
        </extension>
     </simpleContent>
   </complexType>
@@ -155,10 +155,11 @@
     <choice maxOccurs="unbounded">
       <element name="content" type="tns:contentType"  minOccurs="1"/>
       <element name="multipart" type="tns:multipartType"  minOccurs="1"/>
-    </choice>  
+    </choice>
     <attribute name="contentType" type="tns:contentTypeValue"/>
     <attribute name="charset" type="string" default="us-ascii"/>
     <attribute name="contentTransferEncoding" type="tns:cteType" default="ENC7BIT"/>
+    <attribute name="contentDisposition" type="string"/>
   </complexType>
 
   <complexType name="bodyTypeChoice">

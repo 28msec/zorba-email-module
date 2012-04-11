@@ -45,7 +45,7 @@ module namespace imap = 'http://www.zorba-xquery.com/modules/email/imap';
 
 import schema namespace email = 'http://www.zorba-xquery.com/modules/email';
 
-declare namespace ann = "http://www.zorba-xquery.com/annotations";
+declare namespace an = "http://www.zorba-xquery.com/annotations";
 
 declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
 declare option ver:module-version "1.0";
@@ -75,7 +75,7 @@ declare option ver:module-version "1.0";
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/status_example.xq
  :)
-declare %ann:nondeterministic function imap:status(
+declare %an:nondeterministic function imap:status(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string)
   as element(email:status)
@@ -94,7 +94,7 @@ declare %ann:nondeterministic function imap:status(
     }
 };
 
-declare %private %ann:nondeterministic function imap:status-impl($host-info as element(email:hostInfo), $mailbox as xs:string) as xs:string* external;
+declare %private %an:nondeterministic function imap:status-impl($host-info as element(email:hostInfo), $mailbox as xs:string) as xs:string* external;
 
 (:~
  : Creates a new mailbox for the given user.
@@ -109,7 +109,7 @@ declare %private %ann:nondeterministic function imap:status-impl($host-info as e
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
-declare %ann:sequential function imap:create(
+declare %an:sequential function imap:create(
     $host-info as element(email:hostInfo),
     $mailbox-name as xs:string)
   as empty-sequence()
@@ -117,7 +117,7 @@ declare %ann:sequential function imap:create(
   imap:create-impl(validate {$host-info}, $mailbox-name) 
 };
   
-declare %private %ann:sequential function imap:create-impl($host-info as element(email:hostInfo), $mailbox-name as xs:string)  as empty-sequence() external; 
+declare %private %an:sequential function imap:create-impl($host-info as element(email:hostInfo), $mailbox-name as xs:string)  as empty-sequence() external; 
 
 (:~
  : Deletes a mailbox for the given user.
@@ -132,7 +132,7 @@ declare %private %ann:sequential function imap:create-impl($host-info as element
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
-declare %ann:sequential function imap:delete(
+declare %an:sequential function imap:delete(
     $host-info as element(email:hostInfo),
     $mailbox-name as xs:string)
   as empty-sequence()
@@ -140,7 +140,7 @@ declare %ann:sequential function imap:delete(
   imap:delete-impl(validate {$host-info}, $mailbox-name)
 };
 
-declare %private %ann:sequential function imap:delete-impl($host-info as element(email:hostInfo), $mailbox-name as xs:string)  as empty-sequence() external; 
+declare %private %an:sequential function imap:delete-impl($host-info as element(email:hostInfo), $mailbox-name as xs:string)  as empty-sequence() external; 
 
 (:~
  : Renames a mailbox.
@@ -156,7 +156,7 @@ declare %private %ann:sequential function imap:delete-impl($host-info as element
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/create_rename_delete_example.xq
  :)
-declare %ann:sequential function imap:rename(
+declare %an:sequential function imap:rename(
     $host-info as element(email:hostInfo),
     $mailbox-old as xs:string,
     $mailbox-new as xs:string)
@@ -165,7 +165,7 @@ declare %ann:sequential function imap:rename(
   imap:rename-impl(validate {$host-info}, $mailbox-old, $mailbox-new) 
 };
 
-declare %private %ann:sequential function imap:rename-impl($host-info as element(email:hostInfo), $mailbox-old as xs:string, $mailbox-new as xs:string) as empty-sequence() external;
+declare %private %an:sequential function imap:rename-impl($host-info as element(email:hostInfo), $mailbox-old as xs:string, $mailbox-new as xs:string) as empty-sequence() external;
 
 (:~
  : Lists IMAP folders for the specified user on the host that match the pattern. 
@@ -184,7 +184,7 @@ declare %private %ann:sequential function imap:rename-impl($host-info as element
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/list_example.xq
  :)
-declare %ann:nondeterministic function imap:list(
+declare %an:nondeterministic function imap:list(
     $host-info as element(email:hostInfo),
     $mailbox-ref as xs:string,
     $pattern as xs:string,
@@ -202,7 +202,7 @@ declare %ann:nondeterministic function imap:list(
   }
 };
 
-declare %private %ann:nondeterministic function imap:list-impl($host-info as element(email:hostInfo), $mailbox-ref as xs:string, $pattern as xs:string, $only-subscribed as xs:boolean) as xs:string* external;
+declare %private %an:nondeterministic function imap:list-impl($host-info as element(email:hostInfo), $mailbox-ref as xs:string, $pattern as xs:string, $only-subscribed as xs:boolean) as xs:string* external;
 
 (:~
  : Subscribes the user to the specified mailbox.
@@ -217,7 +217,7 @@ declare %private %ann:nondeterministic function imap:list-impl($host-info as ele
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/subscribe_unsubscribe_example.xq
  :)
-declare %ann:sequential function imap:subscribe(
+declare %an:sequential function imap:subscribe(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string)
   as empty-sequence() 
@@ -225,7 +225,7 @@ declare %ann:sequential function imap:subscribe(
   imap:subscribe-impl(validate {$host-info}, $mailbox)
 };
 
-declare %private %ann:sequential function imap:subscribe-impl($host-info as element(email:hostInfo), $mailbox as xs:string) as empty-sequence() external;
+declare %private %an:sequential function imap:subscribe-impl($host-info as element(email:hostInfo), $mailbox as xs:string) as empty-sequence() external;
 
 (:~
  : Unsubscribes the user from the specified mailbox.
@@ -240,7 +240,7 @@ declare %private %ann:sequential function imap:subscribe-impl($host-info as elem
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/subscribe_unsubscribe_example.xq
  :)
-declare %ann:sequential function imap:unsubscribe(
+declare %an:sequential function imap:unsubscribe(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string)
   as empty-sequence()
@@ -248,7 +248,7 @@ declare %ann:sequential function imap:unsubscribe(
   imap:unsubscribe-impl(validate {$host-info}, $mailbox)
 };
 
-declare %private %ann:sequential function imap:unsubscribe-impl($host-info as element(email:hostInfo), $mailbox as xs:string) as empty-sequence() external;
+declare %private %an:sequential function imap:unsubscribe-impl($host-info as element(email:hostInfo), $mailbox as xs:string) as empty-sequence() external;
 
 (:~
  : Permanently deletes all messages of the given mailbox that have the "deleted" flag set.
@@ -263,7 +263,7 @@ declare %private %ann:sequential function imap:unsubscribe-impl($host-info as el
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/expunge_example.xq
  :) 
-declare %ann:sequential function imap:expunge(
+declare %an:sequential function imap:expunge(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string)
   as empty-sequence()
@@ -271,7 +271,7 @@ declare %ann:sequential function imap:expunge(
   imap:expunge-impl(validate {$host-info}, $mailbox)
 };
 
-declare %private %ann:sequential function imap:expunge-impl($host-info as element(email:hostInfo), $mailbox as xs:string) as empty-sequence() external;
+declare %private %an:sequential function imap:expunge-impl($host-info as element(email:hostInfo), $mailbox as xs:string) as empty-sequence() external;
 
 (:~
  : Searches a mailbox for messages that match the given criteria.
@@ -295,7 +295,7 @@ declare %private %ann:sequential function imap:expunge-impl($host-info as elemen
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/search_example.xq
  :)
-declare %ann:nondeterministic function imap:search(
+declare %an:nondeterministic function imap:search(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $criteria as xs:string,
@@ -305,7 +305,7 @@ declare %ann:nondeterministic function imap:search(
   imap:search-impl(validate {$host-info}, $mailbox, $criteria, $uid)
 }; 
 
-declare %private %ann:nondeterministic function imap:search-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $criteria as xs:string, $uid as xs:boolean?) as xs:long* external;
+declare %private %an:nondeterministic function imap:search-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $criteria as xs:string, $uid as xs:boolean?) as xs:long* external;
 
 (:~
  : Copies messages between mailboxes.
@@ -327,7 +327,7 @@ declare %private %ann:nondeterministic function imap:search-impl($host-info as e
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/copy_example.xq
  :)
-declare %ann:sequential function imap:copy(
+declare %an:sequential function imap:copy(
     $host-info as element(email:hostInfo),
     $mailbox-from as xs:string,
     $mailbox-to as xs:string,
@@ -338,7 +338,7 @@ declare %ann:sequential function imap:copy(
   imap:copy-impl(validate {$host-info}, $mailbox-from, $mailbox-to, $messages, $uid, true());
 };
 
-declare %private %ann:sequential function imap:copy-impl($host-info as element(email:hostInfo), $mailbox-from as xs:string, $mailbox-to as xs:string, $messages as xs:long+, $uid as xs:boolean?, $copy as xs:boolean) as empty-sequence() external;
+declare %private %an:sequential function imap:copy-impl($host-info as element(email:hostInfo), $mailbox-from as xs:string, $mailbox-to as xs:string, $messages as xs:long+, $uid as xs:boolean?, $copy as xs:boolean) as empty-sequence() external;
 
 (:~
  : Moves messages between mailboxes.
@@ -360,7 +360,7 @@ declare %private %ann:sequential function imap:copy-impl($host-info as element(e
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/move_example.xq
  :)
-declare %ann:sequential function imap:move(
+declare %an:sequential function imap:move(
     $host-info as element(email:hostInfo),
     $mailbox-from as xs:string,
     $mailbox-to as xs:string,
@@ -390,7 +390,7 @@ declare %ann:sequential function imap:move(
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_envelope_example.xq 
  :) 
-declare %ann:nondeterministic function imap:fetch-envelope(
+declare %an:nondeterministic function imap:fetch-envelope(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $message-number as xs:long,
@@ -400,7 +400,7 @@ declare %ann:nondeterministic function imap:fetch-envelope(
   validate {imap:fetch-envelope-impl( validate { $host-info }, $mailbox , $message-number, $uid )} 
 };
 
-declare %private %ann:nondeterministic function imap:fetch-envelope-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean?) as element(email:envelope) external;
+declare %private %an:nondeterministic function imap:fetch-envelope-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean?) as element(email:envelope) external;
 
 (:~
  : Fetches a whole message.
@@ -420,7 +420,7 @@ declare %private %ann:nondeterministic function imap:fetch-envelope-impl($host-i
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_message_example.xq
  :)
-declare %ann:nondeterministic function imap:fetch-message(
+declare %an:nondeterministic function imap:fetch-message(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $message-number as xs:long,
@@ -430,7 +430,7 @@ declare %ann:nondeterministic function imap:fetch-message(
   validate {imap:fetch-message-impl(validate {$host-info}, $mailbox, $message-number, $uid)} 
 }; 
 
-declare %private %ann:nondeterministic function imap:fetch-message-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean) as element() external;
+declare %private %an:nondeterministic function imap:fetch-message-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean) as element() external;
 
 (:~
  : Fetches the subject for a message.
@@ -451,7 +451,7 @@ declare %private %ann:nondeterministic function imap:fetch-message-impl($host-in
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_subject_example.xq
  :)
-declare %ann:nondeterministic function imap:fetch-subject(
+declare %an:nondeterministic function imap:fetch-subject(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $message-number as xs:long)
@@ -460,7 +460,7 @@ declare %ann:nondeterministic function imap:fetch-subject(
   imap:fetch-subject-impl(validate {$host-info}, $mailbox, $message-number)
 };
 
-declare %private %ann:nondeterministic function imap:fetch-subject-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:string external;
+declare %private %an:nondeterministic function imap:fetch-subject-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:string external;
 
 (:~
  : Fetches the 'from' string of a message.
@@ -481,7 +481,7 @@ declare %private %ann:nondeterministic function imap:fetch-subject-impl($host-in
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_from_example.xq
  :)
-declare %ann:nondeterministic function imap:fetch-from(
+declare %an:nondeterministic function imap:fetch-from(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $message-number as xs:long)
@@ -490,7 +490,7 @@ declare %ann:nondeterministic function imap:fetch-from(
   imap:fetch-from-impl(validate {$host-info}, $mailbox, $message-number)
 };
 
-declare %private %ann:nondeterministic function imap:fetch-from-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:string external;
+declare %private %an:nondeterministic function imap:fetch-from-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:string external;
 
 (:~
  : Fetches the unique identifier for a given message sequence number.
@@ -507,7 +507,7 @@ declare %private %ann:nondeterministic function imap:fetch-from-impl($host-info 
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_uid_example.xq
  :)
-declare %ann:nondeterministic function imap:fetch-uid(
+declare %an:nondeterministic function imap:fetch-uid(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $message-number as xs:long)
@@ -516,7 +516,7 @@ declare %ann:nondeterministic function imap:fetch-uid(
   imap:fetch-uid-impl(validate {$host-info}, $mailbox, $message-number)
 };
 
-declare %private %ann:nondeterministic function imap:fetch-uid-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:long external;
+declare %private %an:nondeterministic function imap:fetch-uid-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:long external;
 
 (:~
  : Fetches the message sequence number for a given unique identifier.
@@ -533,7 +533,7 @@ declare %private %ann:nondeterministic function imap:fetch-uid-impl($host-info a
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_message_sequence_number_example.xq
  :)
-declare %ann:nondeterministic function imap:fetch-message-sequence-number(
+declare %an:nondeterministic function imap:fetch-message-sequence-number(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $message-number as xs:long)
@@ -542,7 +542,7 @@ declare %ann:nondeterministic function imap:fetch-message-sequence-number(
   imap:fetch-message-sequence-number-impl(validate {$host-info}, $mailbox, $message-number)
 };
 
-declare %private %ann:nondeterministic function imap:fetch-message-sequence-number-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:long external;
+declare %private %an:nondeterministic function imap:fetch-message-sequence-number-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long) as xs:long external;
 
 (:~
  : Fetches the flags of a message.
@@ -562,7 +562,7 @@ declare %private %ann:nondeterministic function imap:fetch-message-sequence-numb
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/fetch_flags_example.xq
  :)
-declare %ann:nondeterministic function imap:fetch-flags(
+declare %an:nondeterministic function imap:fetch-flags(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $message-number as xs:long,
@@ -572,7 +572,7 @@ declare %ann:nondeterministic function imap:fetch-flags(
   validate {imap:fetch-flags-impl(validate{$host-info}, $mailbox, $message-number, $uid)} 
 };
 
-declare %private %ann:nondeterministic function imap:fetch-flags-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean?) as element(email:flags) external;
+declare %private %an:nondeterministic function imap:fetch-flags-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long, $uid as xs:boolean?) as element(email:flags) external;
 
 (:~
  : Sets the flags for a given message.
@@ -612,7 +612,7 @@ declare %private %ann:nondeterministic function imap:fetch-flags-impl($host-info
  :    <code>http://www.zorba-xquery.com/modules/email</code>
  : @example examples/Queries/imap/set_flags_example.xq
  :)
-declare %ann:sequential function imap:set-flags(
+declare %an:sequential function imap:set-flags(
     $host-info as element(email:hostInfo),
     $mailbox as xs:string,
     $message-number as xs:long,
@@ -623,4 +623,4 @@ declare %ann:sequential function imap:set-flags(
   imap:set-flags-impl(validate{$host-info}, $mailbox, $message-number, validate{$flags}, $uid)
 }; 
 
-declare %private %ann:sequential function imap:set-flags-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long, $flags as element(email:flags), $uid as xs:boolean?) as empty-sequence() external;
+declare %private %an:sequential function imap:set-flags-impl($host-info as element(email:hostInfo), $mailbox as xs:string, $message-number as xs:long, $flags as element(email:flags), $uid as xs:boolean?) as empty-sequence() external;

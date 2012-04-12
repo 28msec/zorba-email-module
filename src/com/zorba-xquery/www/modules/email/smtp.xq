@@ -34,7 +34,7 @@ module namespace smtp = "http://www.zorba-xquery.com/modules/email/smtp";
 
 import schema namespace email = 'http://www.zorba-xquery.com/modules/email';
 
-declare namespace ann = "http://www.zorba-xquery.com/annotations";
+declare namespace an = "http://www.zorba-xquery.com/annotations";
 
 declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
 declare option ver:module-version "1.0";
@@ -85,7 +85,7 @@ declare option ver:module-version "1.0";
  : @example examples/Queries/smtp/text_with_image.xq
  : @example examples/Queries/smtp/html.xq
  :)
-declare %ann:sequential function smtp:send(
+declare %an:sequential function smtp:send(
     $host-info as element(email:hostInfo),
     $message as element(email:message))
   as empty-sequence()
@@ -93,4 +93,4 @@ declare %ann:sequential function smtp:send(
   smtp:send-impl(validate{$host-info}, validate{$message})
 }; 
 
-declare %private %ann:sequential function smtp:send-impl($host-info as element(email:hostInfo), $message as element(email:message)) as empty-sequence() external;
+declare %private %an:sequential function smtp:send-impl($host-info as element(email:hostInfo), $message as element(email:message)) as empty-sequence() external;

@@ -31,8 +31,8 @@ make slx EXTRACFLAGS="-I/usr/include/openssl -fPIC"
 
 Use the following extra CMake arguments when building Zorba:
 
--D "CCLIENT_INCLUDE=path_to_imap-2007e\c-client"
--D CCLIENT_LIBRARY=path_to_imap-2007e\c-client\libc-client.a"
+-D CCLIENT_INCLUDE="path_to_imap-2007e\c-client"
+-D CCLIENT_LIBRARY="path_to_imap-2007e\c-client\libc-client.a"
 
 Here are some quick suggestions to build CClient on Linux:
 - x32-bit Linux: make lnp

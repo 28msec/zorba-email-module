@@ -178,12 +178,22 @@ ImapFunction::getDateTime(const std::string& aCClientDateTime) const
   
   std::string lMonths = "JanFebMarAprMayJunJulAugSepOctNovDec";
   size_t lMonthNumber = lMonths.find(lTokens[2]);
-  // if the month was not found, were really in trouble!
+  size_t lTokensShift = 0;
   if (lMonthNumber == std::string::npos) {
-    Item lQName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE,
-        "XPTY0004");
-    throw USER_EXCEPTION(lQName, "Error while processing month in date of message");
-  }  
+    // if the month is not there, day of week is possibly missing, 
+    // shift tokens by one and retry
+    lTokensShift = -1;
+    lMonthNumber = lMonths.find(lTokens[2 + lTokensShift]);
+    if (lMonthNumber == std::string::npos) {
+      // now, we are really in trouble, something is wrong
+      Item lQName = theModule->getItemFactory()
+                      ->createQName(SCHEMA_NAMESPACE, "XPTY0004");
+      throw USER_EXCEPTION(
+              lQName, 
+              "Error while processing month in date of email message");
+    }
+  }
+
   lMonthNumber = lMonthNumber/3 + 1;
   // make sure its MM and not just <
   if (lMonthNumber < 10) {
@@ -191,12 +201,15 @@ ImapFunction::getDateTime(const std::string& aCClientDateTime) const
   }  
   lResult << lMonthNumber << "-";
   
-  if (lTokens[1].size() == 1) {
+  if (lTokens[1 + lTokensShift].size() == 1) {
     lResult << 0;
   }
-  lResult << lTokens[1] << "T";
+  lResult << lTokens[1 + lTokensShift] << "T";
   // now hh:mm:ss
-  lResult << lTokens[4].substr(0,2) << ":" << lTokens[4].substr(3,2) << ":" << lTokens[4].substr(6,2);
+  lResult << lTokens[4 + lTokensShift].substr(0,2) << ":" 
+    << lTokens[4 + lTokensShift].substr(3,2) << ":" 
+    << lTokens[4 + lTokensShift].substr(6,2);
+
 
   return lResult.str();
   

@@ -192,7 +192,7 @@ ImapFunction::getDateTime(const std::string& aCClientDateTime) const
   }
 
   // YYYY-MM-DDThh:mm:ss, first push YYYY
-  lResult << lTokens[3] << "-";
+  lResult << lTokens[3 + lTokensShift] << "-";
   // then push MM
 
   lMonthNumber = lMonthNumber/3 + 1;

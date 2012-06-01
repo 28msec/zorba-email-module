@@ -171,11 +171,8 @@ ImapFunction::getDateTime(const std::string& aCClientDateTime) const
   while (lDateTimeStream >> lBuffer) { 
     lTokens.push_back(lBuffer);
   }
-  // YYYY-MM-DDThh:mm:ss, first push YYYY
-  lResult << lTokens[3] << "-";
-  // then push MM
+
   // build up map for Months
-  
   std::string lMonths = "JanFebMarAprMayJunJulAugSepOctNovDec";
   size_t lMonthNumber = lMonths.find(lTokens[2]);
   size_t lTokensShift = 0;
@@ -193,6 +190,10 @@ ImapFunction::getDateTime(const std::string& aCClientDateTime) const
               "Error while processing month in date of email message");
     }
   }
+
+  // YYYY-MM-DDThh:mm:ss, first push YYYY
+  lResult << lTokens[3] << "-";
+  // then push MM
 
   lMonthNumber = lMonthNumber/3 + 1;
   // make sure its MM and not just <

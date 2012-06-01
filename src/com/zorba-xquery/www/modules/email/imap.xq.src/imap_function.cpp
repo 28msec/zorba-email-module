@@ -467,7 +467,7 @@ ImapFunction::createContentTypeAttributes(
     }
     if (aContentDispositionModificationDate.length() > 2) { 
       /* build the contentDispositionModificationDate attribute */ 
-      Item lContentDispositionModificationDateName = theModule->getItemFactory()->createQName("", "contentDispostion-modification-date");
+      Item lContentDispositionModificationDateName = theModule->getItemFactory()->createQName("", "contentDisposition-modification-date");
       Item lContentDispositionModificationDateType = theModule->getItemFactory()->createQName("http://www.w3.org/2001/XMLSchema", "string");
       Item lContentDispositionModificationDateText = theModule->getItemFactory()->createTextNode(lNullItem, String(getDateTime(aContentDispositionModificationDate)));
       theModule->getItemFactory()->createAttributeNode(aParent, lContentDispositionModificationDateName, lContentDispositionModificationDateType, lContentDispositionModificationDateText);

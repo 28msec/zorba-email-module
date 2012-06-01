@@ -104,7 +104,7 @@
       <element name="sender" type="tns:emailAddress" maxOccurs="1" minOccurs="0"/>
       <element name="replyTo" type="tns:emailAddress" maxOccurs="1" minOccurs="0"/>
       <element name="subject" type="string" maxOccurs="1" minOccurs="0"/>
-      <element name="recipient" type="tns:recipientType" maxOccurs="unbounded" minOccurs="1"/>
+      <element name="recipient" type="tns:recipientType" maxOccurs="unbounded" minOccurs="0"/>
       <element name="messageId" type="string" maxOccurs="1" minOccurs="0"/>
       <element name="flags" type="tns:flagsType" maxOccurs="1" minOccurs="0"/>
     </sequence>

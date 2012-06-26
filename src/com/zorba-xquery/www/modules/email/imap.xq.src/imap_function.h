@@ -35,6 +35,7 @@ class ImapFunction : public ContextualExternalFunction
   protected:
     const ImapModule* theModule;
     static const char* SCHEMA_NAMESPACE;
+    static const char* SCHEMA_PREFIX;
 
     void
     raiseImapError(
@@ -130,7 +131,7 @@ class ImapFunction : public ContextualExternalFunction
       const char* aHost) const;
 
     void
-    createRecipentNode(
+    createRecipientNode(
       Item& aParent,
       const std::string& aName,
       const char* aPersonal,
@@ -167,7 +168,7 @@ class ImapFunction : public ContextualExternalFunction
     void
     toUtf8(
       const std::string& value,
-      const char* fromCharset,
+      const std::string& fromCharset,
       std::string& result) const;
 
     void

@@ -21,10 +21,11 @@
 #include <map>
 #include <sstream>
 
-#include <zorba/zorba.h>
+#include <zorba/base64.h>
+#include <zorba/diagnostic_list.h>
 #include <zorba/iterator.h>
 #include <zorba/user_exception.h>
-#include <zorba/diagnostic_list.h>
+#include <zorba/zorba.h>
 
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
@@ -36,6 +37,7 @@
 namespace zorba { namespace emailmodule {
 
 const char* ImapFunction::SCHEMA_NAMESPACE = "http://www.zorba-xquery.com/modules/email";  
+const char* ImapFunction::SCHEMA_PREFIX = "email";  
 
 ImapFunction::ImapFunction(const ImapModule* aModule)
   : theModule(aModule)
@@ -297,11 +299,11 @@ ImapFunction::createFlagsNode(
   const bool aQualified) const
 {
   NsBindings ns_binding;
-  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
+  ns_binding.push_back(std::pair<String, String>(SCHEMA_PREFIX, SCHEMA_NAMESPACE));
   
   // if aParent is null, then we want to have the flags node qualified (so that it can be shema validated)
   Item lFlagsName;
-  lFlagsName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "flags");
+  lFlagsName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "flags");
   Item lFlagsType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE,  "flagsType");
   aFlags = theModule->getItemFactory()->createElementNode(aParent, lFlagsName, lFlagsType, false, false, ns_binding);
 
@@ -327,7 +329,7 @@ ImapFunction::createFlagsNode(
         break;
       }
       
-      Item lOneFlagName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", lFlagName);
+      Item lOneFlagName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, lFlagName);
       Item lOneFlagType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "emptyType");
       Item lOneFlag = theModule->getItemFactory()->createElementNode(aFlags, lOneFlagName, lOneFlagType, false, true, ns_binding);
     }
@@ -366,7 +368,7 @@ ImapFunction::createContentNode(
   Item lNullItem;
    
   NsBindings null_binding;
-  Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "content");
+  Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "content");
   Item lType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "contentType" );
   Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, null_binding);
   
@@ -390,37 +392,51 @@ ImapFunction::createEmailAddressNode(
   const char* aMailbox,
   const char* aHost) const
 {
-  Item lType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "emailAddress");
-  Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email",  aName);
-
-  NsBindings ns_binding;
-  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
- 
-  Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding);
-  if (aPersonal) {
-    createInnerNodeWithText(lItem, SCHEMA_NAMESPACE, "email", "name", "http://www.w3.org/2001/XMLSchema", "string", aPersonal);
-  }
   if ((aMailbox) && (aHost)) {
-    createInnerNodeWithText(lItem, SCHEMA_NAMESPACE, "email", "email", SCHEMA_NAMESPACE, "emailAddressType", std::string(aMailbox) + "@" + std::string(aHost));  
+    // mailbox and host needs to be available, otherwise broken
+    Item lType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "emailAddress");
+    Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX,  aName);
+
+    NsBindings ns_binding;
+    ns_binding.push_back(std::pair<String, String>(SCHEMA_PREFIX, SCHEMA_NAMESPACE));
+   
+    Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding);
+    if (aPersonal) {
+      std::string lDecodedPersonal;
+      decodeHeader(std::string(aPersonal), lDecodedPersonal);
+      createInnerNodeWithText(
+          lItem, SCHEMA_NAMESPACE, SCHEMA_PREFIX, "name", 
+          "http://www.w3.org/2001/XMLSchema", "string", lDecodedPersonal);
+    }
+
+    std::string lDecodedMailbox, lDecodedHost;
+    decodeHeader(std::string(aMailbox), lDecodedMailbox);
+    decodeHeader(std::string(aHost), lDecodedHost);
+    createInnerNodeWithText(
+        lItem, SCHEMA_NAMESPACE, SCHEMA_PREFIX, "email", SCHEMA_NAMESPACE, 
+        "emailAddressType", lDecodedMailbox + "@" + lDecodedHost);  
   }
 }
 
 void 
-ImapFunction::createRecipentNode(
+ImapFunction::createRecipientNode(
   Item& aParent,
   const std::string& aName,
   const char* aPersonal,
   const char* aMailbox,
   const char* aHost) const
 {                    
-  Item lType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "recipientType");                                                                    
-  Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "recipient");                           
-  
-  NsBindings ns_binding;
-  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
- 
-  Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding); 
-  createEmailAddressNode(lItem, aName, aPersonal, aMailbox, aHost);
+  if (aMailbox && aHost) {
+    // mailbox and host needs to be available, otherwise bcc
+    Item lType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "recipientType");                                                                    
+    Item lName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "recipient");                           
+    
+    NsBindings ns_binding;
+    ns_binding.push_back(std::pair<String, String>(SCHEMA_PREFIX, SCHEMA_NAMESPACE));
+   
+    Item lItem = theModule->getItemFactory()->createElementNode(aParent, lName, lType, false, false, ns_binding); 
+    createEmailAddressNode(lItem, aName, aPersonal, aMailbox, aHost);
+  }
 }
 
 void 
@@ -499,7 +515,7 @@ ImapFunction::getMessage(
   }
     
   NsBindings ns_binding;
-  ns_binding.push_back(std::pair<String, String>("email", SCHEMA_NAMESPACE));
+  ns_binding.push_back(std::pair<String, String>(SCHEMA_PREFIX, SCHEMA_NAMESPACE));
     
   Item lEnvelopeItem;
   std::string lErrorMessage = ImapClient::Instance().getError();
@@ -512,33 +528,37 @@ ImapFunction::getMessage(
   // Important: if we only want the envelope, then the envelope MUST be qualified (being the root of the DOM)
   Item lEnvelopeName;
   if (aOnlyEnvelope) {
-    lEnvelopeName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelope");
+    lEnvelopeName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "envelope");
   } else {
-    lEnvelopeName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelope");
+    lEnvelopeName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "envelope");
   }  
-  Item lEnvelopeType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "envelopeType");
+  Item lEnvelopeType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "envelopeType");
     
   Item lNullItem;
   // if we only want the envelope, then create it with a null parent, else create the message and use it as parent
   if (aOnlyEnvelope) {
     lEnvelopeItem =  theModule->getItemFactory()->createElementNode(lNullItem, lEnvelopeName, lEnvelopeType, false, false, ns_binding);
   } else {
-    Item lMessageName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "message");
-    Item lMessageType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "messageType");
+    Item lMessageName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "message");
+    Item lMessageType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "messageType");
     aParent =  theModule->getItemFactory()->createElementNode(lNullItem, lMessageName, lMessageType, false, false, ns_binding);
     lEnvelopeItem =  theModule->getItemFactory()->createElementNode(aParent, lEnvelopeName, lEnvelopeType, false, false, ns_binding);
   }
     
   // create the remail node if needed
   if (lEnvelope->remail) {
-    createInnerNodeWithText(lEnvelopeItem, SCHEMA_NAMESPACE, "email",  "remail", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->remail);
+    std::string lDecodedRemail;
+    decodeHeader(std::string(lEnvelope->remail), lDecodedRemail);
+    createInnerNodeWithText(
+        lEnvelopeItem, SCHEMA_NAMESPACE, SCHEMA_PREFIX,  "remail",
+        "http://www.w3.org/2001/XMLSchema", "string", lDecodedRemail);
   }
   // create the date node if needed
   if (lEnvelope->date) {
     createInnerNodeWithText(
       lEnvelopeItem,
       SCHEMA_NAMESPACE,
-      "email",
+      SCHEMA_PREFIX,
       "date",
       "http://www.w3.org/2001/XMLSchema",
       "string",
@@ -561,36 +581,36 @@ ImapFunction::getMessage(
     std::string lSubject = lEnvelope->subject;
     std::string lDecodedSubject;
     decodeHeader(lSubject, lDecodedSubject);
-    createInnerNodeWithText(lEnvelopeItem, "", "",  "subject", "http://www.w3.org/2001/XMLSchema", "string", lDecodedSubject);
+    createInnerNodeWithText(lEnvelopeItem, SCHEMA_NAMESPACE, SCHEMA_PREFIX,  "subject", "http://www.w3.org/2001/XMLSchema", "string", lDecodedSubject);
   }
     
-  ADDRESS* lRecipents;
+  ADDRESS* lRecipients;
   if (lEnvelope->to) {
-    createRecipentNode(lEnvelopeItem, "to", lEnvelope->to->personal, lEnvelope->to->mailbox, lEnvelope->to->host);
-    lRecipents = lEnvelope->to;
-    while ((lRecipents = lRecipents->next)) {
-      createRecipentNode(lEnvelopeItem, "to", lEnvelope->to->personal, lEnvelope->to->mailbox, lEnvelope->to->host);
+    createRecipientNode(lEnvelopeItem, "to", lEnvelope->to->personal, lEnvelope->to->mailbox, lEnvelope->to->host);
+    lRecipients = lEnvelope->to;
+    while ((lRecipients = lRecipients->next)) {
+      createRecipientNode(lEnvelopeItem, "to", lEnvelope->to->personal, lEnvelope->to->mailbox, lEnvelope->to->host);
     }
   }
     
   if (lEnvelope->cc) {
-    createRecipentNode(lEnvelopeItem, "cc", lEnvelope->cc->personal, lEnvelope->cc->mailbox, lEnvelope->cc->host);
-    lRecipents = lEnvelope->cc;
-    while ((lRecipents = lRecipents->next)) {
-      createRecipentNode(lEnvelopeItem, "cc", lEnvelope->cc->personal, lEnvelope->cc->mailbox, lEnvelope->cc->host);
+    createRecipientNode(lEnvelopeItem, "cc", lEnvelope->cc->personal, lEnvelope->cc->mailbox, lEnvelope->cc->host);
+    lRecipients = lEnvelope->cc;
+    while ((lRecipients = lRecipients->next)) {
+      createRecipientNode(lEnvelopeItem, "cc", lEnvelope->cc->personal, lEnvelope->cc->mailbox, lEnvelope->cc->host);
     }
   }
     
-  if ((lRecipents = lEnvelope->bcc)) {
-    createRecipentNode(lEnvelopeItem, "bcc", lEnvelope->bcc->personal, lEnvelope->bcc->mailbox, lEnvelope->bcc->host);
-    while ((lRecipents = lRecipents->next)) {
-      createRecipentNode(lEnvelopeItem, "bcc", lEnvelope->bcc->personal, lEnvelope->bcc->mailbox, lEnvelope->bcc->host);
+  if ((lRecipients = lEnvelope->bcc)) {
+    createRecipientNode(lEnvelopeItem, "bcc", lEnvelope->bcc->personal, lEnvelope->bcc->mailbox, lEnvelope->bcc->host);
+    while ((lRecipients = lRecipients->next)) {
+      createRecipientNode(lEnvelopeItem, "bcc", lEnvelope->bcc->personal, lEnvelope->bcc->mailbox, lEnvelope->bcc->host);
     }
   }
     
   // create messageId node
   if (lEnvelope->message_id) {
-    createInnerNodeWithText(lEnvelopeItem,  SCHEMA_NAMESPACE, "email",  "messageId", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->message_id);
+    createInnerNodeWithText(lEnvelopeItem,  SCHEMA_NAMESPACE, SCHEMA_PREFIX,  "messageId", "http://www.w3.org/2001/XMLSchema", "string", lEnvelope->message_id);
   }
   Item lFlagsItem;
   // create flags node
@@ -605,20 +625,20 @@ ImapFunction::getMessage(
   // if we want the whole message, then build it together
     
   // <email:mimeVersion>1.0</email:mimeVersion>
-  createInnerNodeWithText(aParent,  SCHEMA_NAMESPACE, "email", "mimeVersion", "http://www.w3.org/2001/XMLSchema", "string", "1.0");
+  createInnerNodeWithText(aParent,  SCHEMA_NAMESPACE, SCHEMA_PREFIX, "mimeVersion", "http://www.w3.org/2001/XMLSchema", "string", "1.0");
         
   // make a tolower version of the subtype
   std::string lSubType(lBody->subtype);
   std::transform(lSubType.begin(), lSubType.end(), lSubType.begin(), tolower);
     
   // creating the <body> node
-  Item lBodyName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "body");
-  Item lBodyType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "bodyTypeChoice");
+  Item lBodyName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "body");
+  Item lBodyType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "bodyTypeChoice");
   Item lBodyItem = theModule->getItemFactory()->createElementNode(aParent, lBodyName, lBodyType, false, false, ns_binding); 
   // in case of non-multipart, just add the body to the message
     
-  Item lMultipartParentName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "multipart");
-  Item lMultipartParentType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, "email", "multipartType");
+  Item lMultipartParentName = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "multipart");
+  Item lMultipartParentType = theModule->getItemFactory()->createQName(SCHEMA_NAMESPACE, SCHEMA_PREFIX, "multipartType");
   Item lMultipartParent; 
   // using a vector instead of a stack, because including stack will clash with the c-client include ... 
   std::vector<BODY*> lBodies;
@@ -656,10 +676,15 @@ ImapFunction::getMessage(
       
     PARAMETER* lCurrentParameter = lCurrentBody->disposition.parameter;
     while (lCurrentParameter != NIL) {
-        
-      if (!std::string("filename").compare(lCurrentParameter->attribute)) {
+      std::string lAttribute = lCurrentParameter->attribute;
+      std::transform(lAttribute.begin(), lAttribute.end(), lAttribute.begin(), ::tolower);
+      if (!std::string("filename").compare(lAttribute)) {
         lContentDispositionFilename = cpystr(lCurrentParameter->value);
-      }  else if (!std::string("modification-date").compare(lCurrentParameter->attribute)) {
+      } else if (!std::string("filename*0").compare(lAttribute)) {
+        // TODO this is a hack that works for most cases.
+        // See: http://tools.ietf.org/html/rfc2184 [Page 3]
+        lContentDispositionFilename = cpystr(lCurrentParameter->value);
+      }  else if (!std::string("modification-date").compare(lAttribute)) {
         lContentDispositionModificationDate = cpystr(lCurrentParameter->value);
       }  
         
@@ -684,10 +709,14 @@ ImapFunction::getMessage(
       std::string lBodyContent = ImapClient::Instance().fetchBodyFull(aHostName, aUserName, aPassword, aMailbox, aMessageNumber, lNoMultipart ? "1" : lCurrentSection, aUid);
 
         // reading charset from email
-        const char* lCharset = 0;
+        // default mime charset, see 
+        // http://tools.ietf.org/html/draft-ietf-appsawg-mime-default-charset-04
+        std::string lCharset = "ISO-8859-1"; 
         PARAMETER* lParam = lCurrentBody->parameter;
         while (lParam) {
-          if (strcmp(lParam->attribute, "charset") == 0) {
+          std::string lAttribute = lParam->attribute;
+          std::transform(lAttribute.begin(), lAttribute.end(), lAttribute.begin(), ::tolower);
+          if (lAttribute.compare("charset") == 0) {
             lCharset = lParam->value;
           }
           lParam = lParam->next;
@@ -697,7 +726,7 @@ ImapFunction::getMessage(
         unsigned short lEncoding = lCurrentBody->encoding;
         // decode the body according the transfer encoding if it is quoted-printable
         decodeTextualTransferEncoding(lBodyContent, lContentType, lEncoding, lTransferEncodingDecoded);
-        
+
         // decode the body according to the charset
         std::string lCharsetDecoded;
         toUtf8(lTransferEncodingDecoded, lCharset, lCharsetDecoded);
@@ -736,10 +765,10 @@ ImapFunction::getMessage(
 void
 ImapFunction::toUtf8(
   const std::string& aValue,
-  const char* aFromCharset,
+  const std::string& aFromCharset,
   std::string& aResult) const
 {
-  if (!aFromCharset || std::string(aFromCharset) == "") {
+  if (aFromCharset == "") {
     aResult = aValue;
     return;
   }
@@ -752,7 +781,7 @@ ImapFunction::toUtf8(
   UConverter *lConverter;
 
   // set up the converter
-  lConverter = ucnv_open(aFromCharset, &lStatus);
+  lConverter = ucnv_open(aFromCharset.c_str(), &lStatus);
   checkStatus(lStatus);
 
   // convert to Unicode
@@ -793,23 +822,42 @@ ImapFunction::checkStatus(UErrorCode aStatus) const
   }
 }
 
+struct PrintableAsciiChar
+{
+  bool operator()(char c) const {
+    unsigned int u = static_cast<unsigned int>(c);
+    return !(u == '\t' || u == '\n' || u == '\t' || (u >= 32 && u <= 127)); 
+  }
+};
 
 void
 ImapFunction::decodeHeader(
   const std::string& aValue,
   std::string& aResult) const
 {
+  std::string lValue = aValue;
+  // We assume that email headers must not contain non-printable characters
+  // because special chars need to be encoded.
+  // Therefore, we filter everything non-printable out to avoid problems.
+  lValue.erase(
+    std::remove_if(
+      lValue.begin(),
+      lValue.end(),
+      PrintableAsciiChar()), 
+    lValue.end()
+  );
+
   std::stringstream lDecoded;
   std::size_t lMarker = 0;
 
   // size used many times
-  std::size_t lLength = aValue.length();
+  std::size_t lLength = lValue.length();
   // to collect question mark positions
   std::vector<std::size_t> lQMs;
 
   // populate the above vectors
   for (std::size_t i = 0; i < lLength; i++) {
-    if (aValue.at(i) == '?') {
+    if (lValue.at(i) == '?') {
       lQMs.push_back(i);
     }
   }
@@ -819,7 +867,7 @@ ImapFunction::decodeHeader(
 
   // not enough questions marks to make up an encoding, give up
   if (lQLength < 4) {
-    aResult = aValue;
+    aResult = lValue;
     return;
   }
 
@@ -830,17 +878,17 @@ ImapFunction::decodeHeader(
       // 2nd and 3rd question marks have only one character in between
       lQMs[j + 1] + 2 == lQMs[j + 2] &&
       // 1st question mark is prefixed by an equal sign
-      (lQMs[j]  > 0 && aValue.at(lQMs[j] - 1) == '=') &&
+      (lQMs[j]  > 0 && lValue.at(lQMs[j] - 1) == '=') &&
       // 4th question mark is suffixes by an equal sign
-      (lQMs[j + 3] < (lLength-1) && aValue.at(lQMs[j + 3] + 1) == '='))
+      (lQMs[j + 3] < (lLength-1) && lValue.at(lQMs[j + 3] + 1) == '='))
     {
       // ok were good, so first save the text from the last marker
       // upto the starting equal sign
-      lDecoded << aValue.substr(lMarker, lQMs[j] - lMarker - 1);
+      lDecoded << lValue.substr(lMarker, lQMs[j] - lMarker - 1);
 
       // then take the entire region, including =? and ?= and try to decode it
       std::string lWords;
-      decodeEncodedWords(aValue.substr(lQMs[j] - 1, lQMs[j + 3] - lQMs[j] + 3), lWords);
+      decodeEncodedWords(lValue.substr(lQMs[j] - 1, lQMs[j + 3] - lQMs[j] + 3), lWords);
       lDecoded << lWords;
 
       // save the new marker at the end of this encoded word group
@@ -854,11 +902,16 @@ ImapFunction::decodeHeader(
       ++j;
     }
   }
-  lDecoded << aValue.substr(lMarker);
+  lDecoded << lValue.substr(lMarker);
 
   aResult = lDecoded.str();
 }
 
+bool isTextOrXMLContentType(const std::string& aContentType) {
+  return  aContentType.find("text/") != std::string::npos
+       || aContentType == "application/xml"
+       || aContentType.find("+xml") != std::string::npos;
+}
 
 void
 ImapFunction::decodeTextualTransferEncoding(
@@ -873,19 +926,29 @@ ImapFunction::decodeTextualTransferEncoding(
     aResult = std::string((char *)lNewData, lNewLength);
     fs_give(&lNewData);
     aEncoding = ENC8BIT;
+    if (!isTextOrXMLContentType(aContentType)) {
+      // binary content needs to be base64 encoded for zorba
+      zorba::String lInput(aResult.c_str());
+      zorba::String lOutput = zorba::encoding::Base64::encode(lInput);
+      aResult = lOutput.c_str();
+    }
   }
-  else if (aEncoding == ENCBASE64 &&
-        (
-          aContentType.find("text") != std::string::npos
-       || aContentType.find("xml") != std::string::npos
-        )) {
-    unsigned long lNewLength;
-    void* lNewData = rfc822_base64((unsigned char*)aValue.c_str(), aValue.length(), &lNewLength);
-    aResult = std::string((char *)lNewData, lNewLength);
-    fs_give(&lNewData);
-    aEncoding = ENC8BIT;
+  else if (aEncoding == ENCBASE64) {
+    aResult = aValue;
+    // remove newlines from base64 
+    aResult.erase(std::remove(aResult.begin(), aResult.end(), '\r'), aResult.end());
+    aResult.erase(std::remove(aResult.begin(), aResult.end(), '\n'), aResult.end());
+    if (isTextOrXMLContentType(aContentType))
+    {
+      unsigned long lNewLength;
+      void* lNewData = rfc822_base64((unsigned char*)aResult.c_str(), aResult.length(), &lNewLength);
+      aResult = std::string((char *)lNewData, lNewLength);
+      fs_give(&lNewData);
+      aEncoding = ENC8BIT;
+    }
   }
-  else {
+  else
+  {
     aResult = aValue;
   }
 }

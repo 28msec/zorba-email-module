@@ -18,12 +18,13 @@
 #include <cstdio>
 #include <sstream>
 
-#include <zorba/zorba_string.h>
+#include <zorba/base64.h>
 #include <zorba/iterator.h>
 #include <zorba/item_factory.h>
 #include <zorba/store_consts.h>
 #include <zorba/user_exception.h>
 #include <zorba/xquery_functions.h>
+#include <zorba/zorba_string.h>
 
 #include "mime_handler.h"
 
@@ -70,7 +71,6 @@ getNameAndEmailAddress(
   Iterator_t lChildren = aEmailItem.getChildren();
   lChildren->open();
   Item lChild;
-  bool lReadName = true;
   while (lChildren->next(lChild)) {
     if (lChild.getNodeKind() != store::StoreConsts::elementNode) {
       continue;
@@ -81,7 +81,6 @@ getNameAndEmailAddress(
     getNodeName(lChild, lNodeName);
     if (lNodeName == "name") {
       aName = lChild.getStringValue();
-      lReadName = false;
     } else {
       aName = "";
       String lEmail = lChild.getStringValue();
@@ -143,6 +142,42 @@ CClientMimeHandler::end()
 {
 }
 
+/**
+ * Assigns a Zorba String to CClient value and encodes it if 
+ * necessary (to base64).
+ */
+void encodeStringForCClient(const zorba::String& aString, char*& aCClientVal)
+{
+  // check if string contains non-ascii chars
+  bool lContainsNonAscii = false;
+  for (
+    zorba::String::const_iterator lIter = aString.begin();
+    lIter != aString.end();
+    ++lIter)
+  {
+    unsigned int u = static_cast<unsigned int>(*lIter);
+    if (!(u == '\t' || u == '\n' || u == '\t' || (u >= 32 && u <= 127)))
+    {
+      lContainsNonAscii = true;
+      break;
+    }
+  }
+
+  if (lContainsNonAscii)
+  {
+    // encode subject if it contains non-ascii chars
+    zorba::String lEncodedValue = zorba::encoding::Base64::encode(aString);
+    zorba::String lFullValue = zorba::String("=?UTF-8?B?") 
+                             + lEncodedValue 
+                             + zorba::String("?=");
+    aCClientVal = cpystr(const_cast<char*>(lFullValue.c_str()));
+  }
+  else 
+  {
+    aCClientVal = cpystr(const_cast<char*>(aString.c_str()));
+  }
+}
+
 void
 CClientMimeHandler::envelope()
 {
@@ -188,7 +223,7 @@ CClientMimeHandler::envelope()
       getNameAndEmailAddress(lChild, lName, lMailbox, lHost);
       theEnvelope->reply_to = create_mail_address(lName, lMailbox, lHost);
     } else if (lNodeName == "subject") {
-      theEnvelope->subject = cpystr(const_cast<char*>(lNodeValue.c_str()));
+      encodeStringForCClient(lNodeValue, theEnvelope->subject);
     } else if (lNodeName == "recipient") {
       Iterator_t lRecipentChildren = lChild.getChildren(); 
       lRecipentChildren->open();
@@ -383,7 +418,7 @@ CClientMimeHandler::set_contentTypeCharsetCTF(
       aBody->parameter = create_param("charset", fn::upper_case(lNodeValue), NIL);
     } else if (lNodeName == "contentTransferEncoding") {
       set_encoding(aBody, lNodeValue);  
-    } else if (lNodeName ,"contentDisposition") {
+    } else if (lNodeName == "contentDisposition") {
       aBody->disposition.type = cpystr(fn::upper_case(lNodeValue).c_str()); 
     } else if (lNodeName == "contentDisposition-filename") {
       if (!aBody->disposition.parameter) {  

@@ -61,8 +61,8 @@ getTextValue(const Item aElement, zorba::String& aValue)
 }
 
 /**
- * Assigns a Zorba String to CClient value and does base64 encoding
- * if necessary.
+ * Encodes a zorba String if necessary (if it contains non-ascii chars)
+ * and assigns it to the passed char-pointer-reference.
  */
 void encodeStringForCClient(const zorba::String& aString, char*& aCClientVal)
 {
@@ -83,6 +83,7 @@ void encodeStringForCClient(const zorba::String& aString, char*& aCClientVal)
 
   if (lContainsNonAscii)
   {
+    // base64 encoding if the subject contains non-ascii chars
     zorba::String lEncodedValue = zorba::encoding::Base64::encode(aString);
     zorba::String lFullValue = zorba::String("=?UTF-8?B?") 
                              + lEncodedValue 
@@ -106,13 +107,13 @@ getNameAndEmailAddress(
   Iterator_t lChildren = aEmailItem.getChildren();
   lChildren->open();
   Item lChild;
+  // name might not exist -> empty string by default
   aName = "";
   while (lChildren->next(lChild)) {
     if (lChild.getNodeKind() != store::StoreConsts::elementNode) {
       continue;
     }
 
-    // as a name is not mandatory, we first check if this is a name node
     String lNodeName;
     getNodeName(lChild, lNodeName);
     if (lNodeName == "name") {

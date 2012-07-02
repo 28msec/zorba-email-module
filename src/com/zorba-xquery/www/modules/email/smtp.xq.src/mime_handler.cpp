@@ -60,6 +60,41 @@ getTextValue(const Item aElement, zorba::String& aValue)
   lChildrenIt->close();
 }
 
+/**
+ * Assigns a Zorba String to CClient value and does base64 encoding
+ * if necessary.
+ */
+void encodeStringForCClient(const zorba::String& aString, char*& aCClientVal)
+{
+  // check if string contains non ascii chars
+  bool lContainsNonAscii = false;
+  for (
+    zorba::String::const_iterator lIter = aString.begin();
+    lIter != aString.end();
+    ++lIter)
+  {
+    unsigned int u = static_cast<unsigned int>(*lIter);
+    if (!(u == '\t' || u == '\n' || u == '\t' || (u >= 32 && u <= 127)))
+    {
+      lContainsNonAscii = true;
+      break;
+    }
+  }
+
+  if (lContainsNonAscii)
+  {
+    zorba::String lEncodedValue = zorba::encoding::Base64::encode(aString);
+    zorba::String lFullValue = zorba::String("=?UTF-8?B?") 
+                             + lEncodedValue 
+                             + zorba::String("?=");
+    aCClientVal = cpystr(const_cast<char*>(lFullValue.c_str()));
+  }
+  else 
+  {
+    aCClientVal = cpystr(const_cast<char*>(aString.c_str()));
+  }
+}
+
 // helper function for retrieving the name and email address from an item
 static void
 getNameAndEmailAddress(
@@ -71,6 +106,7 @@ getNameAndEmailAddress(
   Iterator_t lChildren = aEmailItem.getChildren();
   lChildren->open();
   Item lChild;
+  aName = "";
   while (lChildren->next(lChild)) {
     if (lChild.getNodeKind() != store::StoreConsts::elementNode) {
       continue;
@@ -82,7 +118,6 @@ getNameAndEmailAddress(
     if (lNodeName == "name") {
       aName = lChild.getStringValue();
     } else {
-      aName = "";
       String lEmail = lChild.getStringValue();
       int lIndexOfAt = lEmail.find('@'); 
       aMailbox = lEmail.substr(0, lIndexOfAt).c_str();
@@ -95,9 +130,9 @@ mail_address*
 create_mail_address(String& aName, String& aMailbox, String& aHost)
 {
   mail_address* address = mail_newaddr();
-  address->personal = cpystr(const_cast<char*>(aName.c_str()));
-  address->mailbox = cpystr(const_cast<char*>(aMailbox.c_str()));
-  address->host = cpystr(const_cast<char*>(aHost.c_str()));
+  encodeStringForCClient(aName, address->personal);
+  encodeStringForCClient(aMailbox, address->mailbox);
+  encodeStringForCClient(aHost, address->host);
   return address;
 }
 
@@ -140,42 +175,6 @@ CClientMimeHandler::begin(const Item& aMimeItem)
 void
 CClientMimeHandler::end()
 {
-}
-
-/**
- * Assigns a Zorba String to CClient value and encodes it if 
- * necessary (to base64).
- */
-void encodeStringForCClient(const zorba::String& aString, char*& aCClientVal)
-{
-  // check if string contains non-ascii chars
-  bool lContainsNonAscii = false;
-  for (
-    zorba::String::const_iterator lIter = aString.begin();
-    lIter != aString.end();
-    ++lIter)
-  {
-    unsigned int u = static_cast<unsigned int>(*lIter);
-    if (!(u == '\t' || u == '\n' || u == '\t' || (u >= 32 && u <= 127)))
-    {
-      lContainsNonAscii = true;
-      break;
-    }
-  }
-
-  if (lContainsNonAscii)
-  {
-    // encode subject if it contains non-ascii chars
-    zorba::String lEncodedValue = zorba::encoding::Base64::encode(aString);
-    zorba::String lFullValue = zorba::String("=?UTF-8?B?") 
-                             + lEncodedValue 
-                             + zorba::String("?=");
-    aCClientVal = cpystr(const_cast<char*>(lFullValue.c_str()));
-  }
-  else 
-  {
-    aCClientVal = cpystr(const_cast<char*>(aString.c_str()));
-  }
 }
 
 void

@@ -64,7 +64,7 @@ getTextValue(const Item aElement, zorba::String& aValue)
  * Encodes a zorba String if necessary (if it contains non-ascii chars)
  * and assigns it to the passed char-pointer-reference.
  */
-void encodeStringForCClient(const zorba::String& aString, char*& aCClientVal)
+void encodeStringForEMailHeader(const zorba::String& aString, char*& aCClientVal)
 {
   // check if string contains non ascii chars
   bool lContainsNonAscii = false;
@@ -83,7 +83,9 @@ void encodeStringForCClient(const zorba::String& aString, char*& aCClientVal)
 
   if (lContainsNonAscii)
   {
-    // base64 encoding if the subject contains non-ascii chars
+    // if string contains non-ascii chars, we encode it with
+    // base64 encoding and generate a header value according to
+    // http://tools.ietf.org/html/rfc2047 (MIME encoded-word syntax).
     zorba::String lEncodedValue = zorba::encoding::Base64::encode(aString);
     zorba::String lFullValue = zorba::String("=?UTF-8?B?") 
                              + lEncodedValue 
@@ -92,6 +94,7 @@ void encodeStringForCClient(const zorba::String& aString, char*& aCClientVal)
   }
   else 
   {
+    // if string contains ascii chars only, do don't encode anything
     aCClientVal = cpystr(const_cast<char*>(aString.c_str()));
   }
 }
@@ -131,9 +134,9 @@ mail_address*
 create_mail_address(String& aName, String& aMailbox, String& aHost)
 {
   mail_address* address = mail_newaddr();
-  encodeStringForCClient(aName, address->personal);
-  encodeStringForCClient(aMailbox, address->mailbox);
-  encodeStringForCClient(aHost, address->host);
+  encodeStringForEMailHeader(aName, address->personal);
+  encodeStringForEMailHeader(aMailbox, address->mailbox);
+  encodeStringForEMailHeader(aHost, address->host);
   return address;
 }
 
@@ -223,7 +226,7 @@ CClientMimeHandler::envelope()
       getNameAndEmailAddress(lChild, lName, lMailbox, lHost);
       theEnvelope->reply_to = create_mail_address(lName, lMailbox, lHost);
     } else if (lNodeName == "subject") {
-      encodeStringForCClient(lNodeValue, theEnvelope->subject);
+      encodeStringForEMailHeader(lNodeValue, theEnvelope->subject);
     } else if (lNodeName == "recipient") {
       Iterator_t lRecipentChildren = lChild.getChildren(); 
       lRecipentChildren->open();

@@ -90,12 +90,12 @@ void encodeStringForEMailHeader(const zorba::String& aString, char*& aCClientVal
     zorba::String lFullValue = zorba::String("=?UTF-8?B?") 
                              + lEncodedValue 
                              + zorba::String("?=");
-    aCClientVal = cpystr(const_cast<char*>(lFullValue.c_str()));
+    aCClientVal = cpystr(lFullValue.c_str());
   }
   else 
   {
     // if string contains ascii chars only, do don't encode anything
-    aCClientVal = cpystr(const_cast<char*>(aString.c_str()));
+    aCClientVal = cpystr(aString.c_str());
   }
 }
 
@@ -305,7 +305,7 @@ CClientMimeHandler::set_text_body(BODY* aBody, String& aMessage)
     std::stringstream lInStream;
     std::stringstream lOutStream;
     // for loop that counts to 64 and then makes a new line
-    lInStream << const_cast<char*>(aMessage.c_str());
+    lInStream << aMessage.c_str();
     char next;
     int counter = 0;
     while (lInStream >> next) {

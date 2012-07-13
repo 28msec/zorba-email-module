@@ -18,12 +18,13 @@
 #include <cstdio>
 #include <sstream>
 
-#include <zorba/zorba_string.h>
+#include <zorba/base64.h>
 #include <zorba/iterator.h>
 #include <zorba/item_factory.h>
 #include <zorba/store_consts.h>
 #include <zorba/user_exception.h>
 #include <zorba/xquery_functions.h>
+#include <zorba/zorba_string.h>
 
 #include "mime_handler.h"
 
@@ -59,6 +60,45 @@ getTextValue(const Item aElement, zorba::String& aValue)
   lChildrenIt->close();
 }
 
+/**
+ * Encodes a zorba String if necessary (if it contains non-ascii chars)
+ * and assigns it to the passed char-pointer-reference.
+ */
+void encodeStringForEMailHeader(const zorba::String& aString, char*& aCClientVal)
+{
+  // check if string contains non ascii chars
+  bool lContainsNonAscii = false;
+  for (
+    zorba::String::const_iterator lIter = aString.begin();
+    lIter != aString.end();
+    ++lIter)
+  {
+    unsigned int u = static_cast<unsigned int>(*lIter);
+    if (!(u == '\t' || u == '\n' || u == '\t' || (u >= 32 && u <= 127)))
+    {
+      lContainsNonAscii = true;
+      break;
+    }
+  }
+
+  if (lContainsNonAscii)
+  {
+    // if string contains non-ascii chars, we encode it with
+    // base64 encoding and generate a header value according to
+    // http://tools.ietf.org/html/rfc2047 (MIME encoded-word syntax).
+    zorba::String lEncodedValue = zorba::encoding::Base64::encode(aString);
+    zorba::String lFullValue = zorba::String("=?UTF-8?B?") 
+                             + lEncodedValue 
+                             + zorba::String("?=");
+    aCClientVal = cpystr(lFullValue.c_str());
+  }
+  else 
+  {
+    // if string contains ascii chars only, do don't encode anything
+    aCClientVal = cpystr(aString.c_str());
+  }
+}
+
 // helper function for retrieving the name and email address from an item
 static void
 getNameAndEmailAddress(
@@ -70,20 +110,18 @@ getNameAndEmailAddress(
   Iterator_t lChildren = aEmailItem.getChildren();
   lChildren->open();
   Item lChild;
-  bool lReadName = true;
+  // name might not exist -> empty string by default
+  aName = "";
   while (lChildren->next(lChild)) {
     if (lChild.getNodeKind() != store::StoreConsts::elementNode) {
       continue;
     }
 
-    // as a name is not mandatory, we first check if this is a name node
     String lNodeName;
     getNodeName(lChild, lNodeName);
     if (lNodeName == "name") {
       aName = lChild.getStringValue();
-      lReadName = false;
     } else {
-      aName = "";
       String lEmail = lChild.getStringValue();
       int lIndexOfAt = lEmail.find('@'); 
       aMailbox = lEmail.substr(0, lIndexOfAt).c_str();
@@ -96,9 +134,9 @@ mail_address*
 create_mail_address(String& aName, String& aMailbox, String& aHost)
 {
   mail_address* address = mail_newaddr();
-  address->personal = cpystr(const_cast<char*>(aName.c_str()));
-  address->mailbox = cpystr(const_cast<char*>(aMailbox.c_str()));
-  address->host = cpystr(const_cast<char*>(aHost.c_str()));
+  encodeStringForEMailHeader(aName, address->personal);
+  encodeStringForEMailHeader(aMailbox, address->mailbox);
+  encodeStringForEMailHeader(aHost, address->host);
   return address;
 }
 
@@ -188,7 +226,7 @@ CClientMimeHandler::envelope()
       getNameAndEmailAddress(lChild, lName, lMailbox, lHost);
       theEnvelope->reply_to = create_mail_address(lName, lMailbox, lHost);
     } else if (lNodeName == "subject") {
-      theEnvelope->subject = cpystr(const_cast<char*>(lNodeValue.c_str()));
+      encodeStringForEMailHeader(lNodeValue, theEnvelope->subject);
     } else if (lNodeName == "recipient") {
       Iterator_t lRecipentChildren = lChild.getChildren(); 
       lRecipentChildren->open();
@@ -267,7 +305,7 @@ CClientMimeHandler::set_text_body(BODY* aBody, String& aMessage)
     std::stringstream lInStream;
     std::stringstream lOutStream;
     // for loop that counts to 64 and then makes a new line
-    lInStream << const_cast<char*>(aMessage.c_str());
+    lInStream << aMessage.c_str();
     char next;
     int counter = 0;
     while (lInStream >> next) {
@@ -383,7 +421,7 @@ CClientMimeHandler::set_contentTypeCharsetCTF(
       aBody->parameter = create_param("charset", fn::upper_case(lNodeValue), NIL);
     } else if (lNodeName == "contentTransferEncoding") {
       set_encoding(aBody, lNodeValue);  
-    } else if (lNodeName ,"contentDisposition") {
+    } else if (lNodeName == "contentDisposition") {
       aBody->disposition.type = cpystr(fn::upper_case(lNodeValue).c_str()); 
     } else if (lNodeName == "contentDisposition-filename") {
       if (!aBody->disposition.parameter) {  

@@ -61,6 +61,8 @@ ELSE(ZORBA_SUPPRESS_CCLIENT)
 
     IF(UNIX AND NOT WIN32)
       ADD_DEFINITIONS(-fPIC)
+      # option needed to make c-client compilable with clang
+      SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fms-compatibility")
     ENDIF(UNIX AND NOT WIN32)
 
     TARGET_LINK_LIBRARIES(imap_commons ${SMTP_LINK_LIBRARIES})

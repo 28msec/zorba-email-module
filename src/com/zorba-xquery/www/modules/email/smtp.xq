@@ -27,8 +27,8 @@ xquery version "3.0";
  : documentation associated with this function.
  :
  : @author Sorin Nasoi, Daniel Thomas
- : @library <a href="http://www.washington.edu/imap/">c-client Library part of UW IMAP toolkit</a>
- : @project communication
+ : @see <a href="http://www.washington.edu/imap/">c-client Library part of UW IMAP toolkit</a>
+ : @project Zorba/IO/SMTP
  :)
 module namespace smtp = "http://www.zorba-xquery.com/modules/email/smtp";
 
@@ -55,13 +55,13 @@ declare option ver:module-version "1.0";
  : </ul>
  :
  : The <code>$host-info</code> parameter could then look like this:
- : <pre>
- : &lt;hostInfo&gt;
- : &lt;hostName&gt;smtp.gmail.com:587/tls/novalidate-cert&lt;hostName&gt;
- : &lt;userName&gt;username&lt;userName&gt;
- : &lt;password&gt;password&lt;password&gt;
- : &lt;/hostInfo&gt;
- : </pre>
+ : <pre class="ace-static" ace-mode="xquery"><![CDATA[
+ : <hostInfo>
+ :   <hostName>smtp.gmail.com:587/tls/novalidate-cert</hostName>
+ :   <userName>username</userName>
+ :   <password>password</password>
+ : </hostInfo>
+ : ]]></pre>
  :
  : For a complete of the structure of an email message, see the imported email
  : schema: <code>http://www.zorba-xquery.com/modules/email</code>

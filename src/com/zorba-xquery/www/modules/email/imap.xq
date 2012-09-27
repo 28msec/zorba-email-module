@@ -25,21 +25,21 @@ xquery version "3.0";
  : in the email schema: <code>http://www.zorba-xquery.com/modules/email</code>.
  :
  : For example:
- : <pre>
- : &lt;email:hostInfo&gt;
- :   &lt;email:hostName&gt;imap.example.com&lt;/email:hostName&gt;
- :   &lt;email:userName&gt;myuser&lt;/email:userName&gt;
- :   &lt;email:password&gt;mypassword&lt;/email:password&gt;
- : &lt;/email:hostInfo&gt;
- : </pre>
+ : <pre class="ace-static" ace-mode="xquery"><![CDATA[
+ : <email:hostInfo>
+ :   <email:hostName>imap.example.com</email:hostName>
+ :   <email:userName>myuser</email:userName>
+ :   <email:password>mypassword</email:password>
+ : </email:hostInfo>
+ : ]]></pre>
  :
  : The <code>hostInfoType</code> only needs to be in the email schema namespace
  : (<code>http://www.zorba-xquery.com/modules/email</code>). It does not need
  : to be validated since it's validated by the module.
  :
  : @author Daniel Thomas, Gabriel Petrovay
- : @library <a href="http://www.washington.edu/imap/">c-client library part of UW IMAP toolkit</a>
- : @project communication
+ : @see <a href="http://www.washington.edu/imap/">c-client library part of UW IMAP toolkit</a>
+ : @project Zorba/IO/IMAP
  :)
 module namespace imap = 'http://www.zorba-xquery.com/modules/email/imap';
 

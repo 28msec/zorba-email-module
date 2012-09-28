@@ -28,6 +28,7 @@ xquery version "3.0";
  :
  : @author Sorin Nasoi, Daniel Thomas
  : @see <a href="http://www.washington.edu/imap/">c-client Library part of UW IMAP toolkit</a>
+ : @library <a href="http://www.washington.edu/imap/">c-client Library part of UW IMAP toolkit</a>
  : @project Zorba/IO/SMTP
  :)
 module namespace smtp = "http://www.zorba-xquery.com/modules/email/smtp";

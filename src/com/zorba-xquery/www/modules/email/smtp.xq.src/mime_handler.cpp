@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-#include <vector>
 #include <cstdio>
 #include <sstream>
+#include <vector>
 
-#include <zorba/base64.h>
-#include <zorba/iterator.h>
 #include <zorba/item_factory.h>
+#include <zorba/iterator.h>
 #include <zorba/store_consts.h>
 #include <zorba/user_exception.h>
+#include <zorba/util/base64.h>
 #include <zorba/xquery_functions.h>
 #include <zorba/zorba_string.h>
 
 #include "mime_handler.h"
-
 #include "email_exception.h"
 
 namespace zorba { namespace emailmodule {

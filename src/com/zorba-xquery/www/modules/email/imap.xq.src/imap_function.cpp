@@ -21,10 +21,10 @@
 #include <map>
 #include <sstream>
 
-#include <zorba/base64.h>
 #include <zorba/diagnostic_list.h>
 #include <zorba/iterator.h>
 #include <zorba/user_exception.h>
+#include <zorba/util/base64.h>
 #include <zorba/zorba.h>
 
 #include <unicode/ucnv.h>

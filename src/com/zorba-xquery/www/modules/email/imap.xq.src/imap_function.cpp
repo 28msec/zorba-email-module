@@ -929,7 +929,7 @@ ImapFunction::decodeTextualTransferEncoding(
     if (!isTextOrXMLContentType(aContentType)) {
       // binary content needs to be base64 encoded for zorba
       zorba::String lInput(aResult.c_str());
-      zorba::String lOutput = zorba::encoding::Base64::encode(lInput);
+      zorba::String lOutput = zorba::base64::encode(lInput);
       aResult = lOutput.c_str();
     }
   }

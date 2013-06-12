@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-#include "imap_function.h"
-
 #include <algorithm>
 #include <iostream>
 #include <map>
 #include <sstream>
 
-#include <zorba/diagnostic_list.h>
-#include <zorba/iterator.h>
-#include <zorba/user_exception.h>
-#include <zorba/util/base64.h>
-#include <zorba/zorba.h>
-
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 
+#include <zorba/diagnostic_list.h>
+#include <zorba/iterator.h>
+#include <zorba/user_exception.h>
+#include <zorba/util/base64_util.h>
+#include <zorba/zorba.h>
+
+#include "imap_function.h"
 #include "imap_module.h"
 #include "imap_client.h"
 #include "email_exception.h"

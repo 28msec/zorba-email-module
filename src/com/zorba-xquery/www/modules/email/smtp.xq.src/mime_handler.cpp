@@ -22,7 +22,7 @@
 #include <zorba/iterator.h>
 #include <zorba/store_consts.h>
 #include <zorba/user_exception.h>
-#include <zorba/util/base64.h>
+#include <zorba/util/base64_util.h>
 #include <zorba/xquery_functions.h>
 #include <zorba/zorba_string.h>
 

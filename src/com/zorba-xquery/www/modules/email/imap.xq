@@ -40,7 +40,7 @@ xquery version "3.0";
  : @author Daniel Thomas, Gabriel Petrovay
  : @see <a href="http://www.washington.edu/imap/">c-client library part of UW IMAP toolkit</a>
  : @library <a href="http://www.washington.edu/imap/">c-client library part of UW IMAP toolkit</a>
- : @project Zorba/IO/IMAP
+ : @project Zorba/Input Output/IMAP
  :)
 module namespace imap = 'http://www.zorba-xquery.com/modules/email/imap';
 

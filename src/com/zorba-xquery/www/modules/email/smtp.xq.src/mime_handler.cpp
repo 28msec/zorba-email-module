@@ -85,7 +85,8 @@ void encodeStringForEMailHeader(const zorba::String& aString, char*& aCClientVal
     // if string contains non-ascii chars, we encode it with
     // base64 encoding and generate a header value according to
     // http://tools.ietf.org/html/rfc2047 (MIME encoded-word syntax).
-    zorba::String lEncodedValue = zorba::base64::encode(aString);
+    zorba::String lEncodedValue;
+    zorba::base64::encode(aString, &lEncodedValue);
     zorba::String lFullValue = zorba::String("=?UTF-8?B?") 
                              + lEncodedValue 
                              + zorba::String("?=");

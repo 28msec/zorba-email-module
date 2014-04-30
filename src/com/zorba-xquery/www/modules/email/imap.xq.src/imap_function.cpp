@@ -24,6 +24,7 @@
 
 #include <zorba/diagnostic_list.h>
 #include <zorba/iterator.h>
+#include <zorba/item_sequence.h>
 #include <zorba/user_exception.h>
 #include <zorba/util/base64_util.h>
 #include <zorba/zorba.h>

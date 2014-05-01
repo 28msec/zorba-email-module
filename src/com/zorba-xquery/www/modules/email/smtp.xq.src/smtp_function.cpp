@@ -16,6 +16,7 @@
 
 #include <zorba/zorba.h>
 #include <zorba/iterator.h>
+#include <zorba/item_sequence.h>
 #include <zorba/user_exception.h>
 #include <zorba/xquery_functions.h>
 #include <zorba/store_consts.h>

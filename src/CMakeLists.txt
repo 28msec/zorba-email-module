@@ -12,9 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# all external module libraries are generated in the directory
-# of the corresponding .xq file
-MESSAGE(STATUS "Add com")
-ADD_SUBDIRECTORY(com)
-
-MESSAGE(STATUS "End modules")
+DECLARE_ZORBA_SCHEMA (FILE email.xsd 
+                      URI "http://www.zorba-xquery.com/modules/email")
+                      
+DECLARE_ZORBA_MODULE (URI "http://www.zorba-xquery.com/modules/email/smtp" 
+                      VERSION 1.0 
+                      FILE "smtp.xq" 
+                      LINK_LIBRARIES "imap_commons;${SMTP_LINK_LIBRARIES}")
+                      
+DECLARE_ZORBA_MODULE (URI "http://www.zorba-xquery.com/modules/email/imap" 
+                      VERSION 1.0 
+                      FILE "imap.xq" 
+                      LINK_LIBRARIES "imap_commons;${SMTP_LINK_LIBRARIES}")
